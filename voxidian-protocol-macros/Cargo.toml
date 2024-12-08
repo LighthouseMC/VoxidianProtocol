@@ -1,0 +1,14 @@
+[package]
+name        = "voxidian-protocol-macros"
+version     = "0.1.0"
+authors     = ["LighthouseMC <https://github.com/LighthouseMC>"]
+description = "Minecraft network protocol datastructures and implementations in Rust."
+
+homepage   = "https://github.com/LighthouseMC"
+repository = "https://github.com/LighthouseMC/VoxidianProtocol"
+
+edition = "2021"
+
+workspace = "../"
+
+[dependencies]
