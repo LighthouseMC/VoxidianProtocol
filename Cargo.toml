@@ -12,4 +12,7 @@ edition = "2024"
 [workspace]
 members = [ "voxidian-protocol-macros" ]
 
+[lints.rust]
+unused-parens = "allow"
+
 [dependencies]
