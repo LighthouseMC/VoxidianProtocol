@@ -11,4 +11,7 @@ edition = "2021"
 
 workspace = "../"
 
+[lib]
+proc-macro = true
+
 [dependencies]
