@@ -7,7 +7,7 @@ description = "Minecraft network protocol datastructures and implementations in 
 homepage   = "https://github.com/LighthouseMC"
 repository = "https://github.com/LighthouseMC/VoxidianProtocol"
 
-edition = "2021"
+edition = "2024"
 
 workspace = "../"
 
