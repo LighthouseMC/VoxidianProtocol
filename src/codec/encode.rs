@@ -11,6 +11,10 @@ pub enum EncodeError {
 }
 
 
+impl<T : PacketEncode> PacketEncode for &T { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    buf.encode_write(self)
+} }
+
 macro packet_encode_int( $($types:ty),* $(,)? ) { $(
     impl PacketEncode for $types { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
         buf.write_u8s(&self.to_be_bytes());

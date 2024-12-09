@@ -1,12 +1,13 @@
 use crate::codec::{ PacketEncode, PacketDecode, EncodeError, DecodeError };
 
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct VarInt(i32);
 
 
 impl From<i32> for VarInt { fn from(value : i32) -> Self { Self(value) } }
 
-impl VarInt { pub fn as_i32(&self) -> i32 { self.0 } }
+impl Into<i32> for VarInt { fn into(self) -> i32 { self.0 } }
 
 
 impl PacketEncode for VarInt { fn encode(&self, buf : &mut crate::buffer::PacketBuf) -> Result<(), EncodeError> {

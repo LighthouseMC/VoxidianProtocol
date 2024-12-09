@@ -15,4 +15,6 @@ members = [ "voxidian-protocol-macros" ]
 [lints.rust]
 unused-parens = "allow"
 
-[dependencies]
+
+[dependencies.voxidian-protocol-macros]
+path = "voxidian-protocol-macros"

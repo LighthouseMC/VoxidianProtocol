@@ -25,6 +25,6 @@ macro packet_decode_int( $($types:ty),* $(,)? ) { $(
 packet_decode_int!( u8, i8, u16, i16, u32, i32, u64, i64 );
 
 impl PacketDecode for String { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
-    let len = buf.read_decode::<VarInt>()?.as_i32() as usize;
+    let len = Into::<i32>::into(buf.read_decode::<VarInt>()?) as usize;
     Ok(String::from_utf8(buf.read_u8s(len)?.to_vec()).map_err(|_| DecodeError::InvalidData)?)
 } }

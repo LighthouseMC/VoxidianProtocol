@@ -11,7 +11,19 @@ edition = "2024"
 
 workspace = "../"
 
+[lints.rust]
+unused-parens = "allow"
+
 [lib]
 proc-macro = true
 
-[dependencies]
+
+[dependencies.syn]
+version  = "2.0"
+features = [ "full" ]
+
+[dependencies.quote]
+version = "1.0"
+
+[dependencies.proc-macro2]
+version = "1.0"
