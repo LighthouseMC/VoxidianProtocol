@@ -4,8 +4,7 @@ mod decode;
 pub use decode::*;
 
 
-use crate::buffer::PacketBuf;
-use crate::value::VarInt;
+use super::{ PacketBuf, VarInt };
 
 
 pub trait PacketEncodeDecode : Sized {
