@@ -29,12 +29,14 @@ impl PacketEncode for String {
     }
 }
 
-pub mod tests {
+#[doc(hidden)]
+#[allow(unused_imports)]
+mod tests {
     use crate::packet::c2s::handshake::handshake::{ConnectionIntent, HandshakeC2SPacket};
     use super::*;
 
     #[test]
-    pub fn test_encoding() {
+    fn test_encoding() {
         let packet = HandshakeC2SPacket {
             protocol_version: VarInt::from(823),
             address: "127.0.0.1".to_string(),
@@ -42,7 +44,7 @@ pub mod tests {
             intended_state: ConnectionIntent::Status,
         };
         let mut buf = PacketBuf::new();
-        let encoded = packet.encode(&mut buf).expect("encoding error bruh");
+        packet.encode(&mut buf).expect("encoding error bruh");
         assert_eq!(buf.into_inner(), vec![183, 6, 9, 49, 50, 55, 46, 48, 46, 48, 46, 49, 99, 221, 0]);
     }
 }
