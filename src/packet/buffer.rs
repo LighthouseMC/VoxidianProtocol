@@ -1,5 +1,6 @@
 use super::*;
 
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct PacketBuf {
     inner: Vec<u8>,
     read_idx: usize,
@@ -18,6 +19,14 @@ impl PacketBuf {
         let mut buf = Self::new();
         encodable.encode(&mut buf)?;
         Ok(buf)
+    }
+
+    pub fn into_inner(self) -> Vec<u8> {
+        self.inner
+    }
+
+    pub fn as_vec(&self) -> &Vec<u8> {
+        &self.inner
     }
 }
 

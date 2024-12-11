@@ -4,12 +4,12 @@ pub trait PacketEncode {
     fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError>;
 }
 
+#[derive(Debug, Clone)]
 pub enum EncodeError {}
 
 impl<T: PacketEncode> PacketEncode for &T {
     fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
-        // FIXME: recursion limit reached here while instantiating
-        buf.encode_write(self)
+        (*self).encode(buf)
     }
 }
 
@@ -26,5 +26,24 @@ impl PacketEncode for String {
         buf.encode_write(VarInt::from(self.len() as i32))?;
         buf.write_u8s(self.as_bytes());
         Ok(())
+    }
+}
+
+pub mod tests {
+    use crate::packet::c2s::handshake::handshake::{ConnectionIntent, HandshakeC2SPacket};
+    use super::*;
+
+    #[test]
+    pub fn test_encoding() {
+        let packet = HandshakeC2SPacket {
+            protocol_version: VarInt::from(823),
+            address: "127.0.0.1".to_string(),
+            port: 25565,
+            intended_state: ConnectionIntent::Status,
+        };
+        let mut buf = PacketBuf::new();
+        let encoded = packet.encode(&mut buf)
+            .expect("encoding error bruh");
+        assert_eq!(buf.into_inner(), vec![183, 6, 9, 49, 50, 55, 46, 48, 46, 48, 46, 49, 99, 221, 0]);
     }
 }
