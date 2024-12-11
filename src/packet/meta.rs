@@ -1,18 +1,19 @@
 pub trait PacketMeta {
-    const ID: i32;
-    const DIRECTION: Direction;
-    const STATE: State;
+    const PREFIX : usize;
+    const BOUND  : Bound;
+    const STAGE  : Stage;
 }
 
-pub enum Direction {
-    Clientbound,
-    Serverbound
+pub enum Bound {
+    S2C,
+    C2S
 }
 
-pub enum State {
-    Handshaking,
+pub enum Stage {
+    Handshake,
+    Status,
     Login,
-    Configuration,
+    Config,
     Play,
     Transfer
 }
