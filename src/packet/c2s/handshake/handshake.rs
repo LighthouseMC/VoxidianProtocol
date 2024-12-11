@@ -2,10 +2,10 @@ use super::*;
 
 #[packet]
 pub struct HandshakeC2SPacket {
-    protocol_version: VarInt,
-    address: String,
-    port: u16,
-    intended_state: ConnectionIntent,
+    pub protocol_version: VarInt,
+    pub address: String,
+    pub port: u16,
+    pub intended_state: ConnectionIntent,
 }
 
 #[packet(VarInt)]
