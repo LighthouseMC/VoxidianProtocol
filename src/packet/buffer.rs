@@ -73,6 +73,10 @@ impl PacketBuf {
         self.seek(self.read_idx + count);
     }
 
+    pub fn remaining(&self) -> usize {
+        self.inner.len() - self.read_idx
+    }
+
     pub fn write_u8(&mut self, byte : u8) -> () {
         self.inner.push(byte);
     }
