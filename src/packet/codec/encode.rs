@@ -32,7 +32,7 @@ impl PacketEncode for String {
 #[doc(hidden)]
 #[allow(unused_imports)]
 mod tests {
-    use crate::packet::c2s::handshake::handshake::{ConnectionIntent, HandshakeC2SPacket};
+    use crate::packet::c2s::handshake::{ ConnectionIntent, HandshakeC2SPacket };
     use super::*;
 
     #[test]
