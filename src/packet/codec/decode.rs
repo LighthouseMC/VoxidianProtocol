@@ -1,16 +1,22 @@
 use super::*;
 
-pub trait PacketDecode: Sized {
-    fn decode(buf: &mut PacketBuf) -> Result<Self, DecodeError>;
+
+pub trait PacketDecode : Sized {
+    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError>;
 }
 
+
+#[derive(Debug)]
 pub enum DecodeError {
+
     /// The end of the buffer has been reached.
     EndOfBuffer,
 
     /// The data in the buffer could not be parsed properly.
     InvalidData,
+
 }
+
 
 macro packet_decode_int( $($types:ty),* $(,)? ) { $(
     impl PacketDecode for $types { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {

@@ -3,6 +3,10 @@ use crate::packet::*;
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct VarInt(i32);
 
+impl VarInt {
+    pub fn as_i32(self) -> i32 { self.into() }
+}
+
 impl From<i32> for VarInt {
     fn from(value: i32) -> Self {
         Self(value)
@@ -33,13 +37,21 @@ impl PacketEncode for VarInt {
 
 impl PacketDecode for VarInt {
     fn decode(buf: &mut PacketBuf) -> Result<Self, DecodeError> {
+        Self::decode_iter(&mut buf.iter()).map(|(out, _)| out)
+    }
+}
+impl VarInt {
+    /// Also returns the number of bytes to discard.
+    pub fn decode_iter(iter : &mut impl Iterator<Item = u8>) -> Result<(Self, usize), DecodeError> {
         const MAX_BYTES: usize = 5;
         let mut x = 0;
+        let mut consumed = 0;
         for i in 0..MAX_BYTES {
-            let byte = buf.read_u8()?;
+            let byte = iter.next().ok_or(DecodeError::EndOfBuffer)?;
+            consumed += 1;
             x |= (i32::from(byte) & 0b01111111) << (i * 7);
             if (byte & 0b10000000 == 0) {
-                return Ok(VarInt(x));
+                return Ok((VarInt(x), consumed));
             }
         }
         Err(DecodeError::InvalidData)
