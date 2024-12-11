@@ -5,7 +5,24 @@ use super::*;
 pub struct VarInt(i32);
 
 impl VarInt {
+
     pub fn as_i32(self) -> i32 { self.into() }
+
+    pub fn as_bytes(&self) -> Vec<u8> {
+        let mut out = Vec::new();
+        let mut x = self.0 as u64;
+        loop {
+            let byte = (x & 0b01111111) as u8;
+            x >>= 7;
+            if (x == 0) {
+                out.push(byte);
+                break;
+            }
+            out.push(byte | 0b10000000);
+        }
+        out
+    }
+
 }
 
 impl From<i32> for VarInt {
@@ -13,7 +30,6 @@ impl From<i32> for VarInt {
         Self(value)
     }
 }
-
 impl Into<i32> for VarInt {
     fn into(self) -> i32 {
         self.0
@@ -22,16 +38,7 @@ impl Into<i32> for VarInt {
 
 impl PacketEncode for VarInt {
     fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
-        let mut x = self.0 as u64;
-        loop {
-            let byte = (x & 0b01111111) as u8;
-            x >>= 7;
-            if (x == 0) {
-                buf.write_u8(byte);
-                break;
-            }
-            buf.write_u8(byte | 0b10000000);
-        }
+        buf.write_u8s(&self.as_bytes());
         Ok(())
     }
 }

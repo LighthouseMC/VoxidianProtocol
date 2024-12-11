@@ -3,6 +3,6 @@ pub use encode::*;
 mod decode;
 pub use decode::*;
 
-use super::{PacketBuf, VarInt};
+use super::*;
 
 pub trait PacketEncodeDecode: Sized + PacketEncode + PacketDecode { }
