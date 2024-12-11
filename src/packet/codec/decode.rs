@@ -37,7 +37,7 @@ impl PacketDecode for String { fn decode(buf : &mut PacketBuf) -> Result<Self, D
 
 #[cfg(test)]
 mod tests {
-    use crate::packet::c2s::handshake::{ ConnectionIntent, HandshakeC2SPacket };
+    use crate::packet::c2s::handshake::{ HandshakeC2SPacket, IntendedStage };
 
     use super::*;
 
@@ -68,7 +68,7 @@ mod tests {
         assert_eq!(packet.protocol_version.as_i32(), 769);
         assert_eq!(packet.address, "localhost");
         assert_eq!(packet.port, 25565);
-        assert_eq!(packet.intended_state, ConnectionIntent::Status);
+        assert_eq!(packet.intended_stage, IntendedStage::Status);
     }
 
 }
