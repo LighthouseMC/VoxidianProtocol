@@ -1,4 +1,5 @@
-use crate::packet::*;
+use super::*;
+
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct VarInt(i32);

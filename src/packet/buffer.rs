@@ -155,8 +155,7 @@ impl fmt::Debug for PacketBuf {
 }
 
 
-#[doc(hidden)]
-#[allow(unused_imports)]
+#[cfg(test)]
 mod tests {
     use super::*;
 
