@@ -25,16 +25,17 @@ macro packet_decode_int( $($types:ty),* $(,)? ) { $(
 )* }
 packet_decode_int!(u8, i8, u16, i16, u32, i32, u64, i64);
 
-impl PacketDecode for String {
-    fn decode(buf: &mut PacketBuf) -> Result<Self, DecodeError> {
-        let len = buf.read_decode::<VarInt>()?.as_i32() as usize;
-        Ok(String::from_utf8(buf.read_u8s(len)?).map_err(|_| DecodeError::InvalidData)?)
-    }
-}
+impl PacketDecode for bool { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+    Ok(buf.read_u8()? != 0)
+} }
+
+impl PacketDecode for String { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+    let len = buf.read_decode::<VarInt>()?.as_i32() as usize;
+    Ok(String::from_utf8(buf.read_u8s(len)?).map_err(|_| DecodeError::InvalidData)?)
+} }
 
 
-#[doc(hidden)]
-#[allow(unused_imports)]
+#[cfg(test)]
 mod tests {
     use crate::packet::c2s::handshake::{ ConnectionIntent, HandshakeC2SPacket };
 

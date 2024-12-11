@@ -4,7 +4,7 @@ use proc_macro::{Span, TokenStream};
 use proc_macro2::TokenStream as TokenStream2;
 use quote::{quote, quote_spanned};
 use syn::{
-    Field, Fields, FieldsNamed, FieldsUnnamed, Ident, Item, ItemEnum, ItemStruct, Type, Variant,
+    Field, Fields, FieldsNamed, FieldsUnnamed, Ident, Index, Item, ItemEnum, ItemStruct, Type, Variant,
     parse_macro_input, parse_str, spanned::Spanned,
 };
 
@@ -46,10 +46,9 @@ pub fn packet(attr: TokenStream, item: TokenStream) -> TokenStream {
                         let mut encode = Vec::new();
                         let mut decode = Vec::new();
                         for (i, field) in unnamed.iter().enumerate() {
-                            encode.push(
-                                quote_spanned! { field.span() => buf.encode_write(&self.#i)?; },
-                            );
-                            decode.push(quote_spanned! { field.span() => buf.read_decode()?, });
+                            let i = Index::from(i);
+                            encode.push(quote_spanned!{ field.span() => buf.encode_write(&self.#i)?; });
+                            decode.push(quote_spanned!{ field.span() => buf.read_decode()?, });
                         }
                         (quote! { #(#encode)* }, quote! { ( #(#decode)* ) })
                     }
@@ -111,16 +110,14 @@ pub fn packet(attr: TokenStream, item: TokenStream) -> TokenStream {
                         let mut decode = Vec::new();
                         for (i, field) in unnamed.iter().enumerate() {
                             let ident = parse_str::<Ident>(&format!("x{}", i)).unwrap();
-                            destructure.push(quote! { #ident, });
-                            encode.push(
-                                quote_spanned! { field.span() => buf.encode_write(#ident)?; },
-                            );
-                            decode.push(quote_spanned! { field.span() => buf.read_decode()?, });
+                            destructure.push(quote!{ #ident, });
+                            encode.push(quote_spanned!{ field.span() => buf.encode_write(#ident)?; });
+                            decode.push(quote_spanned!{ field.span() => buf.read_decode()?, });
                         }
                         (
-                            quote! { ( #(#destructure),* ) },
-                            quote! { #(#encode)* },
-                            quote! { ( #(#decode)* ) },
+                            quote!{ ( #(#destructure),* ) },
+                            quote!{ #(#encode)* },
+                            quote!{ ( #(#decode)* ) },
                         )
                     }
                     Fields::Unit => (quote! {}, quote! {}, quote! {}),

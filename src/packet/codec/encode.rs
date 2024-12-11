@@ -21,16 +21,19 @@ macro packet_encode_int( $($types:ty),* $(,)? ) { $(
 )* }
 packet_encode_int!(u8, i8, u16, i16, u32, i32, u64, i64);
 
-impl PacketEncode for String {
-    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
-        buf.encode_write(VarInt::from(self.len() as i32))?;
-        buf.write_u8s(self.as_bytes());
-        Ok(())
-    }
-}
+impl PacketEncode for bool { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    buf.write_u8(if (*self) { 1 } else { 0 });
+    Ok(())
+} }
 
-#[doc(hidden)]
-#[allow(unused_imports)]
+impl PacketEncode for String { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    buf.encode_write(VarInt::from(self.len() as i32))?;
+    buf.write_u8s(self.as_bytes());
+    Ok(())
+} }
+
+
+#[cfg(test)]
 mod tests {
     use crate::packet::c2s::handshake::{ ConnectionIntent, HandshakeC2SPacket };
     use super::*;

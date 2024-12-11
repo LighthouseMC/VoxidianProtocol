@@ -5,5 +5,4 @@ pub use decode::*;
 
 use super::{PacketBuf, VarInt};
 
-pub trait PacketEncodeDecode: Sized + PacketEncode + PacketDecode {
-}
+pub trait PacketEncodeDecode: Sized + PacketEncode + PacketDecode { }
