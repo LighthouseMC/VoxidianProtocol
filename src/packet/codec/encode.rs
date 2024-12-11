@@ -35,7 +35,7 @@ mod tests {
     use crate::packet::c2s::handshake::{ ConnectionIntent, HandshakeC2SPacket };
     use super::*;
 
-    /*#[test]
+    #[test]
     fn basic_encoding() {
         let packet = HandshakeC2SPacket {
             protocol_version: VarInt::from(823),
@@ -46,5 +46,5 @@ mod tests {
         let mut buf = PacketBuf::new();
         packet.encode(&mut buf).expect("encoding error bruh");
         assert_eq!(buf.into_inner(), vec![183, 6, 9, 49, 50, 55, 46, 48, 46, 48, 46, 49, 99, 221, 0]);
-    }*/
+    }
 }
