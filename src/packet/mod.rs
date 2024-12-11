@@ -5,6 +5,7 @@ pub use buffer::*;
 
 pub mod c2s;
 pub mod s2c;
+mod meta;
 
 pub(crate) use crate::value::*;
 pub(crate) use voxidian_protocol_macros::packet;

@@ -56,6 +56,7 @@ pub fn packet(attr: TokenStream, item: TokenStream) -> TokenStream {
                 };
                 let item2: TokenStream2 = item.into();
                 (quote!{
+                    #[derive(Debug, Clone, PartialEq, Eq)]
                     #item2
                     impl PacketEncode for #ident { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { #encode Ok(()) } }
                     impl PacketDecode for #ident { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> { Ok(Self #decode) } }
@@ -145,8 +146,10 @@ pub fn packet(attr: TokenStream, item: TokenStream) -> TokenStream {
             }
             (quote!{
                 #[repr(u32)]
+                #[derive(Debug, Clone, PartialEq, Eq)]
                 #item2
                 #[repr(u32)]
+                #[derive(Debug, Clone, PartialEq, Eq)]
                 enum #discriminant_ident { #discriminant_variants }
                 impl PacketEncode for #ident { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { match (self) { #encode } Ok(()) } }
                 impl PacketDecode for #ident { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> { #decode Err(DecodeError::InvalidData) } }
