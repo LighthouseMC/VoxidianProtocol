@@ -1,17 +1,16 @@
 use super::*;
 
+
 pub trait PacketEncode {
-    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError>;
+    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError>;
 }
 
 #[derive(Debug, Clone)]
 pub enum EncodeError {}
 
-impl<T: PacketEncode> PacketEncode for &T {
-    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
-        (*self).encode(buf)
-    }
-}
+impl<T : PacketEncode> PacketEncode for &T { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    (*self).encode(buf)
+} }
 
 macro packet_encode_int( $($types:ty),* $(,)? ) { $(
     impl PacketEncode for $types { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
@@ -31,6 +30,33 @@ impl PacketEncode for String { fn encode(&self, buf : &mut PacketBuf) -> Result<
     buf.write_u8s(self.as_bytes());
     Ok(())
 } }
+
+
+
+pub trait PacketEncodeFull : PacketEncode + PacketMeta {
+    /// Encode the full packet.
+    /// This includes:
+    /// - Packet length (VarInt)
+    /// - Packet prefix/ID (VarInt)
+    /// - Packet data (...)
+    fn encode_full(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+        // Data
+        let mut data_buf = PacketBuf::new();
+        self.encode(&mut data_buf)?;
+        // Packet ID
+        let packetid = VarInt::from(Self::PREFIX as i32).as_bytes();
+        // Packet Length
+        let packetlen = VarInt::from((packetid.len() + data_buf.remaining()) as i32).as_bytes();
+        // Write
+        buf.write_u8s(&packetlen);
+        buf.write_u8s(&packetid);
+        buf.write_u8s(data_buf.as_slice());
+        Ok(())
+    }
+}
+
+impl<T : PacketEncode + PacketMeta> PacketEncodeFull for T {}
+
 
 
 #[cfg(test)]
