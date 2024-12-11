@@ -6,13 +6,13 @@ pub struct HandshakeC2SPacket {
     pub protocol_version : VarInt,
     pub address          : String,
     pub port             : u16,
-    pub intended_state   : ConnectionIntent,
+    pub intended_state   : ConnectionIntent
 }
 
 #[packet(VarInt)]
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum ConnectionIntent {
-    Status   = 0,
-    Login    = 1,
+    Login    = 0,
+    Status   = 1,
     Transfer = 2,
 }

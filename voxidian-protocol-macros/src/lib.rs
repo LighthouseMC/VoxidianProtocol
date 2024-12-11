@@ -28,11 +28,11 @@ pub fn packet(attr: TokenStream, item: TokenStream) -> TokenStream {
                             if let Some(ident) = ident {
                                 encode.push(quote_spanned!{ field.span() => buf.encode_write(&self.#ident)?; });
                                 decode.push(
-                                    quote_spanned! { field.span() => #ident : buf.read_decode()?, },
+                                    quote_spanned!{ field.span() => #ident : buf.read_decode()?, },
                                 );
                             } else {
                                 let item2: TokenStream2 = item.into();
-                                let error = quote_spanned! { field.span() => compile_error!("Named fields without an identifier are not allowed in packet items"); };
+                                let error = quote_spanned!{ field.span() => compile_error!("Named fields without an identifier are not allowed in packet items"); };
                                 return quote! {
                                     #item2
                                     #error
