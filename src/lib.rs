@@ -1,7 +1,6 @@
 #![feature(
-    array_chunks,
-    decl_macro,
-    assert_matches
+    iter_array_chunks,
+    decl_macro
 )]
 
 pub mod packet;

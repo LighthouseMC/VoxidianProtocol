@@ -36,8 +36,10 @@ impl PacketEncode for VarInt {
 }
 
 impl PacketDecode for VarInt {
-    fn decode(buf: &mut PacketBuf) -> Result<Self, DecodeError> {
-        Self::decode_iter(&mut buf.iter()).map(|(out, _)| out)
+    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+        let ((out, consumed)) = Self::decode_iter(&mut buf.iter())?;
+        buf.skip(consumed);
+        Ok(out)
     }
 }
 impl VarInt {

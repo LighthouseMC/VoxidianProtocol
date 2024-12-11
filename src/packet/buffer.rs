@@ -61,10 +61,16 @@ impl PacketBuf {
 
 /// Basic Operations
 impl PacketBuf {
+
     #[track_caller]
     pub fn seek(&mut self, idx : usize) {
-        assert!(idx < self.inner.len(), "Seek index exceeded packet size");
+        assert!(idx <= self.inner.len(), "Seek index exceeded packet size");
         self.read_idx = idx;
+    }
+
+    #[track_caller]
+    pub fn skip(&mut self, count : usize) {
+        self.seek(self.read_idx + count);
     }
 
     pub fn write_u8(&mut self, byte : u8) -> () {
@@ -83,20 +89,22 @@ impl PacketBuf {
     }
 
     pub fn read_u8s_const<const BYTES : usize>(&mut self) -> Result<[u8; BYTES], DecodeError> {
-        let data = self.inner.array_chunks()
+        if (BYTES == 0) { return Ok([0; BYTES]); }
+        let out = self.inner.iter().skip(self.read_idx).cloned().array_chunks()
             .next().ok_or(DecodeError::EndOfBuffer)?;
         self.read_idx += BYTES;
-        Ok(*data)
+        Ok(out)
     }
 
-    pub fn read_u8s(&mut self, bytes : usize) -> Result<&[u8], DecodeError> {
-        let data = self
-            .inner
-            .chunks(bytes)
-            .next()
-            .ok_or(DecodeError::EndOfBuffer)?;
+    pub fn read_u8s(&mut self, bytes : usize) -> Result<Vec<u8>, DecodeError> {
+        if (bytes == 0) { return Ok(Vec::new()) }
+        let mut out  = Vec::with_capacity(bytes);
+        let mut data = self.inner.iter().skip(self.read_idx);
+        for _ in 0..bytes {
+            out.push(*data.next().ok_or(DecodeError::EndOfBuffer)?);
+        }
         self.read_idx += bytes;
-        Ok(data)
+        Ok(out)
     }
 
 }
@@ -151,7 +159,6 @@ impl fmt::Debug for PacketBuf {
 #[allow(unused_imports)]
 mod tests {
     use super::*;
-    use std::assert_matches::assert_matches;
 
     #[test]
     fn varint_decode_iter() {
