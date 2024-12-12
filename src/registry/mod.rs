@@ -1,3 +1,5 @@
+pub mod dimension_types;
+
 use std::collections::HashMap;
 use crate::value::Identifier;
 
