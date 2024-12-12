@@ -27,3 +27,6 @@ version = "1.0"
 
 [dependencies.proc-macro2]
 version = "1.0"
+
+[dependencies.lazy_static]
+version = "1.5"

@@ -15,3 +15,6 @@ pub enum IntendedStage {
     Status   = 1,
     Transfer = 2,
 }
+
+
+packet_full_decode!( bound = C2S, stage = Handshake );
