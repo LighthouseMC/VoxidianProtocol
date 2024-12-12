@@ -24,12 +24,12 @@ pub enum DecodeError {
 }
 
 
-macro packet_decode_int( $($types:ty),* $(,)? ) { $(
+macro packet_decode_num( $($types:ty),* $(,)? ) { $(
     impl PacketDecode for $types { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
         Ok(<$types>::from_be_bytes(buf.read_u8s_const()?))
     } }
 )* }
-packet_decode_int!(u8, i8, u16, i16, u32, i32, u64, i64);
+packet_decode_num!(u8, i8, u16, i16, u32, i32, u64, i64, f32, f64);
 
 impl PacketDecode for bool { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
     Ok(buf.read_u8()? != 0)

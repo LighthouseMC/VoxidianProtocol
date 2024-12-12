@@ -17,13 +17,13 @@ impl<T : PacketEncode> PacketEncode for &T { fn encode(&self, buf : &mut PacketB
     (*self).encode(buf)
 } }
 
-macro packet_encode_int( $($types:ty),* $(,)? ) { $(
+macro packet_encode_num( $($types:ty),* $(,)? ) { $(
     impl PacketEncode for $types { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
         buf.write_u8s(&self.to_be_bytes());
         Ok(())
     } }
 )* }
-packet_encode_int!(u8, i8, u16, i16, u32, i32, u64, i64);
+packet_encode_num!(u8, i8, u16, i16, u32, i32, u64, i64, f32, f64);
 
 impl PacketEncode for bool { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
     buf.write_u8(if (*self) { 1 } else { 0 });

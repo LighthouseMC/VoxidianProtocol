@@ -4,6 +4,8 @@ mod text;
 pub use text::*;
 mod ident;
 pub use ident::*;
+mod nbt;
+pub use nbt::*;
 
 mod length_prefix_vec;
 pub use length_prefix_vec::*;
