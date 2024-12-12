@@ -6,6 +6,8 @@ mod ident;
 pub use ident::*;
 mod nbt;
 pub use nbt::*;
+mod block_pos;
+pub use block_pos::*;
 
 mod length_prefix_vec;
 pub use length_prefix_vec::*;

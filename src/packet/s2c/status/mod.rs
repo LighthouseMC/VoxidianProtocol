@@ -50,7 +50,7 @@ pub struct StatusResponsePlayerSample {
     pub uuid : Uuid
 }
 
-#[packet( prefix = 0x00, bound = S2C, stage = Status )]
+#[packet( prefix = 0x00, bound = S2C, stage = Status, allow_priv = true )]
 pub struct StatusResponseS2CPacket(String);
 impl StatusResponseS2CPacket {
     pub fn to_response(&self) -> Result<StatusResponse, DecodeError> {
