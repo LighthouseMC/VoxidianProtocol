@@ -65,6 +65,11 @@ pub struct PongResponseS2CPacket {
 }
 
 
+
+packet_full_decode!( bound = S2C, stage = Status );
+
+
+
 #[cfg(test)]
 mod tests {
     use super::*;

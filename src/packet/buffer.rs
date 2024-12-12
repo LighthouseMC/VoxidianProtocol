@@ -25,7 +25,7 @@ impl PacketBuf {
         Ok(buf)
     }
 
-    /// Also returns the number of bytes to discard.
+    /// Also returns the number of bytes that were consumed.
     pub fn from_raw_queue(mut queue : impl Iterator<Item = u8>) -> Result<(Self, usize), DecodeError> {
         let (size, consumed) = VarInt::decode_iter(&mut queue)?;
         let size = size.as_i32() as usize;

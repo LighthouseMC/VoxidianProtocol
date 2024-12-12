@@ -51,7 +51,7 @@ impl PacketDecode for VarInt {
     }
 }
 impl VarInt {
-    /// Also returns the number of bytes to discard.
+    /// Also returns the number of bytes that were consumed.
     pub fn decode_iter(iter : &mut impl Iterator<Item = u8>) -> Result<(Self, usize), DecodeError> {
         const MAX_BYTES: usize = 5;
         let mut x = 0;

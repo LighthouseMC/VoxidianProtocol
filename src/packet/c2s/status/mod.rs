@@ -9,3 +9,6 @@ pub struct StatusRequestC2SPacket;
 pub struct PingRequestC2SPacket {
     timestamp : u64
 }
+
+
+packet_full_decode!( bound = C2S, stage = Status );

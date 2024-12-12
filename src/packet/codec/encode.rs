@@ -33,12 +33,16 @@ impl PacketEncode for String { fn encode(&self, buf : &mut PacketBuf) -> Result<
 
 
 
-pub trait PacketEncodeFull : PacketEncode + PacketMeta {
+pub trait PacketEncodeFull {
     /// Encode the full packet.
     /// This includes:
     /// - Packet length (VarInt)
     /// - Packet prefix/ID (VarInt)
     /// - Packet data (...)
+    fn encode_full(&self, buf : &mut PacketBuf) -> Result<(), EncodeError>;
+}
+
+impl<T : PacketEncode + PacketMeta> PacketEncodeFull for T {
     fn encode_full(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
         // Data
         let mut data_buf = PacketBuf::new();
@@ -54,8 +58,6 @@ pub trait PacketEncodeFull : PacketEncode + PacketMeta {
         Ok(())
     }
 }
-
-impl<T : PacketEncode + PacketMeta> PacketEncodeFull for T {}
 
 
 

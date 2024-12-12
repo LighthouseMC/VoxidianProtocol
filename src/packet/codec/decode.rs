@@ -15,6 +15,12 @@ pub enum DecodeError {
     /// The data in the buffer could not be parsed properly.
     InvalidData,
 
+    /// The packet decoder did not consume the length specified in the previously received header.
+    UnconsumedBuffer,
+
+    /// The received packet ID did not match any registered packet.
+    UnknownPacketPrefix
+
 }
 
 
@@ -33,6 +39,39 @@ impl PacketDecode for String { fn decode(buf : &mut PacketBuf) -> Result<Self, D
     let len = buf.read_decode::<VarInt>()?.as_i32() as usize;
     Ok(String::from_utf8(buf.read_u8s(len)?).map_err(|_| DecodeError::InvalidData)?)
 } }
+
+
+
+pub trait PacketDecodeFull : Sized {
+
+    /// Decode part of the packet.
+    /// This includes:
+    /// - Packet prefix/ID (VarInt)
+    /// - Packet data (...)
+    /// This **DOES NOT** include the packet length.
+    /// 
+    /// See `decode_full_from_queue`.
+    fn decode_partial(buf : &mut PacketBuf) -> Result<Self, DecodeError>;
+
+    /// Decode the full packet, reading from a queue of bytes.
+    /// This includes:
+    /// - Packet length (VarInt)
+    /// - Packet prefix/ID (VarInt)
+    /// - Packet data (...)
+    /// 
+    /// Also returns the number of bytes that were consumed.
+    fn decode_full_from_queue(queue : impl Iterator<Item = u8>) -> Result<(Self, usize), DecodeError> {
+        let (mut buf, consumed) = PacketBuf::from_raw_queue(queue)?;
+        let out = Self::decode_partial(&mut buf)?;
+        if (buf.remaining() != 0) {
+            Err(DecodeError::UnconsumedBuffer)
+        } else {
+            Ok((out, consumed))
+        }
+    }
+
+}
+
 
 
 #[cfg(test)]
