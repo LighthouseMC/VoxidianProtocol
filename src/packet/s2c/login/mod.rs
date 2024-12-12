@@ -1,6 +1,12 @@
 use super::*;
 
 
+#[packet( prefix = 0x00, bound = S2C, stage = Login )]
+pub struct DisconnectS2CPacket {
+    pub reason : Text
+}
+
+
 #[packet( prefix = 0x01, bound = S2C, stage = Login )]
 pub struct EncryptionRequestS2CPacket {
     pub server_id    : String,
@@ -27,6 +33,20 @@ pub struct LoginSuccessProperty {
     pub name      : String,
     pub value     : String,
     pub signature : Option<String>
+}
+
+
+#[packet( prefix = 0x04, bound = S@C, stage = Login )]
+pub struct LoginPluginRequestS2CPacket {
+    pub msg_id  : VarInt,
+    pub channel : Identifier,
+    pub data    : ConsumeAllVec<u8>
+}
+
+
+#[packet( prefix = 0x05, bound = S2C, stage = Login )]
+pub struct CookieRequestS2CPacket {
+    pub key : Identifier
 }
 
 

@@ -21,4 +21,11 @@ pub struct EncryptionResponseC2SPacket {
 pub struct LoginAcknowledgeC2SPacket;
 
 
+#[packet( prefix = 0x04, bound = C2S, stage = Login )]
+pub struct CookieResponseC2SPacket {
+    pub key     : Identifier,
+    pub payload : Option<LengthPrefixVec<VarInt, u8>>
+}
+
+
 packet_full_decode!( bound = C2S, stage = Login );
