@@ -35,9 +35,20 @@ impl PacketDecode for bool { fn decode(buf : &mut PacketBuf) -> Result<Self, Dec
     Ok(buf.read_u8()? != 0)
 } }
 
+impl PacketDecode for Uuid { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+    let msb = buf.read_decode::<u64>()?;
+    let lsb = buf.read_decode::<u64>()?;
+    Ok(Self::from_u64_pair(msb, lsb))
+} }
+
 impl PacketDecode for String { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
     let len = buf.read_decode::<VarInt>()?.as_i32() as usize;
     Ok(String::from_utf8(buf.read_u8s(len)?).map_err(|_| DecodeError::InvalidData)?)
+} }
+
+impl<T : PacketDecode> PacketDecode for Option<T> { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+    let is_some = buf.read_u8()? != 0;
+    Ok(if (is_some) { Some(buf.read_decode::<T>()?) } else { None })
 } }
 
 

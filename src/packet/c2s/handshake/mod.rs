@@ -9,11 +9,11 @@ pub struct HandshakeC2SPacket {
     pub intended_stage   : IntendedStage
 }
 
-#[packet_enum(VarInt)]
+#[packet_part(VarInt)]
 pub enum IntendedStage {
-    Login    = 0,
     Status   = 1,
-    Transfer = 2,
+    Login    = 2,
+    Transfer = 3,
 }
 impl IntendedStage {
     pub fn into_stage(&self) -> Stage { match (self) {
