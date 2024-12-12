@@ -37,6 +37,7 @@ impl<T> Registry<T> {
     }
 }
 
+#[cfg(test)]
 mod tests {
     use crate::registry::Registry;
     use crate::value::Identifier;
