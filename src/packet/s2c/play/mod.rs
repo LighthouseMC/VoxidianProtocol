@@ -9,7 +9,7 @@ pub struct BundleDelimiterS2CPacket;
 pub struct SpawnEntityS2CPacket {
     pub id       : VarInt,
     pub uuid     : Uuid,
-    pub kind     : VarInt,
+    pub kind     : RegEntry<EntityType>,
     pub x        : f64,
     pub y        : f64,
     pub z        : f64,

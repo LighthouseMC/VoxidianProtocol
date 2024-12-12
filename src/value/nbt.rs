@@ -88,33 +88,33 @@ impl NbtCompound { fn encode_packet(&self, buf : &mut PacketBuf) {
 } }
 impl NbtElement { fn encode_packet(&self, buf : &mut PacketBuf) { match (self) {
     Self::Byte   (value) => { buf.write_u8(*value as u8); },
-    Self::Short  (value) => { buf.encode_write(value); },
-    Self::Int    (value) => { buf.encode_write(value); },
-    Self::Long   (value) => { buf.encode_write(value); },
-    Self::Float  (value) => { buf.encode_write(value); },
-    Self::Double (value) => { buf.encode_write(value); },
+    Self::Short  (value) => { let _ = buf.encode_write(value); },
+    Self::Int    (value) => { let _ = buf.encode_write(value); },
+    Self::Long   (value) => { let _ = buf.encode_write(value); },
+    Self::Float  (value) => { let _ = buf.encode_write(value); },
+    Self::Double (value) => { let _ = buf.encode_write(value); },
     Self::BArray(values) => {
-        buf.encode_write(values.len() as i32);
+        let _ = buf.encode_write(values.len() as i32);
         for byte in values { buf.write_u8(*byte as u8); }
     },
     Self::String (value) => {
         let jstring = cesu8::to_java_cesu8(value);
-        buf.encode_write(jstring.len() as u16);
+        let _ = buf.encode_write(jstring.len() as u16);
         for byte in jstring.as_ref() { buf.write_u8(*byte); }
     },
     Self::List (values) => {
         buf.write_u8(values.first().map_or(NbtElement::TAG_END, |e| e.tag()));
-        buf.encode_write(values.len() as i32);
-        for e in values { e.encode_packet(buf); }
+        let _ = buf.encode_write(values.len() as i32);
+        for e in values { let _ = e.encode_packet(buf); }
     },
     Self::Compound (values) => { values.encode_packet(buf); },
     Self::IArray(values) => {
-        buf.encode_write(values.len() as i32);
-        for int in values { buf.encode_write(*int); }
+        let _ = buf.encode_write(values.len() as i32);
+        for int in values { let _ = buf.encode_write(*int); }
     },
     Self::LArray(values) => {
-        buf.encode_write(values.len() as i32);
-        for long in values { buf.encode_write(*long); }
+        let _ = buf.encode_write(values.len() as i32);
+        for long in values { let _ = buf.encode_write(*long); }
     }
 } } }
 

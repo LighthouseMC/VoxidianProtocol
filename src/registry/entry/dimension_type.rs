@@ -1,4 +1,4 @@
-use crate::value::{NbtCompound, NbtElement};
+use crate::value::NbtCompound;
 
 pub struct DimensionType {
     pub fixed_time: Option<i64>,
@@ -30,7 +30,7 @@ impl Into<NbtCompound> for DimensionType {
 impl TryFrom<NbtCompound> for DimensionType {
     type Error = String;
 
-    fn try_from(value: NbtCompound) -> Result<Self, Self::Error> {
+    fn try_from(_value: NbtCompound) -> Result<Self, Self::Error> {
         todo!()
     }
 }
