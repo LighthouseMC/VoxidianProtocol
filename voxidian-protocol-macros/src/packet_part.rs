@@ -71,7 +71,7 @@ pub fn packet_part(attr : TokenStream, item : TokenStream) -> TokenStream {
 
             let mut encode = quote! {};
             let mut decode =
-                quote! { let discriminant = Into::<i32>::into(buf.read_decode::<#repr>()?); };
+                quote! { let discriminant = PacketEnumOrdinal::into_usize(buf.read_decode::<#repr>()?); };
             for Variant { ident, fields, .. } in variants {
                 let (destructure, encode_variant, decode_variant) = match (fields) {
                     Fields::Named(FieldsNamed { named, .. }) => {
@@ -98,7 +98,7 @@ pub fn packet_part(attr : TokenStream, item : TokenStream) -> TokenStream {
                             }
                         }
                         (
-                            quote! { { #(#destructure),* } },
+                            quote! { { #(#destructure)* } },
                             quote! { #(#encode)* },
                             quote! { { #(#decode)* } },
                         )
@@ -122,11 +122,11 @@ pub fn packet_part(attr : TokenStream, item : TokenStream) -> TokenStream {
                     Fields::Unit => (quote! {}, quote! {}, quote! {}),
                 };
                 encode.extend(quote! { Self::#ident #destructure => {
-                    buf.encode_write(#repr::from(#discriminant_ident::#ident as i32))?;
+                    buf.encode_write::<#repr>(PacketEnumOrdinal::from_usize(#discriminant_ident::#ident as usize))?;
                     #encode_variant
                 } });
                 decode.extend(
-                    quote! { if (#discriminant_ident::#ident as i32 == discriminant) {
+                    quote! { if (#discriminant_ident::#ident as usize == discriminant) {
                         return Ok(Self::#ident #decode_variant);
                     } },
                 );
@@ -143,10 +143,10 @@ pub fn packet_part(attr : TokenStream, item : TokenStream) -> TokenStream {
                 discriminant_variants.extend(quote! { , });
             }
             (quote!{
-                #[repr(u32)]
-                #[derive(Debug, Clone, PartialEq, Eq)]
+                #[repr(usize)]
+                #[derive(Debug, Clone, PartialEq)]
                 #item2
-                #[repr(u32)]
+                #[repr(usize)]
                 #[derive(Debug, Clone, PartialEq, Eq)]
                 enum #discriminant_ident { #discriminant_variants }
                 impl PacketEncode for #ident { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { match (self) { #encode } Ok(()) } }

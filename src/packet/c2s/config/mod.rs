@@ -44,11 +44,11 @@ pub struct AcknowledgeFinishConfigC2SPacket;
 
 
 #[packet( prefix = 0x04, bound = C2S, stage = Config )]
-pub struct KeepAliveC2SPacket(u64);
+pub struct KeepAliveC2SPacket(pub u64);
 
 
 #[packet( prefix = 0x05, bound = C2S, stage = Config )]
-pub struct PongC2SPacket(u32);
+pub struct PongC2SPacket(pub u32);
 
 
 #[packet( prefix = 0x06, bound = C2S, stage = Config )]

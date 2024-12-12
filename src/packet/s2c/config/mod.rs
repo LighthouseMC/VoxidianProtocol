@@ -25,11 +25,11 @@ pub struct FinishConfigS2CPacket;
 
 
 #[packet( prefix = 0x04, bound = S2C, stage = Config )]
-pub struct KeepAliveS2CPacket(u64);
+pub struct KeepAliveS2CPacket(pub u64);
 
 
 #[packet( prefix = 0x05, bound = S2C, stage = Config )]
-pub struct PingS2CPacket(u32);
+pub struct PingS2CPacket(pub u32);
 
 
 #[packet( prefix = 0x06, bound = S2C, stage = Config )]

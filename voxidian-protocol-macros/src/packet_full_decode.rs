@@ -2,16 +2,17 @@
 pub fn packet_full_decode(input : TokenStream) -> TokenStream {
 
 
-    let MetaKVPairs { meta_prefix, meta_bound, meta_stage } = match (MetaKVPairs::split(input)) {
+    let MetaKVPairs { meta_prefix, meta_bound, meta_stage, meta_allow_priv } = match (MetaKVPairs::split(input)) {
         Ok(meta) => meta,
         Err(e) => {
             Span::call_site().error(e).emit();
             return quote!{ }.into();
         }
     };
-    let None             = meta_prefix else { Span::call_site().error("`prefix` value must not be given" ).emit(); return TokenStream::new() };
-    let Some(meta_bound) = meta_bound  else { Span::call_site().error("No `bound` value given"           ).emit(); return TokenStream::new() };
-    let Some(meta_stage) = meta_stage  else { Span::call_site().error("No `stage` value given"           ).emit(); return TokenStream::new() };
+    let None             = meta_prefix     else { Span::call_site().error("`prefix` value must not be given"     ).emit(); return TokenStream::new() };
+    let None             = meta_allow_priv else { Span::call_site().error("`allow_priv` value must not be given" ).emit(); return TokenStream::new() };
+    let Some(meta_bound) = meta_bound      else { Span::call_site().error("No `bound` value given"               ).emit(); return TokenStream::new() };
+    let Some(meta_stage) = meta_stage      else { Span::call_site().error("No `stage` value given"               ).emit(); return TokenStream::new() };
     let meta_bound = quote!{ #meta_bound }.to_string();
     let meta_stage = quote!{ #meta_stage }.to_string();
 
