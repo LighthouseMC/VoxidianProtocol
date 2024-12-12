@@ -44,7 +44,7 @@ pub struct RegistryDataS2CPacket {
 #[packet_part]
 pub struct RegistryDataEntry {
     pub id   : Identifier,
-    pub data : Option<NBT>
+    pub data : Option<Nbt>
 }
 
 
