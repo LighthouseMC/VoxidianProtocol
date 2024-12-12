@@ -10,7 +10,7 @@ repository = "https://github.com/LighthouseMC/VoxidianProtocol"
 edition = "2024"
 
 [workspace]
-members = [ "voxidian-protocol-macros" ]
+members = ["voxidian-datagen", "voxidian-protocol-macros" ]
 
 [lints.rust]
 unused-parens = "allow"
