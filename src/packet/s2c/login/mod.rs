@@ -36,7 +36,7 @@ pub struct LoginSuccessProperty {
 }
 
 
-#[packet( prefix = 0x04, bound = S@C, stage = Login )]
+#[packet( prefix = 0x04, bound = S2C, stage = Login )]
 pub struct LoginPluginRequestS2CPacket {
     pub msg_id  : VarInt,
     pub channel : Identifier,

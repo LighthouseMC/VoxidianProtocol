@@ -229,6 +229,13 @@ fn to_string_to_string<T : ToString, S : Serer>(value : &T, ser : S) -> Result<S
 }
 
 
+impl PacketEncode for Text { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    buf.encode_write(&to_json_string(self).unwrap())
+} }
+impl PacketDecode for Text { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+    from_json_str(&buf.read_decode::<String>()?).map_err(|_| DecodeError::InvalidData)
+} }
+
 
 #[cfg(test)]
 mod tests {
