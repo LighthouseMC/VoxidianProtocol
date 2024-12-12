@@ -6,7 +6,12 @@ pub trait PacketEncode {
 }
 
 #[derive(Debug, Clone)]
-pub enum EncodeError {}
+pub enum EncodeError {
+
+    /// Failed to send the packet to the client.
+    SendFailed
+
+}
 
 impl<T : PacketEncode> PacketEncode for &T { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
     (*self).encode(buf)

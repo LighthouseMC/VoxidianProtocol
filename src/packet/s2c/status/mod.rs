@@ -61,7 +61,7 @@ impl StatusResponseS2CPacket {
 
 #[packet( prefix = 0x01, bound = S2C, stage = Status )]
 pub struct PongResponseS2CPacket {
-    timestamp : u64
+    pub timestamp : u64
 }
 
 
