@@ -30,10 +30,27 @@ impl PacketEncode for bool { fn encode(&self, buf : &mut PacketBuf) -> Result<()
     Ok(())
 } }
 
+impl PacketEncode for Uuid { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    let (msb, lsb) = self.as_u64_pair();
+    buf.encode_write(msb)?;
+    buf.encode_write(lsb)?;
+    Ok(())
+} }
+
 impl PacketEncode for String { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
     buf.encode_write(VarInt::from(self.len() as i32))?;
     buf.write_u8s(self.as_bytes());
     Ok(())
+} }
+
+impl<T : PacketEncode> PacketEncode for Option<T> { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    if let Some(value) = self {
+        buf.write_u8(1);
+        buf.encode_write(value)
+    } else {
+        buf.write_u8(0);
+        Ok(())
+    }
 } }
 
 

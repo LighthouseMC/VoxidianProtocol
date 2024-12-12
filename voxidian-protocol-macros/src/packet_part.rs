@@ -1,8 +1,67 @@
 #[proc_macro_attribute]
-pub fn packet_enum(attr : TokenStream, item : TokenStream) -> TokenStream {
+pub fn packet_part(attr : TokenStream, item : TokenStream) -> TokenStream {
     let input = item.clone();
     let input = parse_macro_input!(input as Item);
     match (&input) {
+
+
+        Item::Struct(item_struct @ ItemStruct { ident, fields, .. }) => {
+            if (! attr.is_empty()) {
+                Span::call_site().error("Attrs are not supported on struct `packet_part`s").emit();
+                item
+            } else {
+                let (encode, decode) = match (fields) {
+
+                    Fields::Named(FieldsNamed { named, .. }) => {
+                        let mut encode = Vec::new();
+                        let mut decode = Vec::new();
+                        for field @ Field { ident, vis, .. } in named {
+                            if let Some(ident) = ident {
+                                if let Visibility::Public(_) = vis { } else {
+                                    Span::call_site().warning(format!("Packet `{}` field `{}` is not public", item_struct.ident, ident)).emit();
+                                }
+                                encode.push(quote_spanned!{ field.span() => buf.encode_write(&self.#ident)?; });
+                                decode.push(
+                                    quote_spanned!{ field.span() => #ident : buf.read_decode()?, },
+                                );
+                            } else {
+                                let item2: TokenStream2 = item.into();
+                                let error = quote_spanned!{ field.span() => compile_error!("Named fields without an identifier are not allowed in packet items"); };
+                                return quote! {
+                                    #item2
+                                    #error
+                                }
+                                .into();
+                            }
+                        }
+                        (quote! { #(#encode)* }, quote! { { #(#decode)* } })
+                    }
+
+                    Fields::Unnamed(FieldsUnnamed { unnamed, .. }) => {
+                        let mut encode = Vec::new();
+                        let mut decode = Vec::new();
+                        for (i, field) in unnamed.iter().enumerate() {
+                            let i = Index::from(i);
+                            encode.push(quote_spanned!{ field.span() => buf.encode_write(&self.#i)?; });
+                            decode.push(quote_spanned!{ field.span() => buf.read_decode()?, });
+                        }
+                        (quote! { #(#encode)* }, quote! { ( #(#decode)* ) })
+                    }
+
+                    Fields::Unit => (quote! {}, quote! {}),
+
+                };
+                let item2 : TokenStream2 = item.into();
+                quote!{
+                    #[derive(Debug, Clone)]
+                    #item2
+                    impl PacketEncode for #ident { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { #encode Ok(()) } }
+                    impl PacketDecode for #ident { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> { Ok(Self #decode) } }
+                }.into()
+            }
+        },
+
+
         Item::Enum(ItemEnum { ident, variants, .. }) => {
 
 
@@ -101,4 +160,5 @@ pub fn packet_enum(attr : TokenStream, item : TokenStream) -> TokenStream {
             item
         }
     }
+
 }

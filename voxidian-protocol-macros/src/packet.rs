@@ -16,7 +16,7 @@ pub fn packet(attr : TokenStream, item : TokenStream) -> TokenStream {
     let input = item.clone();
     let input = parse_macro_input!(input as Item);
     match (&input) {
-        Item::Struct(ItemStruct { ident, fields, .. }) => {
+        Item::Struct(item_struct @ ItemStruct { ident, fields, .. }) => {
 
 
             let MetaKVPairs { meta_prefix, meta_bound, meta_stage } = match (MetaKVPairs::split(attr)) {
@@ -44,11 +44,15 @@ pub fn packet(attr : TokenStream, item : TokenStream) -> TokenStream {
                 });
 
             let (encode, decode) = match (fields) {
+
                 Fields::Named(FieldsNamed { named, .. }) => {
                     let mut encode = Vec::new();
                     let mut decode = Vec::new();
-                    for field @ Field { ident, .. } in named {
+                    for field @ Field { ident, vis, .. } in named {
                         if let Some(ident) = ident {
+                            if let Visibility::Public(_) = vis { } else {
+                                Span::call_site().warning(format!("Packet `{}` field `{}` is not public", item_struct.ident, ident)).emit();
+                            }
                             encode.push(quote_spanned!{ field.span() => buf.encode_write(&self.#ident)?; });
                             decode.push(
                                 quote_spanned!{ field.span() => #ident : buf.read_decode()?, },
@@ -65,6 +69,7 @@ pub fn packet(attr : TokenStream, item : TokenStream) -> TokenStream {
                     }
                     (quote! { #(#encode)* }, quote! { { #(#decode)* } })
                 }
+
                 Fields::Unnamed(FieldsUnnamed { unnamed, .. }) => {
                     let mut encode = Vec::new();
                     let mut decode = Vec::new();
@@ -75,11 +80,13 @@ pub fn packet(attr : TokenStream, item : TokenStream) -> TokenStream {
                     }
                     (quote! { #(#encode)* }, quote! { ( #(#decode)* ) })
                 }
+
                 Fields::Unit => (quote! {}, quote! {}),
+
             };
             let item2: TokenStream2 = item.into();
             (quote!{
-                #[derive(Debug, Clone, PartialEq, Eq)]
+                #[derive(Debug, Clone)]
                 #item2
                 impl PacketMeta for #ident {
                     const PREFIX : usize = #meta_prefix;
