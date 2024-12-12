@@ -2,3 +2,4 @@
 Cargo.lock
 rustc-ice-*.txt
 /.idea
+/datagen
