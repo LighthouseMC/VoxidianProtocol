@@ -17,6 +17,13 @@ pub struct EncryptionResponseC2SPacket {
 }
 
 
+#[packet( prefix = 0x02, bound = C2S, stage = Login )]
+pub struct LoginPluginResponseC2SPacket {
+    pub msg_id : VarInt,
+    pub data   : Option<ConsumeAllVec<u8>>
+}
+
+
 #[packet( prefix = 0x03, bound = C2S, stage = Login )]
 pub struct LoginAcknowledgeC2SPacket;
 
