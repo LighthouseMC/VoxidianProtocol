@@ -7,7 +7,7 @@ pub struct StatusRequestC2SPacket;
 
 #[packet( prefix = 0x01, bound = C2S, stage = Status )]
 pub struct PingRequestC2SPacket {
-    timestamp : u64
+    pub timestamp : u64
 }
 
 

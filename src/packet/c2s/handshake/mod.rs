@@ -15,6 +15,13 @@ pub enum IntendedStage {
     Status   = 1,
     Transfer = 2,
 }
+impl IntendedStage {
+    pub fn into_stage(&self) -> Stage { match (self) {
+        Self::Login    => Stage::Login,
+        Self::Status   => Stage::Status,
+        Self::Transfer => Stage::Transfer
+    } }
+}
 
 
 packet_full_decode!( bound = C2S, stage = Handshake );
