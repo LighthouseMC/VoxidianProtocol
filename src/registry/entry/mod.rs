@@ -2,6 +2,8 @@ mod block;
 pub use block::*;
 mod block_state;
 pub use block_state::*;
+mod dimension_type;
+pub use dimension_type::*;
 
 
 use crate::value::*;

@@ -11,9 +11,19 @@ pub struct Nbt {
 
 #[derive(Clone, Debug)]
 pub struct NbtCompound(HashMap<String, NbtElement>);
-impl NbtCompound { pub fn new() -> Self {
-    Self(HashMap::new())
-} }
+impl NbtCompound {
+    pub fn new() -> Self {
+        Self(HashMap::new())
+    }
+
+    pub fn get(&self, key: &str) -> Option<&NbtElement> {
+        self.0.get(key)
+    }
+
+    pub fn insert(&mut self, key: &str, value: NbtElement) {
+        self.0.insert(key.to_string(), value);
+    }
+}
 
 
 #[derive(Clone, Debug)]
