@@ -1,4 +1,5 @@
 use super::*;
+use config::{ ReportDetail, ServerLink };
 
 
 #[packet( prefix = 0x00, bound = S2C, stage = Play )]
@@ -665,7 +666,7 @@ pub struct SyncPlayerPosS2CPacket {
     pub adyaw_deg   : f32,
     pub adpitch_deg : f32,
     pub flags       : u8,
-    pub id          : VarInt
+    pub transaction : VarInt
 }
 
 
@@ -752,8 +753,8 @@ pub struct SetHeadRotS2CPacket {
 
 #[packet( prefix = 0x49, bound = S2C, stage = Play )]
 pub struct UpdateSectionBlocksS2CPacket {
-    pub chunk_pos : ChunkPos,
-    pub blocks    : LengthPrefixVec<VarInt, VarLong>
+    pub chunk_section : ChunkSection,
+    pub blocks        : LengthPrefixVec<VarInt, VarLong>
 }
 
 
@@ -1262,13 +1263,13 @@ pub struct ProjPowerS2CPacket {
 
 #[packet( prefix = 0x7A, bound = S2C, stage = Play )]
 pub struct CustomReportDetailsS2CPacket {
-    pub details : LengthPrefixVec<VarInt, super::config::ReportDetail>
+    pub details : LengthPrefixVec<VarInt, ReportDetail>
 }
 
 
 #[packet( prefix = 0x7B, bound = S2C, stage = Play )]
 pub struct ServerLinksS2CPacket {
-    pub links : LengthPrefixVec<VarInt, super::config::ServerLink>
+    pub links : LengthPrefixVec<VarInt, ServerLink>
 }
 
 

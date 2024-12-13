@@ -2,7 +2,11 @@ use super::*;
 
 
 #[packet( prefix = 0x00, bound = C2S, stage = Config )]
-pub struct ClientInformationC2SPacket {
+pub struct ClientInfoC2SPacket {
+    pub info : ClientInfo
+}
+#[packet_part]
+pub struct ClientInfo {
     pub locale         : String,
     pub view_distance  : u8,
     pub chat_mode      : ClientChatMode,
@@ -54,7 +58,7 @@ pub struct PongC2SPacket(pub u32);
 #[packet( prefix = 0x06, bound = C2S, stage = Config )]
 pub struct ResourcePackResponseC2SPacket {
     pub uuid   : Uuid,
-    pub result : ResourcePackStatus
+    pub status : ResourcePackStatus
 }
 #[packet_part(VarInt)]
 pub enum ResourcePackStatus {
