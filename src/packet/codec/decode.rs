@@ -1,4 +1,5 @@
 use super::*;
+use std::mem::MaybeUninit;
 
 
 pub trait PacketDecode : Sized {
@@ -49,6 +50,12 @@ impl PacketDecode for String { fn decode(buf : &mut PacketBuf) -> Result<Self, D
 impl<T : PacketDecode> PacketDecode for Option<T> { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
     let is_some = buf.read_u8()? != 0;
     Ok(if (is_some) { Some(buf.read_decode::<T>()?) } else { None })
+} }
+
+impl<T : PacketDecode, const LEN : usize> PacketDecode for [T; LEN] { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+    let mut out : Self = unsafe{ MaybeUninit::uninit().assume_init() };
+    for i in 0..LEN { out[i] = buf.read_decode::<T>()?; }
+    Ok(out)
 } }
 
 

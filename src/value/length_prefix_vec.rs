@@ -11,7 +11,7 @@ pub struct LengthPrefixVec<Index : From<usize> + Into<usize>, T> {
 }
 impl<Index : From<usize> + Into<usize>, T> LengthPrefixVec<Index, T> {
 
-    pub fn new(self) -> Self { Self {
+    pub fn new() -> Self { Self {
         inner : Vec::new(),
         _ph   : PhantomData
     } }

@@ -3,13 +3,13 @@ use super::*;
 use std::collections::HashMap;
 
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Nbt {
     pub name : String,
     pub root : NbtCompound
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct NbtCompound(HashMap<String, NbtElement>);
 impl NbtCompound {
     pub fn new() -> Self {
@@ -26,7 +26,7 @@ impl NbtCompound {
 }
 
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 #[repr(u8)]
 pub enum NbtElement {
     Byte     (i8              ) = 1,

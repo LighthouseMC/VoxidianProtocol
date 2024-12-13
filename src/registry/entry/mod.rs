@@ -2,12 +2,24 @@ mod block;
 pub use block::*;
 mod block_state;
 pub use block_state::*;
-mod dimension_type;
-pub use dimension_type::*;
+mod dim_type;
+pub use dim_type::*;
 mod entity_type;
 pub use entity_type::*;
 mod item;
 pub use item::*;
+mod damage_type;
+pub use damage_type::*;
+mod chat_type;
+pub use chat_type::*;
+mod screen;
+pub use screen::*;
+mod status_effect;
+pub use status_effect::*;
+mod sound_event;
+pub use sound_event::*;
+mod attribute_type;
+pub use attribute_type::*;
 
 
 use crate::packet::*;

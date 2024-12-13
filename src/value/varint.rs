@@ -30,20 +30,16 @@ impl Into<i32> for VarInt { fn into(self) -> i32 { self.0 } }
 impl From<usize> for VarInt { fn from(value : usize) -> Self { Self(value as i32) } }
 impl Into<usize> for VarInt { fn into(self) -> usize { self.0 as usize } }
 
-impl PacketEncode for VarInt {
-    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
-        buf.write_u8s(&self.as_bytes());
-        Ok(())
-    }
-}
+impl PacketEncode for VarInt { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    buf.write_u8s(&self.as_bytes());
+    Ok(())
+} }
 
-impl PacketDecode for VarInt {
-    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
-        let ((out, consumed)) = Self::decode_iter(&mut buf.iter())?;
-        buf.skip(consumed);
-        Ok(out)
-    }
-}
+impl PacketDecode for VarInt { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+    let ((out, consumed)) = Self::decode_iter(&mut buf.iter())?;
+    buf.skip(consumed);
+    Ok(out)
+} }
 impl VarInt {
     /// Also returns the number of bytes that were consumed.
     pub fn decode_iter(iter : &mut impl Iterator<Item = u8>) -> Result<(Self, usize), DecodeError> {
