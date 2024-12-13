@@ -1,4 +1,5 @@
 use super::*;
+use std::fmt;
 
 
 #[derive(Ser, Deser, Clone, Debug, PartialEq, Eq, Hash)]
@@ -14,6 +15,21 @@ impl Text {
 impl From<Vec<TextComponent>> for Text { fn from(from : Vec<TextComponent>) -> Self {
     Self(from)
 } }
+impl Text {
+
+    pub fn to_json(&self) -> String {
+        if (self.0.is_empty()) {
+            String::from("[{\"text\":\"\"}]")
+        } else {
+            to_json_string(self).unwrap()
+        }
+    }
+
+    pub fn from_json<S : AsRef<str>>(json : S) -> Result<Self, serde_json::error::Error> {
+        from_json_str::<Self>(json.as_ref())
+    }
+
+}
 
 #[derive(Ser, Deser, Clone, Debug, PartialEq, Eq, Hash, Default)]
 pub struct TextComponent {
@@ -23,16 +39,16 @@ pub struct TextComponent {
     pub colour : Option<TextColour>,
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub font : Option<Identifier>,
-    #[serde(skip_serializing_if = "is_false", default)]
-    pub bold : bool,
-    #[serde(skip_serializing_if = "is_false", default)]
-    pub italic : bool,
-    #[serde(rename = "underlined", skip_serializing_if = "is_false", default)]
-    pub underline : bool,
-    #[serde(skip_serializing_if = "is_false", default)]
-    pub strikethrough : bool,
-    #[serde(rename = "obfuscated", skip_serializing_if = "is_false", default)]
-    pub obfuscate : bool,
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub bold : Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub italic : Option<bool>,
+    #[serde(rename = "underlined", skip_serializing_if = "Option::is_none", default)]
+    pub underline : Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub strikethrough : Option<bool>,
+    #[serde(rename = "obfuscated", skip_serializing_if = "Option::is_none", default)]
+    pub obfuscate : Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub insertion : Option<String>,
     #[serde(rename = "clickEvent", skip_serializing_if = "Option::is_none", default)]
@@ -42,7 +58,6 @@ pub struct TextComponent {
     #[serde(skip_serializing_if = "Vec::is_empty", default)]
     pub extra : Vec<TextComponent>
 }
-fn is_false(value : &bool) -> bool { !value }
 impl TextComponent {
     pub fn of_literal<S : Into<String>>(literal : S) -> Self {
         Self::default().with_literal(literal.into())
@@ -67,35 +82,95 @@ impl TextComponent {
     pub fn with_keybind<S : Into<String>>(&self, keybind : S) -> Self {
         self.with_content(TextContent::Keybind { keybind : keybind.into() })
     }
-    pub fn with_colour(&self, colour : Option<TextColour>) -> Self {
-        let mut cloned = self.clone(); cloned.colour = colour; cloned
+    pub fn colour(&self, colour : TextColour) -> Self {
+        let mut cloned = self.clone(); cloned.colour = Some(colour); cloned
     }
-    pub fn with_font(&self, font : Option<Identifier>) -> Self {
-        let mut cloned = self.clone(); cloned.font = font; cloned
+    pub fn reset_colour(&self) -> Self {
+        let mut cloned = self.clone(); cloned.colour = Some(TextColour::White); cloned
     }
-    pub fn with_bold(&self, bold : bool) -> Self {
-        let mut cloned = self.clone(); cloned.bold = bold; cloned
+    pub fn inherit_colour(&self) -> Self {
+        let mut cloned = self.clone(); cloned.colour = None; cloned
     }
-    pub fn with_italic(&self, italic : bool) -> Self {
-        let mut cloned = self.clone(); cloned.italic = italic; cloned
+    pub fn font(&self, font : Identifier) -> Self {
+        let mut cloned = self.clone(); cloned.font = Some(font); cloned
     }
-    pub fn with_underline(&self, underline : bool) -> Self {
-        let mut cloned = self.clone(); cloned.underline = underline; cloned
+    pub fn reset_font(&self) -> Self {
+        let mut cloned = self.clone(); cloned.font = Some(Identifier::vanilla("default")); cloned
     }
-    pub fn with_strikethrough(&self, strikethrough : bool) -> Self {
-        let mut cloned = self.clone(); cloned.strikethrough = strikethrough; cloned
+    pub fn inherit_font(&self) -> Self {
+        let mut cloned = self.clone(); cloned.font = None; cloned
     }
-    pub fn with_obfuscate(&self, obfuscate : bool) -> Self {
-        let mut cloned = self.clone(); cloned.obfuscate = obfuscate; cloned
+    pub fn bold(&self, bold : bool) -> Self {
+        let mut cloned = self.clone(); cloned.bold = Some(bold); cloned
     }
-    pub fn with_insertion(&self, insertion : Option<String>) -> Self {
-        let mut cloned = self.clone(); cloned.insertion = insertion; cloned
+    pub fn reset_bold(&self) -> Self {
+        let mut cloned = self.clone(); cloned.bold = Some(false); cloned
     }
-    pub fn with_click_event(&self, click_event : Option<TextClickEvent>) -> Self {
-        let mut cloned = self.clone(); cloned.click_event = click_event; cloned
+    pub fn inherit_bold(&self) -> Self {
+        let mut cloned = self.clone(); cloned.bold = None; cloned
     }
-    pub fn with_hover_event(&self, hover_event : Option<TextHoverEvent>) -> Self {
-        let mut cloned = self.clone(); cloned.hover_event = hover_event; cloned
+    pub fn italic(&self, italic : bool) -> Self {
+        let mut cloned = self.clone(); cloned.italic = Some(italic); cloned
+    }
+    pub fn reset_italic(&self) -> Self {
+        let mut cloned = self.clone(); cloned.italic = Some(false); cloned
+    }
+    pub fn inherit_italic(&self) -> Self {
+        let mut cloned = self.clone(); cloned.italic = None; cloned
+    }
+    pub fn underline(&self, underline : bool) -> Self {
+        let mut cloned = self.clone(); cloned.underline = Some(underline); cloned
+    }
+    pub fn reset_underline(&self) -> Self {
+        let mut cloned = self.clone(); cloned.underline = Some(false); cloned
+    }
+    pub fn inherit_underline(&self) -> Self {
+        let mut cloned = self.clone(); cloned.underline = None; cloned
+    }
+    pub fn strikethrough(&self, strikethrough : bool) -> Self {
+        let mut cloned = self.clone(); cloned.strikethrough = Some(strikethrough); cloned
+    }
+    pub fn reset_strikethrough(&self) -> Self {
+        let mut cloned = self.clone(); cloned.strikethrough = Some(false); cloned
+    }
+    pub fn inherit_strikethrough(&self) -> Self {
+        let mut cloned = self.clone(); cloned.strikethrough = None; cloned
+    }
+    pub fn obfuscate(&self, obfuscate : bool) -> Self {
+        let mut cloned = self.clone(); cloned.obfuscate = Some(obfuscate); cloned
+    }
+    pub fn reset_obfuscate(&self) -> Self {
+        let mut cloned = self.clone(); cloned.obfuscate = Some(false); cloned
+    }
+    pub fn inherit_obfuscate(&self) -> Self {
+        let mut cloned = self.clone(); cloned.obfuscate = None; cloned
+    }
+    pub fn insertion(&self, insertion : String) -> Self {
+        let mut cloned = self.clone(); cloned.insertion = Some(insertion); cloned
+    }
+    pub fn reset_insertion(&self) -> Self {
+        let mut cloned = self.clone(); cloned.insertion = Some(String::new()); cloned
+    }
+    pub fn inherit_insertion(&self) -> Self {
+        let mut cloned = self.clone(); cloned.insertion = None; cloned
+    }
+    pub fn click_event(&self, click_event : TextClickEvent) -> Self {
+        let mut cloned = self.clone(); cloned.click_event = Some(click_event); cloned
+    }
+    pub fn reset_click_event(&self) -> Self {
+        let mut cloned = self.clone(); cloned.click_event = Some(TextClickEvent::RunCommand { command : String::new() }); cloned
+    }
+    pub fn inherit_click_event(&self) -> Self {
+        let mut cloned = self.clone(); cloned.click_event = None; cloned
+    }
+    pub fn hover_event(&self, hover_event : TextHoverEvent) -> Self {
+        let mut cloned = self.clone(); cloned.hover_event = Some(hover_event); cloned
+    }
+    pub fn reset_hover_event(&self) -> Self {
+        let mut cloned = self.clone(); cloned.hover_event = Some(TextHoverEvent::ShowText { text : Text::new() }); cloned
+    }
+    pub fn inherit_hover_event(&self) -> Self {
+        let mut cloned = self.clone(); cloned.hover_event = None; cloned
     }
 }
 
@@ -237,31 +312,46 @@ impl PacketDecode for Text { fn decode(buf : &mut PacketBuf) -> Result<Self, Dec
 } }
 
 
+impl fmt::Display for Text { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    for component in &self.0 { write!(f, "{}", component)?; }
+    Ok(())
+} }
+impl fmt::Display for TextComponent { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "{}", self.content)?;
+    for extra in &self.extra { write!(f, "{}", extra)?; }
+    Ok(())
+} }
+impl fmt::Display for TextContent { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    let ( TextContent::Literal   { literal     : text }
+        | TextContent::Translate { translation : text }
+        | TextContent::Keybind   { keybind     : text }
+    ) = self;
+    write!(f, "{}", text)
+} }
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json::ser::to_string as to_json_string;
-    use serde_json::de::from_str as from_json_str;
 
     #[test]
     fn json_serialise_text() {
         let text = Text::from(vec![
-            TextComponent::of_literal("Hello,").with_colour(Some(TextColour::DarkGreen)),
-            TextComponent::of_literal("World!").with_colour(Some(TextColour::RGB(255, 127, 0)))
+            TextComponent::of_literal("Hello,").colour(TextColour::DarkGreen),
+            TextComponent::of_literal("World!").colour(TextColour::RGB(255, 127, 0))
         ]);
-        let json = to_json_string(&text).unwrap();
+        let json = text.to_json();
         assert_eq!(json, "[{\"text\":\"Hello,\",\"color\":\"dark_green\"},{\"text\":\"World!\",\"color\":\"#ff7f00\"}]");
     }
 
     #[test]
     fn json_deserialise_text() {
         let json = "[{\"text\":\"Hello,\",\"color\":\"dark_green\"},{\"text\":\"World!\",\"color\":\"#ff7f00\"}]";
-        let text = from_json_str::<Text>(json).unwrap();
+        let text = Text::from_json(json).unwrap();
         assert_eq!(text.0.as_slice(), [
-            TextComponent::of_literal("Hello,").with_colour(Some(TextColour::DarkGreen)),
-            TextComponent::of_literal("World!").with_colour(Some(TextColour::RGB(255, 127, 0)))
+            TextComponent::of_literal("Hello,").colour(TextColour::DarkGreen),
+            TextComponent::of_literal("World!").colour(TextColour::RGB(255, 127, 0))
         ]);
     }
 
 }
-

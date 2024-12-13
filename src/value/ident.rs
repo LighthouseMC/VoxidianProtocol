@@ -8,10 +8,14 @@ pub struct Identifier {
     pub path      : String
 }
 impl Identifier {
+
     pub fn new<N : Into<String>, P : Into<String>>(namespace : N, path : P) -> Self { Self {
         namespace : namespace.into(),
         path      : path.into()
     } }
+
+    pub fn vanilla<P : Into<String>>(path : P) -> Self { Self::new("minecraft", path) }
+
 }
 impl fmt::Display for Identifier {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -21,7 +25,7 @@ impl fmt::Display for Identifier {
 impl<T : AsRef<str>> From<T> for Identifier {
     fn from(value : T) -> Self {
         let value = value.as_ref();
-        let Some(i) = value.find(':') else { return Identifier::new("minecraft", value) };
+        let Some(i) = value.find(':') else { return Identifier::vanilla(value) };
         let (namespace, colon_path) = value.split_at(i);
         Self {
             namespace : namespace.to_string(),
