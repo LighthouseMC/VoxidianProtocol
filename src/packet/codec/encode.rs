@@ -53,6 +53,11 @@ impl<T : PacketEncode> PacketEncode for Option<T> { fn encode(&self, buf : &mut 
     }
 } }
 
+impl <T : PacketEncode, const LEN : usize> PacketEncode for [T; LEN] { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    for item in self { buf.encode_write(item)?; }
+    Ok(())
+} }
+
 
 
 pub trait PacketEncodeFull {

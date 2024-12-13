@@ -84,20 +84,7 @@ pub struct FeatureFlagsS2CPacket {
 }
 
 
-#[packet( prefix = 0x0D, bound = S2C, stage = Config )]
-pub struct UpdateTagsS2CPacket {
-    pub tags : LengthPrefixVec<VarInt, UpdateTags>
-}
-#[packet_part]
-pub struct UpdateTags {
-    pub registry : Identifier,
-    pub tag      : LengthPrefixVec<VarInt, UpdateTagsTag>
-}
-#[packet_part]
-pub struct UpdateTagsTag {
-    pub name    : Identifier,
-    pub entries : LengthPrefixVec<VarInt, VarInt>
-}
+// TODO: UpdateTagsS2CPacket
 
 
 #[packet( prefix = 0x0E, bound = S2C, stage = Config )]
@@ -114,10 +101,10 @@ pub struct KnownPack {
 
 #[packet( prefix = 0x0F, bound = S2C, stage = Config )]
 pub struct CustomReportDetailsS2CPacket {
-    pub details : LengthPrefixVec<VarInt, CustomReportDetail>
+    pub details : LengthPrefixVec<VarInt, ReportDetail>
 }
 #[packet_part]
-pub struct CustomReportDetail {
+pub struct ReportDetail {
     pub title : String,
     pub desc  : String
 }
