@@ -1,4 +1,4 @@
-use super::{PacketDecode, PacketEncode};
+use super::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct BlockPos {

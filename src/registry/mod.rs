@@ -1,7 +1,5 @@
 mod entry;
 pub use entry::*;
-mod encode;
-pub use encode::*;
 
 use crate::value::Identifier;
 use std::collections::HashMap;

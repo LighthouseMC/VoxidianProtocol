@@ -1,5 +1,7 @@
 mod varint;
 pub use varint::*;
+mod varlong;
+pub use varlong::*;
 mod text;
 pub use text::*;
 mod ident;
@@ -10,6 +12,10 @@ mod block_pos;
 pub use block_pos::*;
 mod vec3d;
 pub use vec3d::*;
+mod angle;
+pub use angle::*;
+mod chunk_section;
+pub use chunk_section::*;
 
 mod length_prefix_vec;
 pub use length_prefix_vec::*;
