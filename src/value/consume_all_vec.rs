@@ -3,7 +3,7 @@ use super::*;
 use std::ops::{ Deref, DerefMut };
 
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct ConsumeAllVec<T> {
     inner : Vec<T>
 }
@@ -21,6 +21,9 @@ impl<T> From<Vec<T>> for ConsumeAllVec<T> {
         inner : value
     } }
 }
+impl<T : fmt::Debug> fmt::Debug for ConsumeAllVec<T> { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "ConsumeAllVec{:?}", self.inner)
+} }
 
 impl<T> Deref for ConsumeAllVec<T> {
     type Target = Vec<T>;

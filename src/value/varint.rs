@@ -47,7 +47,7 @@ impl VarInt {
         let mut x = 0;
         let mut consumed = 0;
         for i in 0..MAX_BYTES {
-            let byte = secret_cipher.decrypt(&[iter.next().ok_or(DecodeError::EndOfBuffer)?])[0];
+            let byte = secret_cipher.decrypt_u8(iter.next().ok_or(DecodeError::EndOfBuffer)?)?;
             consumed += 1;
             x |= (i32::from(byte) & 0b01111111) << (i * 7);
             if (byte & 0b10000000 == 0) {

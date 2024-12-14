@@ -36,7 +36,7 @@ pub fn packet_full_decode(input : TokenStream) -> TokenStream {
         let variant_name = parse_str::<Ident>(packet.struct_name.strip_suffix(&format!("{}Packet", meta_bound)).unwrap_or(&packet.struct_name)).unwrap();
         let packet_prefix = parse_str::<Expr>(&packet.prefix).unwrap();
         variants.push(quote!{ #variant_name( #struct_name ), });
-        encode.push(quote!{ Self::#variant_name(packet) => PacketEncodeFull::encode_full(packet, buf, secret_cipher), });
+        encode.push(quote!{ Self::#variant_name(packet) => PrefixedPacketEncode::encode_prefixed(packet, buf), });
         decode.push(quote!{ #packet_prefix => { Ok(Self::#variant_name(PacketDecode::decode(buf)?)) } });
     }
 
@@ -44,13 +44,13 @@ pub fn packet_full_decode(input : TokenStream) -> TokenStream {
     quote!{
         #[derive(Debug)]
         pub enum #ident { #(#variants)* }
-        impl PacketEncodeFull for #ident {
-            fn encode_full(&self, buf : &mut PacketBuf, secret_cipher : &mut SecretCipher) -> Result<(), EncodeError> { match (self) {
+        impl PrefixedPacketEncode for #ident {
+            fn encode_prefixed(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { match (self) {
                 #(#encode)*
             } }
         }
-        impl PacketDecodeFull for #ident {
-            fn decode_partial(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+        impl PrefixedPacketDecode for #ident {
+            fn decode_prefixed(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
                 let packetid = buf.read_decode::<VarInt>().unwrap().as_i32();
                 match (packetid) {
                     #(#decode)*

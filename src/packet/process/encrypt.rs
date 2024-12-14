@@ -1,3 +1,5 @@
+use super::*;
+
 use openssl::pkey::{ PKey, Private, Public };
 use openssl::encrypt::{ Encrypter, Decrypter };
 use openssl::rsa::{ Rsa, Padding };
@@ -68,23 +70,47 @@ impl SecretCipher {
         de : Crypter::new(Cipher::aes_128_cfb8(), Mode::Decrypt, key_iv, Some(key_iv)).unwrap()
     })) }
 
-    pub fn encrypt(&mut self, plaindata : &[u8]) -> Vec<u8> {
+    pub fn encrypt(&mut self, plaindata : PacketBuf) -> PacketBuf {
         if let Some(SecretCipherInner { en, .. }) = &mut self.0 {
-            let mut cipherdata = vec![0; plaindata.len()];
-            en.update(plaindata, &mut cipherdata).unwrap();
-            cipherdata
+            let mut cipherdata = vec![0; plaindata.remaining()];
+            en.update(plaindata.as_slice(), &mut cipherdata).unwrap();
+            let mut out = PacketBuf::new();
+            out.write_u8s(&cipherdata);
+            out
         } else {
-            plaindata.to_vec()
+            plaindata
         }
     }
 
-    pub fn decrypt(&mut self, cipherdata : &[u8]) -> Vec<u8> {
-        if let Some(SecretCipherInner { de, .. }) = &mut self.0 {
-            let mut plaindata = vec![0; cipherdata.len()];
-            de.update(cipherdata, &mut plaindata).unwrap();
-            plaindata
+    pub fn encrypt_u8(&mut self, plainbyte : u8) -> Result<u8, DecodeError> {
+        if let Some(SecretCipherInner { en, .. }) = &mut self.0 {
+            let mut cipherbyte = [0];
+            en.update(&[plainbyte], &mut cipherbyte).map_err(|_| DecodeError::InvalidData)?;
+            Ok(cipherbyte[0])
         } else {
-            cipherdata.to_vec()
+            Ok(plainbyte)
+        }
+    }
+
+    pub fn decrypt(&mut self, cipherdata : PacketBuf) -> Result<PacketBuf, DecodeError> {
+        if let Some(SecretCipherInner { de, .. }) = &mut self.0 {
+            let mut plaindata = vec![0; cipherdata.remaining()];
+            de.update(cipherdata.as_slice(), &mut plaindata).map_err(|_| DecodeError::InvalidData)?;
+            let mut out = PacketBuf::new();
+            out.write_u8s(&plaindata);
+            Ok(out)
+        } else {
+            Ok(cipherdata)
+        }
+    }
+
+    pub fn decrypt_u8(&mut self, cipherbyte : u8) -> Result<u8, DecodeError> {
+        if let Some(SecretCipherInner { de, .. }) = &mut self.0 {
+            let mut plainbyte = [0];
+            de.update(&[cipherbyte], &mut plainbyte).map_err(|_| DecodeError::InvalidData)?;
+            Ok(plainbyte[0])
+        } else {
+            Ok(cipherbyte)
         }
     }
 

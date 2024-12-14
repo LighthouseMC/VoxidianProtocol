@@ -4,7 +4,7 @@ use std::marker::PhantomData;
 use std::ops::{ Deref, DerefMut };
 
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct LengthPrefixVec<Idx : From<usize> + Into<usize>, T> {
     inner : Vec<T>,
     _ph   : PhantomData<Idx>
@@ -25,6 +25,9 @@ impl<Idx : From<usize> + Into<usize>, T> From<Vec<T>> for LengthPrefixVec<Idx, T
         _ph   : PhantomData
     } }
 }
+impl<Idx : From<usize> + Into<usize>, T : fmt::Debug> fmt::Debug for LengthPrefixVec<Idx, T> { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "LengthPrefixVec{:?}", self.inner)
+} }
 
 impl<Idx : From<usize> + Into<usize>, T> Deref for LengthPrefixVec<Idx, T> {
     type Target = Vec<T>;

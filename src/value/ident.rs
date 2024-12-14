@@ -2,7 +2,7 @@ use super::*;
 use std::fmt;
 
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub struct Identifier {
     pub namespace : String,
     pub path      : String
@@ -17,11 +17,12 @@ impl Identifier {
     pub fn vanilla<P : Into<String>>(path : P) -> Self { Self::new("minecraft", path) }
 
 }
-impl fmt::Display for Identifier {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}:{}", self.namespace, self.path)
-    }
-}
+impl fmt::Display for Identifier { fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "{}:{}", self.namespace, self.path)
+} }
+impl fmt::Debug for Identifier { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "{:?}", self.to_string())
+} }
 impl<T : AsRef<str>> From<T> for Identifier {
     fn from(value : T) -> Self {
         let value = value.as_ref();
