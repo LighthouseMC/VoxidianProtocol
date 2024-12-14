@@ -26,15 +26,15 @@ impl PacketBuf {
     }
 
     /// Also returns the number of bytes that were consumed.
-    pub fn from_raw_queue(mut queue : impl Iterator<Item = u8>) -> Result<(Self, usize), DecodeError> {
-        let (size, consumed) = VarInt::decode_iter(&mut queue)?;
+    pub fn from_raw_queue(mut queue : impl Iterator<Item = u8>, secret_cipher : &mut SecretCipher) -> Result<(Self, usize), DecodeError> {
+        let (size, consumed) = VarInt::decode_iter(&mut queue, secret_cipher)?;
         let size = size.as_i32() as usize;
         let mut bytes = Vec::with_capacity(size);
         for _ in 0..size {
             let Some(byte) = queue.next() else {
                 return Err(DecodeError::EndOfBuffer);
             };
-            bytes.push(byte);
+            bytes.push(secret_cipher.decrypt(&[byte])[0]);
         }
         Ok((Self {
             inner : bytes,
@@ -167,7 +167,7 @@ mod tests {
     fn varint_decode_iter() {
         let data = [16, 0, 129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1, 1, 0];
         //          ^Packet length
-        let Ok((len, consumed)) = VarInt::decode_iter(&mut data.into_iter()) else { panic!("decode_iter was not a success"); };
+        let Ok((len, consumed)) = VarInt::decode_iter(&mut data.into_iter(), &mut SecretCipher::no_cipher()) else { panic!("decode_iter was not a success"); };
         assert_eq!(len.as_i32(), 16);
         assert_eq!(consumed, 1);
     }
@@ -178,7 +178,7 @@ mod tests {
         //          |   |------------------------------------------------------------------  |  ^Status request packet
         //          |   ^Handshake packet                                                    ^Packet length
         //          ^Packet length
-        let Ok((packetbuf, consumed)) = PacketBuf::from_raw_queue(data.into_iter()) else { panic!("from_raw_queue was not a success") };
+        let Ok((packetbuf, consumed)) = PacketBuf::from_raw_queue(data.into_iter(), &mut SecretCipher::no_cipher()) else { panic!("from_raw_queue was not a success") };
         assert_eq!(packetbuf.inner, [0, 129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1]);
         assert_eq!(consumed, 17);
     }

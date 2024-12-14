@@ -121,7 +121,7 @@ pub enum BossBarAction {
         health   : f32,
         colour   : BossBarColour,
         division : BossBarDivision,
-        flags    : u8
+        flags    : BossBarFlags
     },
     Remove,
     UpdateHealth {
@@ -135,7 +135,7 @@ pub enum BossBarAction {
         division : BossBarDivision
     },
     UpdateFlags {
-        flags : u8
+        flags : BossBarFlags
     }
 }
 #[packet_part(VarInt)]
@@ -156,6 +156,11 @@ pub enum BossBarDivision {
     Notch12 = 3,
     Notch20 = 4
 }
+packet_flags!{ pub struct BossBarFlags {
+    pub darken_sky  : 0b00000001,
+    pub end_music   : 0b00000010,
+    pub thicken_fog : 0b00000100
+} }
 
 
 #[packet( prefix = 0x0B, bound = S2C, stage = Play )]
@@ -214,7 +219,15 @@ pub struct CommandSuggestion {
 }
 
 
-// TODO: CommandsS2CPacket
+/*#[packet( prefix = 0x11, bound = S2C, stage = Play )]
+pub struct CommandsS2CPacket {
+    pub nodes    : LengthPrefixVec<VarInt, CommandNode>,
+    pub root_idx : VarInt
+}
+#[packet_part]
+pub struct CommandNode {
+    // TODO
+}*/
 
 
 #[packet( prefix = 0x12, bound = S2C, stage = Play )]
@@ -317,7 +330,33 @@ pub struct EntityEventS2CPacket {
 }
 
 
-// TODO: ExplosionS2CPacket
+#[packet( prefix = 0x20, bound = S2C, stage = Play )]
+pub struct ExplosionS2CPacket {
+    pub x              : f64,
+    pub y              : f64,
+    pub z              : f64,
+    pub strength       : f32,
+    pub records        : LengthPrefixVec<VarInt, [u8; 3]>,
+    pub player_mot_x   : f32,
+    pub player_mot_y   : f32,
+    pub player_mot_z   : f32,
+    pub blocks         : ExplosionBlockInteraction,
+    pub small_particle : Particle,
+    pub large_particle : Particle,
+    pub sound          : RegOr<SoundEvent, Sound>
+}
+#[packet_part(VarInt)]
+pub enum ExplosionBlockInteraction {
+    Keep         = 0,
+    Destroy      = 1,
+    DestroyDecay = 2,
+    Trigger      = 3
+}
+#[packet_part]
+pub struct Sound {
+    pub name        : Identifier,
+    pub fixed_range : Option<f32>
+}
 
 
 #[packet( prefix = 0x21, bound = S2C, stage = Play )]
@@ -392,7 +431,22 @@ pub struct KeepAliveS2CPacket(pub u64);
 // TODO: WorldEventS2CPacket
 
 
-// TODO: ParticleS2CPacket
+#[packet( prefix = 0x29, bound = S2C, stage = Play )]
+pub struct ParticleS2CPacket {
+    pub long_distance : bool,
+    pub x             : f64,
+    pub y             : f64,
+    pub z             : f64,
+    /// Gaussian distribution
+    pub spread_x      : f32,
+    /// Gaussian distribution
+    pub spread_y      : f32,
+    /// Gaussian distribution
+    pub spread_z      : f32,
+    pub max_speed     : f32,
+    pub count         : u32,
+    pub particle      : Particle
+}
 
 
 // TODO: UpdateLightS2CPacket
@@ -581,11 +635,17 @@ pub struct PlaceGhostRecipeS2CPacket {
 
 #[packet( prefix = 0x38, bound = S2C, stage = Play )]
 pub struct PlayerAbilitiesS2CPacket {
-    pub flags     : u8,
+    pub flags     : PlayerAbilityFlags,
     /// Default is 0.05
     pub fly_speed : f32,
     pub fov_fac   : f32
 }
+packet_flags!{ pub struct PlayerAbilityFlags {
+    pub invul      : 0b00000001,
+    pub flying     : 0b00000010,
+    pub allow_fly  : 0b00000100,
+    pub instabreak : 0b00001000
+} }
 
 
 /*#[packet( prefix = 0x39, bound = S2C, stage = Play )]
@@ -665,9 +725,16 @@ pub struct SyncPlayerPosS2CPacket {
     pub adz         : f64,
     pub adyaw_deg   : f32,
     pub adpitch_deg : f32,
-    pub flags       : u8,
+    pub flags       : SyncPosFlags,
     pub transaction : VarInt
 }
+packet_flags!{ pub struct SyncPosFlags {
+    pub x     : 0b00000001,
+    pub y     : 0b00000010,
+    pub z     : 0b00000100,
+    pub pitch : 0b00001000,
+    pub yaw   : 0b00010000
+} }
 
 
 /*#[packet( prefix = 0x41, bound = S2C, stage = Play )]
@@ -819,7 +886,11 @@ pub struct SetCameraS2CPacket {
 }
 
 
-// TODO: SetHeldItemS2CPacket
+#[packet( prefix = 0x53, bound = S2C, stage = Play )]
+pub struct SetHotbarSlotS2CPacket {
+    /// 0~8
+    pub slot : u8
+}
 
 
 #[packet( prefix = 0x54, bound = S2C, stage = Play )]
@@ -956,7 +1027,7 @@ pub struct UpdateTeamS2CPacket {
 pub enum UpdateTeamAction {
     Create {
         display_name   : Text,
-        friendly_flags : u8,
+        friendly_flags : TeamFriendlyFlags,
         /// `always`, `hideForOtherTeams`, `hideForOwnTeam`, or `never`
         name_tag_vis   : String,
         /// `always`, `pushOtherTeams`, `pushOwnTeam`, or `never`
@@ -969,7 +1040,7 @@ pub enum UpdateTeamAction {
     Remove = 1,
     Update {
         display_name   : Text,
-        friendly_flags : u8,
+        friendly_flags : TeamFriendlyFlags,
         /// `always`, `hideForOtherTeams`, `hideForOwnTeam`, or `never`
         name_tag_vis   : String,
         /// `always`, `pushOtherTeams`, `pushOwnTeam`, or `never`
@@ -1010,6 +1081,10 @@ pub enum VanillaFormatting {
     Italic        = 20,
     Reset         = 21
 }
+packet_flags!{ pub struct TeamFriendlyFlags {
+    pub friendly_fire  : 0b00000001,
+    pub see_invisibles : 0b00000010
+} }
 
 
 #[packet( prefix = 0x61, bound = S2C, stage = Play )]
@@ -1055,15 +1130,15 @@ pub struct SetTitleTimesS2CPacket {
 }
 
 
-/*#[packet( prefix = 0x67, bound = S2C, stage = Play )]
+#[packet( prefix = 0x67, bound = S2C, stage = Play )]
 pub struct EntitySoundEffectS2CPacket {
-    pub sound    : // TODO,
+    pub sound    : Sound,
     pub category : SoundCategory,
     pub entity   : VarInt,
     pub volume   : f32,
     pub pitch    : f32,
     pub seed     : u64
-}*/
+}
 #[packet_part(VarInt)]
 pub enum SoundCategory {
     Master  = 0,
@@ -1079,15 +1154,15 @@ pub enum SoundCategory {
 }
 
 
-/*#[packet( prefix = 0x68, bound = S2C, stage = Play )]
+#[packet( prefix = 0x68, bound = S2C, stage = Play )]
 pub struct SoundEffectS2CPacket {
-    pub sound    : // TODO,
+    pub sound    : Sound,
     pub category : SoundCategory,
     pub entity   : VarInt,
     pub volume   : f32,
     pub pitch    : f32,
     pub seed     : u64
-}*/
+}
 
 
 #[packet( prefix = 0x69, bound = S2C, stage = Play )]
@@ -1186,7 +1261,7 @@ pub struct AdvDisplay {
     pub desc       : Text,
     pub icon       : // TODO,
     pub frame      : AdvFrame,
-    pub flags      : u32,
+    pub flags      : u32, // TODO packet_flags!
     // TODO
     pub x_coord : f32,
     pub y_coord : f32
@@ -1236,8 +1311,14 @@ pub struct EntityEffectS2CPacket {
     pub amp    : VarInt,
     /// -1 for infinite
     pub dur    : VarInt,
-    pub flags  : u8
+    pub flags  : EffectFlags
 }
+packet_flags!{ pub struct EffectFlags {
+    pub ambient   : 0b00000001,
+    pub particles : 0b00000010,
+    pub icon      : 0b00000100,
+    pub blend     : 0b00001000
+} }
 
 
 /*#[packet( prefix = 0x77, bound = S2C, stage = Play )]

@@ -36,7 +36,7 @@ pub fn packet_full_decode(input : TokenStream) -> TokenStream {
         let variant_name = parse_str::<Ident>(packet.struct_name.strip_suffix(&format!("{}Packet", meta_bound)).unwrap_or(&packet.struct_name)).unwrap();
         let packet_prefix = parse_str::<Expr>(&packet.prefix).unwrap();
         variants.push(quote!{ #variant_name( #struct_name ), });
-        encode.push(quote!{ Self::#variant_name(packet) => PacketEncodeFull::encode_full(packet, buf), });
+        encode.push(quote!{ Self::#variant_name(packet) => PacketEncodeFull::encode_full(packet, buf, secret_cipher), });
         decode.push(quote!{ #packet_prefix => { Ok(Self::#variant_name(PacketDecode::decode(buf)?)) } });
     }
 
@@ -45,7 +45,7 @@ pub fn packet_full_decode(input : TokenStream) -> TokenStream {
         #[derive(Debug)]
         pub enum #ident { #(#variants)* }
         impl PacketEncodeFull for #ident {
-            fn encode_full(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { match (self) {
+            fn encode_full(&self, buf : &mut PacketBuf, secret_cipher : &mut SecretCipher) -> Result<(), EncodeError> { match (self) {
                 #(#encode)*
             } }
         }
