@@ -9,11 +9,13 @@ impl<T : PacketMeta> PacketMeta for &T {
     const STAGE  : Stage = Self::STAGE;
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Bound {
     S2C,
     C2S
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Stage {
     Handshake,
     Status,

@@ -66,11 +66,11 @@ pub trait PacketEncodeFull {
     /// - Packet length (VarInt)
     /// - Packet prefix/ID (VarInt)
     /// - Packet data (...)
-    fn encode_full(&self, buf : &mut PacketBuf) -> Result<(), EncodeError>;
+    fn encode_full(&self, buf : &mut PacketBuf, secret_cipher : &mut SecretCipher) -> Result<(), EncodeError>;
 }
 
 impl<T : PacketEncode + PacketMeta> PacketEncodeFull for T {
-    fn encode_full(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode_full(&self, buf : &mut PacketBuf, secret_cipher : &mut SecretCipher) -> Result<(), EncodeError> {
         // Data
         let mut data_buf = PacketBuf::new();
         self.encode(&mut data_buf)?;
@@ -79,9 +79,9 @@ impl<T : PacketEncode + PacketMeta> PacketEncodeFull for T {
         // Packet Length
         let packetlen = VarInt::from((packetid.len() + data_buf.remaining()) as i32).as_bytes();
         // Write
-        buf.write_u8s(&packetlen);
-        buf.write_u8s(&packetid);
-        buf.write_u8s(data_buf.as_slice());
+        buf.write_u8s(&secret_cipher.encrypt(&packetlen));
+        buf.write_u8s(&secret_cipher.encrypt(&packetid));
+        buf.write_u8s(&secret_cipher.encrypt(data_buf.as_slice()));
         Ok(())
     }
 }

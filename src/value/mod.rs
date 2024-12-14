@@ -16,6 +16,8 @@ mod angle;
 pub use angle::*;
 mod chunk_section;
 pub use chunk_section::*;
+mod particle;
+pub use particle::*;
 
 mod length_prefix_vec;
 pub use length_prefix_vec::*;
@@ -27,6 +29,8 @@ mod option_varint;
 pub use option_varint::*;
 mod length_prefix_hashmap;
 pub use length_prefix_hashmap::*;
+mod reg_or;
+pub use reg_or::*;
 
 pub use uuid::{ Uuid, uuid };
 

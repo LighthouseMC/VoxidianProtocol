@@ -78,8 +78,8 @@ pub trait PacketDecodeFull : Sized {
     /// - Packet data (...)
     /// 
     /// Also returns the number of bytes that were consumed.
-    fn decode_full_from_queue(queue : impl Iterator<Item = u8>) -> Result<(Self, usize), DecodeError> {
-        let (mut buf, consumed) = PacketBuf::from_raw_queue(queue)?;
+    fn decode_full_from_queue(queue : impl Iterator<Item = u8>, secret_cipher : &mut SecretCipher) -> Result<(Self, usize), DecodeError> {
+        let (mut buf, consumed) = PacketBuf::from_raw_queue(queue, secret_cipher)?;
         let out = Self::decode_partial(&mut buf)?;
         if (buf.remaining() != 0) {
             Err(DecodeError::UnconsumedBuffer)
@@ -110,11 +110,11 @@ mod tests {
         //          |   |-----------------------------------------------------------------'
         //          |   ^Handshake packet
         //          ^Packet length
-        let Ok((mut packetbuf, consumed)) = PacketBuf::from_raw_queue(data.into_iter()) else { panic!("from_raw_queue was not a success") };
+        let Ok((mut packetbuf, consumed)) = PacketBuf::from_raw_queue(data.into_iter(), &mut SecretCipher::no_cipher()) else { panic!("from_raw_queue was not a success") };
         assert_eq!(packetbuf.as_slice(), [0, 129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1]);
         assert_eq!(consumed, 17);
 
-        let Ok((packet_id, consumed)) = VarInt::decode_iter(&mut packetbuf.iter()) else { panic!("decode_iter was not a success") };
+        let Ok((packet_id, consumed)) = VarInt::decode_iter(&mut packetbuf.iter(), &mut SecretCipher::no_cipher()) else { panic!("decode_iter was not a success") };
         assert_eq!(packet_id.as_i32(), 0);
         packetbuf.skip(consumed);
 

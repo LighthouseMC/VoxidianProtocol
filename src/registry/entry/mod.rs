@@ -20,6 +20,8 @@ mod sound_event;
 pub use sound_event::*;
 mod attribute_type;
 pub use attribute_type::*;
+mod particle_type;
+pub use particle_type::*;
 
 
 use crate::packet::*;

@@ -1,6 +1,6 @@
 use super::*;
 use config::{ ClientInfo, ResourcePackStatus };
-use s2c::play::{ DebugSampleKind, Difficulty, Hand };
+use s2c::play::{ DebugSampleKind, Difficulty, Hand, PlayerAbilityFlags };
 
 
 #[packet( prefix = 0x00, bound = C2S, stage = Play )]
@@ -268,7 +268,7 @@ pub struct PlaceRecipeC2SPacket {
 
 #[packet( prefix = 0x23, bound = C2S, stage = Play )]
 pub struct PlayerAbilitiesC2SPacket {
-    pub flags : u8
+    pub flags : PlayerAbilityFlags
 }
 
 
@@ -325,8 +325,12 @@ pub enum PlayerCommand {
 pub struct PlayerInputC2SPacket {
     pub left    : f32,
     pub forward : f32,
-    pub flags   : u8
+    pub flags   : PlayerInputFlags
 }
+packet_flags!{ pub struct PlayerInputFlags {
+    pub jump    : 0b00000001,
+    pub unmount : 0b00000010
+} }
 
 
 #[packet( prefix = 0x27, bound = C2S, stage = Play )]
@@ -404,7 +408,7 @@ pub struct ProgramCommandBlockC2SPacket {
     pub pos     : BlockPos,
     pub command : String,
     pub mode    : CommandBlockMode,
-    pub flags   : u8
+    pub flags   : CommandBlockFlags
 }
 #[packet_part(VarInt)]
 pub enum CommandBlockMode {
@@ -412,6 +416,11 @@ pub enum CommandBlockMode {
     Auto     = 1,
     Redstone = 2
 }
+packet_flags!{pub struct CommandBlockFlags {
+    pub track_output : 0b00000001,
+    pub conditional  : 0b00000010,
+    pub automatic    : 0b00000100
+} }
 
 
 #[packet( prefix = 0x31, bound = C2S, stage = Play )]
@@ -463,7 +472,7 @@ pub struct ProgramStructureBlockC2SPacket {
     /// 0~1
     pub integrity : f32,
     pub seed      : VarLong,
-    pub flags     : u8
+    pub flags     : StructureBlockFlags
 }
 #[packet_part(VarInt)]
 pub enum StructureBlockAction {
@@ -492,6 +501,11 @@ pub enum StructureBlockRot {
     Clockwise180       = 2,
     CounterClockwise90 = 3
 }
+packet_flags!{ pub struct StructureBlockFlags {
+    pub ignore_entities : 0b00000001,
+    pub show_air        : 0b00000010,
+    pub show_bounds     : 0b00000100
+} }
 
 
 #[packet( prefix = 0x35, bound = C2S, stage = Play )]
