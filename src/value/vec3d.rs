@@ -1,7 +1,7 @@
 use super::*;
 
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Default)]
 pub struct Vec3d {
     pub x : f64,
     pub y : f64,

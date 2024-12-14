@@ -29,6 +29,8 @@ impl<Idx : From<usize> + Into<usize>, T : fmt::Debug> fmt::Debug for LengthPrefi
     write!(f, "LengthPrefixVec{:?}", self.inner)
 } }
 
+impl<Idx : From<usize> + Into<usize>, T> Default for LengthPrefixVec<Idx, T> { fn default() -> Self { Self::new() } }
+
 impl<Idx : From<usize> + Into<usize>, T> Deref for LengthPrefixVec<Idx, T> {
     type Target = Vec<T>;
     fn deref(&self) -> &Self::Target { &self.inner }

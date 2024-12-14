@@ -30,6 +30,7 @@ impl<Idx : From<usize> + Into<usize>, K : Eq + Hash, V> From<HashMap<K, V>> for 
 impl<Idx : From<usize> + Into<usize>, K : Eq + Hash + fmt::Debug, V : fmt::Debug> fmt::Debug for LengthPrefixHashMap<Idx, K, V> { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "LengthPrefixHashMap{:?}", self.inner)
 } }
+impl<Idx : From<usize> + Into<usize>, K : Eq + Hash, V> Default for LengthPrefixHashMap<Idx, K, V> { fn default() -> Self { Self::new() } }
 
 impl<Idx : From<usize> + Into<usize>, K : Eq + Hash, V> Deref for LengthPrefixHashMap<Idx, K, V> {
     type Target = HashMap<K, V>;

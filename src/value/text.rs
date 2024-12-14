@@ -2,7 +2,7 @@ use super::*;
 use std::fmt;
 
 
-#[derive(Ser, Deser, Clone, PartialEq, Eq, Hash)]
+#[derive(Ser, Deser, Clone, PartialEq, Eq, Hash, Default)]
 pub struct Text(Vec<TextComponent>);
 impl Text {
     pub fn new() -> Self {

@@ -26,13 +26,12 @@ pub struct SetCompressionS2CPacket {
 pub struct LoginSuccessS2CPacket {
     pub uuid     : Uuid,
     pub username : String,
-    pub props    : LengthPrefixVec<VarInt, LoginSuccessProperty>
+    pub props    : LengthPrefixHashMap<VarInt, String, LoginSuccessProperty>
 }
 #[packet_part]
 pub struct LoginSuccessProperty {
-    pub name      : String,
-    pub value     : String,
-    pub signature : Option<String>
+    pub value : String,
+    pub sig   : Option<String>
 }
 
 
