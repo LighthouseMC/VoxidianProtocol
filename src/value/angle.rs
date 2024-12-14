@@ -2,7 +2,7 @@ use super::*;
 use std::f32::consts::TAU;
 
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Default)]
 pub struct Angle {
     frac : f32
 }

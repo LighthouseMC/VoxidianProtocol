@@ -9,7 +9,7 @@ pub struct ConsumeAllVec<T> {
 }
 impl<T> ConsumeAllVec<T> {
 
-    pub fn new(self) -> Self { Self {
+    pub fn new() -> Self { Self {
         inner : Vec::new()
     } }
 
@@ -24,6 +24,7 @@ impl<T> From<Vec<T>> for ConsumeAllVec<T> {
 impl<T : fmt::Debug> fmt::Debug for ConsumeAllVec<T> { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "ConsumeAllVec{:?}", self.inner)
 } }
+impl<T> Default for ConsumeAllVec<T> { fn default() -> Self { Self::new() } }
 
 impl<T> Deref for ConsumeAllVec<T> {
     type Target = Vec<T>;

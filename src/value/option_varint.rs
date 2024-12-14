@@ -1,9 +1,10 @@
 use super::*;
 
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default)]
 pub enum OptionVarInt {
     Some(VarInt),
+    #[default]
     None
 }
 impl OptionVarInt {

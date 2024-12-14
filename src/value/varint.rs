@@ -1,7 +1,7 @@
 use super::*;
 
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 pub struct VarInt(i32);
 
 impl VarInt {
