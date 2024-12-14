@@ -2,7 +2,7 @@ use super::*;
 use std::fmt;
 
 
-#[derive(Ser, Deser, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Ser, Deser, Clone, PartialEq, Eq, Hash)]
 pub struct Text(Vec<TextComponent>);
 impl Text {
     pub fn new() -> Self {
@@ -30,6 +30,9 @@ impl Text {
     }
 
 }
+impl fmt::Debug for Text { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "{}", self.to_json())
+} }
 
 #[derive(Ser, Deser, Clone, Debug, PartialEq, Eq, Hash, Default)]
 pub struct TextComponent {

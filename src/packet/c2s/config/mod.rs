@@ -11,7 +11,7 @@ pub struct ClientInfo {
     pub view_distance  : u8,
     pub chat_mode      : ClientChatMode,
     pub chat_colours   : bool,
-    pub skin_layers    : u8,
+    pub skin_layers    : SkinLayers,
     pub main_hand      : ClientMainHand,
     pub text_filtering : bool,
     pub server_listing : bool
@@ -27,6 +27,15 @@ pub enum ClientMainHand {
     Left  = 0,
     Right = 1
 }
+packet_flags!{ pub struct SkinLayers {
+    pub cape         : 0b00000001,
+    pub jacket       : 0b00000010,
+    pub left_sleeve  : 0b00000100,
+    pub right_sleeve : 0b00001000,
+    pub left_leg     : 0b00010000,
+    pub right_leg    : 0b00100000,
+    pub hat          : 0b01000000
+} }
 
 
 #[packet( prefix = 0x01, bound = C2S, stage = Config )]

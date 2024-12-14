@@ -6,7 +6,7 @@ use std::collections::HashMap;
 use std::hash::Hash;
 
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct LengthPrefixHashMap<Idx : From<usize> + Into<usize>, K : Eq + Hash, V> {
     inner : HashMap<K, V>,
     _ph   : PhantomData<Idx>
@@ -27,6 +27,9 @@ impl<Idx : From<usize> + Into<usize>, K : Eq + Hash, V> From<HashMap<K, V>> for 
         _ph   : PhantomData
     } }
 }
+impl<Idx : From<usize> + Into<usize>, K : Eq + Hash + fmt::Debug, V : fmt::Debug> fmt::Debug for LengthPrefixHashMap<Idx, K, V> { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "LengthPrefixHashMap{:?}", self.inner)
+} }
 
 impl<Idx : From<usize> + Into<usize>, K : Eq + Hash, V> Deref for LengthPrefixHashMap<Idx, K, V> {
     type Target = HashMap<K, V>;

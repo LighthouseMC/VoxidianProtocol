@@ -1,5 +1,5 @@
 use super::*;
-use std::{ iter, slice, vec, fmt };
+use std::{ fmt, iter, slice, vec };
 
 
 #[derive(Clone, Hash, Eq, PartialEq)]
@@ -34,7 +34,7 @@ impl PacketBuf {
             let Some(byte) = queue.next() else {
                 return Err(DecodeError::EndOfBuffer);
             };
-            bytes.push(secret_cipher.decrypt(&[byte])[0]);
+            bytes.push(secret_cipher.decrypt_u8(byte)?);
         }
         Ok((Self {
             inner : bytes,
@@ -49,11 +49,11 @@ impl PacketBuf {
 impl PacketBuf {
 
     pub fn into_inner(self) -> Vec<u8> {
-        self.inner
+        self.inner.into_iter().skip(self.read_idx).collect::<Vec<_>>()
     }
 
     pub fn as_slice(&self) -> &[u8] {
-        &self.inner
+        &self.inner.as_slice().get(self.read_idx..).unwrap_or(&[])
     }
 
 }
@@ -109,6 +109,11 @@ impl PacketBuf {
         }
         self.read_idx += bytes;
         Ok(out)
+    }
+
+    #[deprecated = "Are you sure?"]
+    pub(crate) fn insert(&mut self, idx : usize, bytes : &[u8]) {
+        self.inner.splice(idx..idx, bytes.iter().cloned());
     }
 
 }
@@ -167,7 +172,7 @@ mod tests {
     fn varint_decode_iter() {
         let data = [16, 0, 129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1, 1, 0];
         //          ^Packet length
-        let Ok((len, consumed)) = VarInt::decode_iter(&mut data.into_iter(), &mut SecretCipher::no_cipher()) else { panic!("decode_iter was not a success"); };
+        let Ok((len, consumed)) = VarInt::decode_iter(&mut data.into_iter()) else { panic!("decode_iter was not a success"); };
         assert_eq!(len.as_i32(), 16);
         assert_eq!(consumed, 1);
     }
@@ -178,7 +183,7 @@ mod tests {
         //          |   |------------------------------------------------------------------  |  ^Status request packet
         //          |   ^Handshake packet                                                    ^Packet length
         //          ^Packet length
-        let Ok((packetbuf, consumed)) = PacketBuf::from_raw_queue(data.into_iter(), &mut SecretCipher::no_cipher()) else { panic!("from_raw_queue was not a success") };
+        let Ok((packetbuf, consumed)) = PacketBuf::from_raw_queue(data.into_iter()) else { panic!("from_raw_queue was not a success") };
         assert_eq!(packetbuf.inner, [0, 129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1]);
         assert_eq!(consumed, 17);
     }

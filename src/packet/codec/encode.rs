@@ -60,28 +60,16 @@ impl <T : PacketEncode, const LEN : usize> PacketEncode for [T; LEN] { fn encode
 
 
 
-pub trait PacketEncodeFull {
+pub trait PrefixedPacketEncode {
     /// Encode the full packet.
-    /// This includes:
-    /// - Packet length (VarInt)
-    /// - Packet prefix/ID (VarInt)
-    /// - Packet data (...)
-    fn encode_full(&self, buf : &mut PacketBuf, secret_cipher : &mut SecretCipher) -> Result<(), EncodeError>;
+    /// This includes the packet ID and packet data, but **does not include the full packet length**
+    fn encode_prefixed(&self, buf : &mut PacketBuf) -> Result<(), EncodeError>;
 }
 
-impl<T : PacketEncode + PacketMeta> PacketEncodeFull for T {
-    fn encode_full(&self, buf : &mut PacketBuf, secret_cipher : &mut SecretCipher) -> Result<(), EncodeError> {
-        // Data
-        let mut data_buf = PacketBuf::new();
-        self.encode(&mut data_buf)?;
-        // Packet ID
-        let packetid = VarInt::from(Self::PREFIX as i32).as_bytes();
-        // Packet Length
-        let packetlen = VarInt::from((packetid.len() + data_buf.remaining()) as i32).as_bytes();
-        // Write
-        buf.write_u8s(&secret_cipher.encrypt(&packetlen));
-        buf.write_u8s(&secret_cipher.encrypt(&packetid));
-        buf.write_u8s(&secret_cipher.encrypt(data_buf.as_slice()));
+impl<T : PacketEncode + PacketMeta> PrefixedPacketEncode for T {
+    fn encode_prefixed(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+        buf.encode_write(VarInt::from(Self::PREFIX as i32))?;
+        self.encode(buf)?;
         Ok(())
     }
 }

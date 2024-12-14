@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct BlockPos {
     pub x : i32,
     pub y : i32,
@@ -9,6 +9,9 @@ pub struct BlockPos {
 impl BlockPos {
     pub fn new(x : i32, y : i32, z : i32) -> Self { Self { x, y, z } }
 }
+impl fmt::Debug for BlockPos { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "BlockPos({}, {}, {})", self.x, self.y, self.z)
+} }
 
 
 impl PacketEncode for BlockPos { fn encode(&self, buf : &mut super::PacketBuf) -> Result<(), super::EncodeError> {

@@ -3,13 +3,16 @@ use super::*;
 use std::collections::HashMap;
 
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub struct Nbt {
     pub name : String,
     pub root : NbtCompound
 }
+impl fmt::Debug for Nbt { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "Nbt({:?} -> Compound({:?}))", self.name, self.root)
+} }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub struct NbtCompound(HashMap<String, NbtElement>);
 impl NbtCompound {
     pub fn new() -> Self {
@@ -24,6 +27,9 @@ impl NbtCompound {
         self.0.insert(key.to_string(), value);
     }
 }
+impl fmt::Debug for NbtCompound { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "{:?}", self.0)
+} }
 
 
 #[derive(Clone, Debug, PartialEq)]

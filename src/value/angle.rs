@@ -2,7 +2,7 @@ use super::*;
 use std::f32::consts::TAU;
 
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct Angle {
     frac : f32
 }
@@ -18,6 +18,9 @@ impl Angle {
     pub fn as_deg(&self) -> f32 { self.frac * 360.0 }
 
 }
+impl fmt::Debug for Angle { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "Angle({}/1.0)", self.frac)
+} }
 
 
 impl PacketEncode for Angle { fn encode(&self, buf : &mut super::PacketBuf) -> Result<(), super::EncodeError> {

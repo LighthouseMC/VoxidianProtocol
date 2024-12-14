@@ -10,7 +10,10 @@ repository = "https://github.com/LighthouseMC/VoxidianProtocol"
 edition = "2024"
 
 [workspace]
-members = ["voxidian-datagen", "voxidian-protocol-macros" ]
+members = [
+    "voxidian-datagen",
+    "voxidian-protocol-macros"
+]
 
 [lints.rust]
 unused-parens = "allow"
@@ -31,7 +34,13 @@ version  = "1.11"
 features = [ "v4", "serde" ]
 
 [dependencies.cesu8]
+# Used for converting NBT strings into a format which can be packet en/decoded.
 version = "1.1"
 
 [dependencies.openssl]
+# Used for RSA public-key and AES128CFB8 secret-key encryption.
 version = "0.10"
+
+[dependencies.flate2]
+# Used for ZLib (de)compression of packets.
+version = "1.0"
