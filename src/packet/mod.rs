@@ -4,8 +4,8 @@ mod buffer;
 pub use buffer::*;
 mod meta;
 pub use meta::*;
-mod process;
-pub use process::*;
+pub mod processing;
+pub(crate) use processing::*;
 
 pub mod c2s;
 pub mod s2c;

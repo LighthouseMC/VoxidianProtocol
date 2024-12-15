@@ -5,6 +5,7 @@ use flate2::Compression;
 use flate2::write::{ ZlibEncoder, ZlibDecoder };
 
 
+#[derive(Debug)]
 pub enum CompressionMode {
     None,
     ZLib {

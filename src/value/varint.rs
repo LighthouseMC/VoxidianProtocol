@@ -36,18 +36,18 @@ impl PacketEncode for VarInt { fn encode(&self, buf : &mut PacketBuf) -> Result<
 } }
 
 impl PacketDecode for VarInt { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
-    let ((out, consumed)) = Self::decode_iter(&mut buf.iter(), &mut SecretCipher::no_cipher())?;
+    let ((out, consumed)) = Self::decode_iter(&mut buf.iter())?;
     buf.skip(consumed);
     Ok(out)
 } }
 impl VarInt {
     /// Also returns the number of bytes that were consumed.
-    pub fn decode_iter(iter : &mut impl Iterator<Item = u8>, secret_cipher : &mut SecretCipher) -> Result<(Self, usize), DecodeError> {
+    pub fn decode_iter(iter : &mut impl Iterator<Item = u8>) -> Result<(Self, usize), DecodeError> {
         const MAX_BYTES: usize = 5;
         let mut x = 0;
         let mut consumed = 0;
         for i in 0..MAX_BYTES {
-            let byte = secret_cipher.decrypt_u8(iter.next().ok_or(DecodeError::EndOfBuffer)?)?;
+            let byte = iter.next().ok_or(DecodeError::EndOfBuffer)?;
             consumed += 1;
             x |= (i32::from(byte) & 0b01111111) << (i * 7);
             if (byte & 0b10000000 == 0) {
