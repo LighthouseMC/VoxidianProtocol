@@ -26,15 +26,15 @@ impl PacketBuf {
     }
 
     /// Also returns the number of bytes that were consumed.
-    pub fn from_raw_queue(mut queue : impl Iterator<Item = u8>, secret_cipher : &mut SecretCipher) -> Result<(Self, usize), DecodeError> {
-        let (size, consumed) = VarInt::decode_iter(&mut queue, secret_cipher)?;
+    pub fn from_raw_queue(mut queue : impl Iterator<Item = u8>) -> Result<(Self, usize), DecodeError> {
+        let (size, consumed) = VarInt::decode_iter(&mut queue)?;
         let size = size.as_i32() as usize;
         let mut bytes = Vec::with_capacity(size);
         for _ in 0..size {
             let Some(byte) = queue.next() else {
                 return Err(DecodeError::EndOfBuffer);
             };
-            bytes.push(secret_cipher.decrypt_u8(byte)?);
+            bytes.push(byte);
         }
         Ok((Self {
             inner : bytes,

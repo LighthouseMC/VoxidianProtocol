@@ -1,5 +1,6 @@
 use super::*;
 
+use std::fmt;
 use openssl::pkey::{ PKey, Private, Public };
 use openssl::encrypt::{ Encrypter, Decrypter };
 use openssl::rsa::{ Rsa, Padding };
@@ -50,14 +51,18 @@ impl PrivateKey {
     }
 
 }
+impl fmt::Debug for PrivateKey { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "PrivateKey(REDACTED)")
+} }
 
 
 /// A secret AES key, shared between endpoints using the public key.
 /// Can also be a no-cipher which will not encrypt anything.
-pub struct SecretCipher(Option<SecretCipherInner>);
-struct SecretCipherInner {
-    en : Crypter,
-    de : Crypter
+pub struct SecretCipher(pub(crate) Option<SecretCipherInner>);
+pub(crate) struct SecretCipherInner {
+    pub(crate)  key : Vec<u8>,
+                en  : Crypter,
+                de  : Crypter
 }
 impl SecretCipher {
 
@@ -66,8 +71,9 @@ impl SecretCipher {
     pub fn is_no_cipher(&self) -> bool { matches!(self.0, None) } // `self.de` is guaranteed to have the same `is_some` as `self.en`.
 
     pub fn from_key_bytes(key_iv : &[u8]) -> Self { Self(Some(SecretCipherInner {
-        en : Crypter::new(Cipher::aes_128_cfb8(), Mode::Encrypt, key_iv, Some(key_iv)).unwrap(),
-        de : Crypter::new(Cipher::aes_128_cfb8(), Mode::Decrypt, key_iv, Some(key_iv)).unwrap()
+        key : key_iv.to_vec(),
+        en  : Crypter::new(Cipher::aes_128_cfb8(), Mode::Encrypt, key_iv, Some(key_iv)).unwrap(),
+        de  : Crypter::new(Cipher::aes_128_cfb8(), Mode::Decrypt, key_iv, Some(key_iv)).unwrap()
     })) }
 
     pub fn encrypt(&mut self, plaindata : PacketBuf) -> PacketBuf {

@@ -22,9 +22,11 @@ impl PacketProcessing {
         Ok(ciphertext)
     }
 
+    /// Queue must contain data that was **already encrypted**.
+    /// 
     /// Also returns the number of bytes that were consumed.
-    pub fn decrypt_decode_from_raw_queue(&mut self, queue : impl Iterator<Item = u8>) -> Result<(PacketBuf, usize), DecodeError> {
-        let (smalltext, consumed) = PacketBuf::from_raw_queue(queue, &mut self.secret_cipher)?;
+    pub fn decode_from_raw_queue(&mut self, queue : impl Iterator<Item = u8>) -> Result<(PacketBuf, usize), DecodeError> {
+        let (smalltext, consumed) = PacketBuf::from_raw_queue(queue)?;
         let plaintext = self.compression.decompress(smalltext)?;
         Ok((plaintext, consumed))
     }

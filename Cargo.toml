@@ -44,3 +44,12 @@ version = "0.10"
 [dependencies.flate2]
 # Used for ZLib (de)compression of packets.
 version = "1.0"
+
+[dependencies.reqwest]
+# Used for making requests to the Mojang authentication servers.
+version  = "0.12"
+features = [ "blocking" ]
+
+[dependencies.num-bigint]
+# Used for generating Java-style signed hexdigests to send to the Mojang authentication servers.
+version = "0.4"
