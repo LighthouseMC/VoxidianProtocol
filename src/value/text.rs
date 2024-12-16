@@ -15,6 +15,9 @@ impl Text {
 impl From<Vec<TextComponent>> for Text { fn from(from : Vec<TextComponent>) -> Self {
     Self(from)
 } }
+impl From<TextComponent> for Text { fn from(from : TextComponent) -> Self {
+    Self(vec![ from ])
+} }
 impl Text {
 
     pub fn to_json(&self) -> String {

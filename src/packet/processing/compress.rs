@@ -15,6 +15,14 @@ pub enum CompressionMode {
 }
 impl CompressionMode {
 
+    pub fn threshold(&self) -> VarInt { VarInt::from(match (self) {
+        CompressionMode::None               => -1,
+        CompressionMode::ZLib { threshold } => *threshold as i32,
+    }) }
+
+}
+impl CompressionMode {
+
 
     /// `plaintext` should include the packet ID and packet data, but **should not include the full packet length**.
     /// 

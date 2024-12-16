@@ -3,7 +3,9 @@ use super::*;
 
 #[packet( prefix = 0x00, bound = C2S, stage = Login )]
 pub struct LoginStartC2SPacket {
+    /// According to the client.
     pub username : String,
+    /// According to the client.
     pub uuid     : Uuid
 }
 

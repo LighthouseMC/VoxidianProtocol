@@ -38,17 +38,20 @@ impl MojAuth {
         sha.update(&public_key.der_bytes());
         let sha = BigInt::from_signed_bytes_be(&sha.finish()).to_str_radix(16);
         let url = format!("https://sessionserver.mojang.com/session/minecraft/hasJoined?username={}&serverId={}", username.as_ref(), sha);
-        MojAuthHandle(thread::spawn(move || {
-            let response = reqwest::get(&url).map_err(|_| MojAuthError::AuthServerDown)?;
-            match (response.status().as_u16()) {
-                200 => {
-                    let body = response.text().map_err(|_| MojAuthError::InvalidData)?;
-                    Ok(serde_json::from_str::<MojAuth>(&body).expect(&format!("Body was {}", body)))
-                },
-                204 => Err(MojAuthError::Unverified),
-                _   => Err(MojAuthError::InvalidData)
-            }
-        } ) )
+        MojAuthHandle {
+            already_done : None,
+            handle : Some(thread::spawn(move || {
+                let response = reqwest::get(&url).map_err(|_| MojAuthError::AuthServerDown)?;
+                match (response.status().as_u16()) {
+                    200 => {
+                        let body = response.text().map_err(|_| MojAuthError::InvalidData)?;
+                        Ok(serde_json::from_str::<MojAuth>(&body).expect(&format!("Body was {}", body)))
+                    },
+                    204 => Err(MojAuthError::Unverified),
+                    _   => Err(MojAuthError::InvalidData)
+                }
+            } ))
+        }
     }
 
     pub fn start_blocking<U : AsRef<str>, S : AsRef<str>>(username : U, server_id : S, secret_cipher : &SecretCipher, public_key : &PublicKey) -> Result<MojAuth, MojAuthError> {
@@ -58,16 +61,29 @@ impl MojAuth {
 }
 
 
-pub struct MojAuthHandle(JoinHandle<Result<MojAuth, MojAuthError>>);
+pub struct MojAuthHandle {
+    already_done : Option<Result<MojAuth, MojAuthError>>,
+    handle       : Option<JoinHandle<Result<MojAuth, MojAuthError>>>
+}
 
 impl MojAuthHandle {
 
+    pub fn no_data() -> Self { Self {
+        already_done : Some(Err(MojAuthError::InvalidData)),
+        handle       : None
+    } }
+
+    pub fn already_finished(mojauth : MojAuth) -> Self { Self {
+        already_done : Some(Ok(mojauth)),
+        handle       : None
+    } }
+
     pub fn is_finished(&self) -> bool {
-        self.0.is_finished()
+        matches!(self.already_done, Some(_)) || self.handle.as_ref().unwrap().is_finished()
     }
 
     pub fn wait_to_finish(self) -> Result<MojAuth, MojAuthError> {
-        self.0.join().unwrap()
+        self.already_done.unwrap_or_else(|| self.handle.unwrap().join().unwrap())
     }
 
 }
