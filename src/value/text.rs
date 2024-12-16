@@ -83,7 +83,7 @@ impl TextComponent {
         self.with_content(TextContent::Literal { literal : literal.into() })
     }
     pub fn with_translate<S : Into<String>>(&self, translation : S) -> Self {
-        self.with_content(TextContent::Translate { translation : translation.into() })
+        self.with_content(TextContent::Translate { translate : translation.into() })
     }
     pub fn with_keybind<S : Into<String>>(&self, keybind : S) -> Self {
         self.with_content(TextContent::Keybind { keybind : keybind.into() })
@@ -188,8 +188,8 @@ pub enum TextContent {
         literal : String
     },
     Translate {
-        #[serde(rename = "translatable")]
-        translation : String
+        #[serde(rename = "translate")]
+        translate : String
     },
     Keybind {
         keybind : String
@@ -329,7 +329,7 @@ impl fmt::Display for TextComponent { fn fmt(&self, f : &mut fmt::Formatter<'_>)
 } }
 impl fmt::Display for TextContent { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
     let ( TextContent::Literal   { literal     : text }
-        | TextContent::Translate { translation : text }
+        | TextContent::Translate { translate : text }
         | TextContent::Keybind   { keybind     : text }
     ) = self;
     write!(f, "{}", text)
