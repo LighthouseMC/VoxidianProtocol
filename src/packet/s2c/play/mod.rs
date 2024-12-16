@@ -1354,4 +1354,4 @@ pub struct ServerLinksS2CPacket {
 }
 
 
-packet_full_decode!( bound = S2C, stage = Play );
+packet_full_decode!{ PlayS2CPackets }

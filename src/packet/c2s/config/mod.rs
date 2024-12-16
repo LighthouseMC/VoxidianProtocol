@@ -88,4 +88,4 @@ pub struct KnownPacksC2SPacket {
 }
 
 
-packet_full_decode!( bound = C2S, stage = Config );
+packet_full_decode!{ ConfigC2SPackets }

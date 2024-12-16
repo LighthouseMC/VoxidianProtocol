@@ -66,7 +66,7 @@ pub struct PongResponseS2CPacket {
 
 
 
-packet_full_decode!( bound = S2C, stage = Status );
+packet_full_decode!{ StatusS2CPackets }
 
 
 

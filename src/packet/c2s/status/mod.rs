@@ -11,4 +11,4 @@ pub struct PingRequestC2SPacket {
 }
 
 
-packet_full_decode!( bound = C2S, stage = Status );
+packet_full_decode!{ StatusC2SPackets }

@@ -24,4 +24,4 @@ impl IntendedStage {
 }
 
 
-packet_full_decode!( bound = C2S, stage = Handshake );
+packet_full_decode!{ HandshakeC2SPackets }

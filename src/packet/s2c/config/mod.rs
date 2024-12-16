@@ -133,4 +133,4 @@ pub enum BuiltInServerLink {
 }
 
 
-packet_full_decode!( bound = S2C, stage = Config );
+packet_full_decode!{ ConfigS2CPackets }

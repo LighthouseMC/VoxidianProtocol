@@ -1,15 +1,20 @@
-#![feature(proc_macro_diagnostic)]
+#![feature(
+    proc_macro_diagnostic,
+    proc_macro_span,
+    let_chains
+)]
 
-use std::collections::HashMap;
-use std::sync::Mutex;
-use proc_macro::{Span, TokenStream};
+use std::fs;
+use proc_macro::{ Span, TokenStream };
 use proc_macro2::TokenStream as TokenStream2;
 use quote::{quote, quote_spanned};
 use syn::{
-    Expr, Field, Fields, FieldsNamed, FieldsUnnamed, Ident, Index, Item, ItemEnum, ItemStruct, LitBool, Type, Variant, Visibility,
-    parse_macro_input, parse_str, spanned::Spanned,
+    Expr, Field, Fields, FieldsNamed, FieldsUnnamed,
+    Ident, Index, Item, ItemEnum, ItemStruct, LitBool,
+    Meta, MetaList, Type, Variant, Visibility,
+    parse_macro_input, parse_str,
+    spanned::Spanned,
 };
-use lazy_static::lazy_static;
 
 
 include!("packet.rs");
