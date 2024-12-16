@@ -3,7 +3,7 @@ pub fn packet(attr : TokenStream, item : TokenStream) -> TokenStream {
     let input = item.clone();
     let input = parse_macro_input!(input as Item);
     match (&input) {
-        Item::Struct(item_struct @ ItemStruct { ident, fields, .. }) => {
+        Item::Struct(item_struct @ ItemStruct { attrs, vis, struct_token, ident, generics, fields, semi_token }) => {
 
 
             let MetaKVPairs { meta_prefix, meta_bound, meta_stage, meta_allow_priv } = match (MetaKVPairs::split(attr)) {
@@ -13,64 +13,102 @@ pub fn packet(attr : TokenStream, item : TokenStream) -> TokenStream {
                     return item
                 }
             };
-            let Some(meta_prefix ) = meta_prefix else { Span::call_site().error("No `prefix` value given" ).emit(); return item };
-            let Some(meta_bound  ) = meta_bound  else { Span::call_site().error("No `bound` value given"  ).emit(); return item };
-            let Some(meta_stage  ) = meta_stage  else { Span::call_site().error("No `stage` value given"  ).emit(); return item };
+            let Some(meta_prefix ) = meta_prefix else { return quote_spanned!{ Span2::call_site() => compile_error!("No `prefix` value given" ); }.into() };
+            let Some(meta_bound  ) = meta_bound  else { return quote_spanned!{ Span2::call_site() => compile_error!("No `bound` value given"  ); }.into() };
+            let Some(meta_stage  ) = meta_stage  else { return quote_spanned!{ Span2::call_site() => compile_error!("No `stage` value given"  ); }.into() };
             let allow_priv = meta_allow_priv.is_some_and(|allow_priv| allow_priv);
 
-            let struct_name = quote!{ #ident }.to_string();
+            let struct_name = ident.to_string();
             if (! struct_name.ends_with(&format!("{}Packet", quote!{ #meta_bound }.to_string()))) {
                 Span::call_site().warning(format!("Packet `{}` does not have standard suffix `{}Packet`", struct_name, meta_bound)).emit();
             }
 
-            let (encode, decode) = match (fields) {
 
-                Fields::Named(FieldsNamed { named, .. }) => {
+            let (new_fields, encode, decode, debug) = match (fields) {
+
+                Fields::Named(FieldsNamed { brace_token, named }) => {
+                    let mut new_named = Punctuated::new();
                     let mut encode = Vec::new();
                     let mut decode = Vec::new();
-                    for field @ Field { ident, vis, .. } in named {
+                    let mut debug  = Vec::new();
+                    for field @ Field { attrs, vis, mutability, ident, colon_token, ty } in named {
                         if let Some(ident) = ident {
                             if (! allow_priv) { if let Visibility::Public(_) = vis { } else {
                                 Span::call_site().warning(format!("Packet `{}` field `{}` is not public", item_struct.ident, ident)).emit();
                             } }
+                            let ident_str = ident.to_string();
+                            let mut new_attrs = Vec::new();
+                            let mut redacted  = false;
+                            for attr in attrs { if let Meta::Path(path) = &attr.meta && let Some(ident) = path.get_ident() && (ident.to_string() == "redacted") {
+                                redacted = true;
+                            } else {
+                                new_attrs.push(attr.clone());
+                            } }
+                            new_named.push(Field { attrs : new_attrs, vis : vis.clone(), mutability : mutability.clone(), ident : Some(ident.clone()), colon_token : *colon_token, ty : ty.clone() });
                             encode.push(quote_spanned!{ field.span() => buf.encode_write(&self.#ident)?; });
-                            decode.push(
-                                quote_spanned!{ field.span() => #ident : buf.read_decode()?, },
-                            );
+                            decode.push(quote_spanned!{ field.span() => #ident : buf.read_decode()?, },);
+                            debug.push(if (redacted) {
+                                quote_spanned!{ field.span() => .field_with(#ident_str, |f| write!(f, "<REDACTED>")) }
+                            } else {
+                                quote_spanned!{ field.span() => .field(#ident_str, &self.#ident) }
+                            })
                         } else {
-                            let item2: TokenStream2 = item.into();
-                            let error = quote_spanned!{ field.span() => compile_error!("Named fields without an identifier are not allowed in packet items"); };
-                            return quote! {
-                                #item2
-                                #error
-                            }
-                            .into();
+                            return quote_spanned!{ field.span() => compile_error!("Named fields without an identifier are not allowed in packet items"); }.into();
                         }
                     }
-                    (quote! { #(#encode)* }, quote! { { #(#decode)* } })
+                    (
+                        Fields::Named(FieldsNamed { brace_token : *brace_token, named : new_named }),
+                        quote!{ #(#encode)* },
+                        quote!{ { #(#decode)* } },
+                        quote!{ f.debug_struct(#struct_name) #(#debug)* .finish() }
+                    )
                 }
 
-                Fields::Unnamed(FieldsUnnamed { unnamed, .. }) => {
+                Fields::Unnamed(FieldsUnnamed { paren_token, unnamed }) => {
+                    let mut new_unnamed = Punctuated::new();
                     let mut encode = Vec::new();
                     let mut decode = Vec::new();
-                    for (i, field) in unnamed.iter().enumerate() {
+                    let mut debug  = Vec::new();
+                    for (i, field @ Field { attrs, vis, mutability, ident : _, colon_token, ty }) in unnamed.iter().enumerate() {
                         if (! allow_priv) { if let Visibility::Public(_) = field.vis { } else {
                             Span::call_site().warning(format!("Packet `{}` field `{}` is not public", item_struct.ident, i)).emit();
                         } }
                         let i = Index::from(i);
+                        let mut new_attrs = Vec::new();
+                        let mut redacted  = false;
+                        for attr in attrs { if let Meta::Path(path) = &attr.meta && let Some(ident) = path.get_ident() && (ident.to_string() == "redacted") {
+                            redacted = true;
+                        } else {
+                            new_attrs.push(attr.clone());
+                        } }
+                        new_unnamed.push(Field { attrs : new_attrs, vis : vis.clone(), mutability : mutability.clone(), ident : None, colon_token : *colon_token, ty : ty.clone() });
                         encode.push(quote_spanned!{ field.span() => buf.encode_write(&self.#i)?; });
                         decode.push(quote_spanned!{ field.span() => buf.read_decode()?, });
+                        debug.push(if (redacted) {
+                            quote_spanned!{ field.span() => .field_with(|f| write!(f, "<REDACTED>")) }
+                        } else {
+                            quote_spanned!{ field.span() => .field(&self.#i) }
+                        })
                     }
-                    (quote! { #(#encode)* }, quote! { ( #(#decode)* ) })
+                    (
+                        Fields::Unnamed(FieldsUnnamed { paren_token : *paren_token, unnamed : new_unnamed }),
+                        quote!{ #(#encode)* },
+                        quote!{ ( #(#decode)* ) },
+                        quote!{ f.debug_tuple(#struct_name) #(#debug)* .finish() }
+                    )
                 }
 
-                Fields::Unit => (quote! {}, quote! {}),
+                Fields::Unit => (
+                    Fields::Unit,
+                    quote!{},
+                    quote!{},
+                    quote!{ write!(f, #struct_name) }
+                ),
 
             };
-            let item2: TokenStream2 = item.into();
             (quote!{
-                #[derive(Debug, Clone)]
-                #item2
+                #(#attrs)* #vis #struct_token #ident #generics #new_fields #semi_token
+                impl fmt::Debug for #ident { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result { #debug } }
                 impl PacketMeta for #ident {
                     const PREFIX : usize = #meta_prefix;
                     const BOUND  : Bound = Bound::#meta_bound;
@@ -83,8 +121,7 @@ pub fn packet(attr : TokenStream, item : TokenStream) -> TokenStream {
 
         },
         _ => {
-            Span::call_site().error("Unsupported item").emit();
-            item
+            quote_spanned!{ Span2::call_site() => compile_error!("Unsupported item"); }.into()
         }
     }
 }

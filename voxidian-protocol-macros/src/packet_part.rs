@@ -34,7 +34,10 @@ pub fn packet_part(attr : TokenStream, item : TokenStream) -> TokenStream {
                                 .into();
                             }
                         }
-                        (quote! { #(#encode)* }, quote! { { #(#decode)* } })
+                        (
+                            quote!{ #(#encode)* },
+                            quote!{ { #(#decode)* } }
+                        )
                     }
 
                     Fields::Unnamed(FieldsUnnamed { unnamed, .. }) => {
@@ -45,15 +48,21 @@ pub fn packet_part(attr : TokenStream, item : TokenStream) -> TokenStream {
                             encode.push(quote_spanned!{ field.span() => buf.encode_write(&self.#i)?; });
                             decode.push(quote_spanned!{ field.span() => buf.read_decode()?, });
                         }
-                        (quote! { #(#encode)* }, quote! { ( #(#decode)* ) })
+                        (
+                            quote!{ #(#encode)* },
+                            quote!{ ( #(#decode)* ) }
+                        )
                     }
 
-                    Fields::Unit => (quote! {}, quote! {}),
+                    Fields::Unit => (
+                        quote!{},
+                        quote!{}
+                    ),
 
                 };
                 let item2 : TokenStream2 = item.into();
                 quote!{
-                    #[derive(Debug, Clone)]
+                    #[derive(Debug)]
                     #item2
                     impl PacketEncode for #ident { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { #encode Ok(()) } }
                     impl PacketDecode for #ident { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> { Ok(Self #decode) } }
