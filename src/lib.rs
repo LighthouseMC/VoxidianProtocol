@@ -1,7 +1,8 @@
 #![feature(
     iter_array_chunks,
     decl_macro,
-    ascii_char
+    ascii_char,
+    debug_closure_helpers
 )]
 
 pub mod packet;

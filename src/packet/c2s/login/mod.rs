@@ -13,8 +13,10 @@ pub struct LoginStartC2SPacket {
 #[packet( prefix = 0x01, bound = C2S, stage = Login )]
 pub struct EncryptionResponseC2SPacket {
     /// Encrypted using the server's public key.
+    #[redacted]
     pub secret_key : LengthPrefixVec<VarInt, u8>,
     /// Encrypted using the server's public key.
+    #[redacted]
     pub verify_token : LengthPrefixVec<VarInt, u8>
 }
 
