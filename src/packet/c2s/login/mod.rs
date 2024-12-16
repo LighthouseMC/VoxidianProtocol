@@ -37,4 +37,4 @@ pub struct CookieResponseC2SPacket {
 }
 
 
-packet_full_decode!( bound = C2S, stage = Login );
+packet_full_decode!{ LoginC2SPackets }

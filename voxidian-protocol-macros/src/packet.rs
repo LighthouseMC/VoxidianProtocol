@@ -1,16 +1,3 @@
-type Stage = String;
-type Bound = String;
-#[derive(Debug)]
-struct Packet {
-    prefix      : String,
-    struct_name : String
-}
-
-lazy_static!{
-    static ref PACKET_REFLECTION : Mutex<HashMap<Stage, HashMap<Bound, Vec<Packet>>>> = Mutex::new(HashMap::new());
-}
-
-
 #[proc_macro_attribute]
 pub fn packet(attr : TokenStream, item : TokenStream) -> TokenStream {
     let input = item.clone();
@@ -35,14 +22,6 @@ pub fn packet(attr : TokenStream, item : TokenStream) -> TokenStream {
             if (! struct_name.ends_with(&format!("{}Packet", quote!{ #meta_bound }.to_string()))) {
                 Span::call_site().warning(format!("Packet `{}` does not have standard suffix `{}Packet`", struct_name, meta_bound)).emit();
             }
-
-            PACKET_REFLECTION.lock().unwrap()
-                .entry(meta_stage.to_string()).or_insert_with(|| HashMap::new())
-                .entry(meta_bound.to_string()).or_insert_with(|| Vec::new())
-                .push(Packet {
-                    prefix      : quote!{ #meta_prefix }.to_string(),
-                    struct_name
-                });
 
             let (encode, decode) = match (fields) {
 

@@ -556,4 +556,4 @@ pub struct UseItemC2SPacket {
 }
 
 
-packet_full_decode!( bound = C2S, stage = Play );
+packet_full_decode!{ PlayC2SPackets }

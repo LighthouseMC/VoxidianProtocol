@@ -18,6 +18,7 @@ pub(crate) use serde_json::ser::to_string as to_json_string;
 pub(crate) use serde_json::de::from_str as from_json_str;
 pub(crate) use uuid::Uuid;
 
+
 pub(crate) macro packet_flags(
     $vis:vis struct $ident:ident { $(
         $fieldvis:vis $fieldident:ident : $bitmask:tt

@@ -49,4 +49,4 @@ pub struct CookieRequestS2CPacket {
 }
 
 
-packet_full_decode!( bound = S2C, stage = Login );
+packet_full_decode!{ LoginS2CPackets }

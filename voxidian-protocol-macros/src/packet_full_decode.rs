@@ -1,57 +1,32 @@
 #[proc_macro]
 pub fn packet_full_decode(input : TokenStream) -> TokenStream {
-
-
-    let MetaKVPairs { meta_prefix, meta_bound, meta_stage, meta_allow_priv } = match (MetaKVPairs::split(input)) {
-        Ok(meta) => meta,
-        Err(e) => {
-            Span::call_site().error(e).emit();
-            return quote!{ }.into();
+    let source_file = syn::parse_file(&fs::read_to_string(Span::call_site().source_file().path()).unwrap()).unwrap();
+    let mut fields = Vec::new();
+    let mut encode = Vec::new();
+    let mut decode = Vec::new();
+    for item in source_file.items {
+        if let Item::Struct(ItemStruct { attrs, ident, .. }) = item {
+            if (attrs.iter().any(|attr| { if let Meta::List(MetaList { path, .. }) = &attr.meta && let Some(ident) = path.get_ident() && (ident.to_string() == "packet") { true } else { false } })) {
+                let ident_str = ident.to_string();
+                let field_ident = parse_str::<Ident>(ident_str.strip_suffix("S2CPacket").or_else(|| ident_str.strip_suffix("C2SPacket")).unwrap_or(&ident_str)).unwrap();
+                fields.push(quote!{ #field_ident ( #ident ), });
+                encode.push(quote!{ Self::#field_ident(packet) => PrefixedPacketEncode::encode_prefixed(packet, buf), });
+                decode.push(quote!{ #ident::PREFIX => { Ok(Self::#field_ident(PacketDecode::decode(buf)?)) } });
+            }
         }
-    };
-    let None             = meta_prefix     else { Span::call_site().error("`prefix` value must not be given"     ).emit(); return TokenStream::new() };
-    let None             = meta_allow_priv else { Span::call_site().error("`allow_priv` value must not be given" ).emit(); return TokenStream::new() };
-    let Some(meta_bound) = meta_bound      else { Span::call_site().error("No `bound` value given"               ).emit(); return TokenStream::new() };
-    let Some(meta_stage) = meta_stage      else { Span::call_site().error("No `stage` value given"               ).emit(); return TokenStream::new() };
-    let meta_bound = quote!{ #meta_bound }.to_string();
-    let meta_stage = quote!{ #meta_stage }.to_string();
-
-    let by_stage = PACKET_REFLECTION.lock().unwrap();
-    let Some(by_bound) = by_stage.get(&meta_stage) else {
-        Span::call_site().error(format!("No packets defined in stage {}", meta_stage)).emit();
-        return TokenStream::new()
-    };
-    let Some(packets) = by_bound.get(&meta_bound) else {
-        Span::call_site().error(format!("No packets defined in stage {} bound {}", meta_stage, meta_bound)).emit();
-        return TokenStream::new()
-    };
-
-    let ident = parse_str::<Ident>(&format!("{}{}Packets", meta_stage, meta_bound)).unwrap();
-
-    let mut variants = Vec::new();
-    let mut encode   = Vec::new();
-    let mut decode   = Vec::new();
-    for packet in packets {
-        let struct_name = parse_str::<Ident>(&packet.struct_name).unwrap();
-        let variant_name = parse_str::<Ident>(packet.struct_name.strip_suffix(&format!("{}Packet", meta_bound)).unwrap_or(&packet.struct_name)).unwrap();
-        let packet_prefix = parse_str::<Expr>(&packet.prefix).unwrap();
-        variants.push(quote!{ #variant_name( #struct_name ), });
-        encode.push(quote!{ Self::#variant_name(packet) => PrefixedPacketEncode::encode_prefixed(packet, buf), });
-        decode.push(quote!{ #packet_prefix => { Ok(Self::#variant_name(PacketDecode::decode(buf)?)) } });
     }
-
-
+    let input2 : TokenStream2 = input.into();
     quote!{
         #[derive(Debug)]
-        pub enum #ident { #(#variants)* }
-        impl PrefixedPacketEncode for #ident {
+        pub enum #input2 { #( #fields )* }
+        impl PrefixedPacketEncode for #input2 {
             fn encode_prefixed(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { match (self) {
                 #(#encode)*
             } }
         }
-        impl PrefixedPacketDecode for #ident {
+        impl PrefixedPacketDecode for #input2 {
             fn decode_prefixed(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
-                let packetid = buf.read_decode::<VarInt>().unwrap().as_i32();
+                let packetid = buf.read_decode::<VarInt>().unwrap().as_i32() as usize;
                 match (packetid) {
                     #(#decode)*
                     _ => Err(DecodeError::UnknownPacketPrefix)
