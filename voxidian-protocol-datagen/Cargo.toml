@@ -1,9 +1,10 @@
 [package]
-name        = "voxidian-protocol-macros"
+name        = "voxidian-protocol-datagen"
 version     = "0.1.0"
 authors     = ["LighthouseMC <https://github.com/LighthouseMC>"]
 description = "Minecraft network protocol datastructures and implementations in Rust."
 license     = "LGPL-3.0"
+publish     = false
 
 homepage   = "https://github.com/LighthouseMC"
 repository = "https://github.com/LighthouseMC/VoxidianProtocol"
@@ -14,17 +15,3 @@ workspace = "../"
 
 [lints.rust]
 unused-parens = "allow"
-
-[lib]
-proc-macro = true
-
-
-[dependencies.syn]
-version  = "2.0"
-features = [ "full" ]
-
-[dependencies.quote]
-version = "1.0"
-
-[dependencies.proc-macro2]
-version = "1.0"
