@@ -17,8 +17,9 @@ pub struct QueryBlockEntityTagC2SPacket {
 
 
 #[packet( prefix = 0x02, bound = C2S, stage = Play )]
-pub struct ChangeDifficultyC2SPacket {
-    pub difficulty : Difficulty
+pub struct BundleItemSelectedC2SPacket {
+    pub inv_index          : VarInt,
+    pub bundle_inner_index : VarInt
 }
 
 
@@ -34,10 +35,10 @@ pub struct ChatCommandC2SPacket {
 }
 
 
-// TODO: SignedChatCommandC2SPacket
+// TODO: 0x05 SignedChatCommandC2SPacket
 
 
-// TODO: ChatMessageC2SPacket
+// TODO: 0x06 ChatMessageC2SPacket
 
 
 #[packet( prefix = 0x07, bound = C2S, stage = Play )]
@@ -74,10 +75,7 @@ pub struct ClientInfoC2SPacket {
 
 
 #[packet( prefix = 0x0B, bound = C2S, stage = Play )]
-pub struct CommandSuggestionsRequestC2SPacket {
-    pub transaction    : VarInt,
-    pub left_of_cursor : String
-}
+pub struct ClientTickEndC2SPacket;
 
 
 #[packet( prefix = 0x0C, bound = C2S, stage = Play )]
@@ -91,10 +89,16 @@ pub struct ClickContainerButtonC2SPacket {
 }
 
 
-/*#[packet( prefix = 0x0E, bound = C2S, stage = Play )]
+// TODO: 0x0E
+
+
+// TODO: 0x0F
+
+
+/*#[packet( prefix = 0x10, bound = C2S, stage = Play )]
 pub struct ClickContainerSlotC2SPacket {
     /// 0 is player inventory
-    pub window  : u8,
+    pub window  : VarInt,
     pub state   : VarInt,
     pub slot    : u16,
     pub button  : u8,
@@ -108,26 +112,10 @@ pub struct SlotChange {
 }*/
 
 
-#[packet( prefix = 0x0F, bound = C2S, stage = Play )]
+#[packet( prefix = 0x11, bound = C2S, stage = Play )]
 pub struct CloseContainerC2SPacket {
     /// 0 for player inventory
-    pub window : u8
-}
-
-
-/// Used by crafters to lock and unlock slots.
-#[packet( prefix = 0x10, bound = C2S, stage = Play )]
-pub struct ChangeContainerSlotStateC2SPacket {
-    pub slot   : VarInt,
-    pub window : VarInt,
-    pub state  : bool
-}
-
-
-#[packet( prefix = 0x11, bound = C2S, stage = Play )]
-pub struct CookieResponseC2SPacket {
-    pub key     : Identifier,
-    pub payload : Option<LengthPrefixVec<VarInt, u8>>
+    pub window : VarInt
 }
 
 
@@ -144,13 +132,7 @@ pub struct DebugSampleSubscriptionC2SPacket {
 }
 
 
-#[packet( prefix = 0x14, bound = C2S, stage = Play )]
-pub struct EditBookC2SPacket {
-    pub slot    : VarInt,
-    pub entries : LengthPrefixVec<VarInt, String>,
-    /// If this field is `Some`, the book is being signed.
-    pub title   : Option<String>
-}
+// TODO: 0x14
 
 
 #[packet( prefix = 0x15, bound = C2S, stage = Play )]
@@ -161,21 +143,11 @@ pub struct QueryEntityTagC2SPacket {
 
 
 #[packet( prefix = 0x16, bound = C2S, stage = Play )]
-pub struct InteractEntityC2SPacket {
-    pub entity : VarInt,
-    pub kind   : InteractEntityKind,
-    pub hand   : Option<Hand>,
-    pub sneak  : bool
-}
-#[packet_part(VarInt)]
-pub enum InteractEntityKind {
-    Interact = 0,
-    Attack   = 1,
-    InteractAt {
-        x : f32,
-        y : f32,
-        z : f32
-    } = 2
+pub struct EditBookC2SPacket {
+    pub inv_index : VarInt,
+    pub entries   : LengthPrefixVec<VarInt, String>,
+    /// If this field is `Some`, the book is being signed.
+    pub title     : Option<String>
 }
 
 
@@ -202,8 +174,12 @@ pub struct SetPlayerPosC2SPacket {
     pub x      : f64,
     pub feet_y : f64,
     pub z      : f64,
-    pub ground : bool
+    pub flags  : PlayerPosFlags
 }
+packet_flags!{ pub struct PlayerPosFlags {
+    pub on_ground    : 0b00000001,
+    pub pushing_wall : 0b00000010
+} }
 
 
 #[packet( prefix = 0x1B, bound = C2S, stage = Play )]
@@ -213,7 +189,7 @@ pub struct SetPlayerPosAndRotC2SPacket {
     pub z         : f64,
     pub yaw_deg   : f32,
     pub pitch_deg : f32,
-    pub ground    : bool
+    pub flags     : PlayerPosFlags
 }
 
 
@@ -221,123 +197,141 @@ pub struct SetPlayerPosAndRotC2SPacket {
 pub struct SetPlayerRotC2SPacket {
     pub yaw_deg   : f32,
     pub pitch_deg : f32,
-    pub ground    : bool
+    pub flags     : PlayerPosFlags
 }
 
 
-#[packet( prefix = 0x1D, bound = C2S, stage = Play )]
-pub struct SetPlayerOnGroundC2SPacket {
-    pub ground : bool
-}
+// TODO: 0x1D
 
 
-#[packet( prefix = 0x1E, bound = C2S, stage = Play )]
+// TODO: 0x1E
+
+
+// TODO: 0x1F
+
+
+#[packet( prefix = 0x20, bound = C2S, stage = Play )]
 pub struct MoveVehicleC2SPacket {
     pub x         : f64,
     pub y         : f64,
     pub z         : f64,
     pub yaw_deg   : f32,
     pub pitch_deg : f32,
+    pub ground    : bool
 }
 
 
-#[packet( prefix = 0x1F, bound = C2S, stage = Play )]
+#[packet( prefix = 0x21, bound = C2S, stage = Play )]
 pub struct PaddleBoatC2SPacket {
     pub paddle_left  : bool,
     pub paddle_right : bool
 }
 
 
-#[packet( prefix = 0x20, bound = C2S, stage = Play )]
-pub struct PickItemC2SPacket {
-    pub slot : VarInt
-}
-
-
-#[packet( prefix = 0x21, bound = C2S, stage = Play )]
-pub struct PingRequestC2SPacket(pub u64);
-
-
 #[packet( prefix = 0x22, bound = C2S, stage = Play )]
-pub struct PlaceRecipeC2SPacket {
-    pub window   : u8,
-    pub recipe   : Identifier,
-    pub make_all : bool
+pub struct PickBlockItemC2SPacket {
+    pub pos       : BlockPos,
+    pub with_data : bool
 }
 
 
 #[packet( prefix = 0x23, bound = C2S, stage = Play )]
+pub struct PickEntityItemC2SPacket {
+    pub entity    : i32,
+    pub with_data : bool
+}
+
+
+#[packet( prefix = 0x24, bound = C2S, stage = Play )]
+pub struct PingRequestC2SPacket(pub u64);
+
+
+#[packet( prefix = 0x25, bound = C2S, stage = Play )]
+pub struct PlaceRecipeC2SPacket {
+    pub window   : u8,
+    pub recipe   : RegEntry<VarInt>,
+    pub make_all : bool
+}
+
+
+#[packet( prefix = 0x26, bound = C2S, stage = Play )]
 pub struct PlayerAbilitiesC2SPacket {
     pub flags : PlayerAbilityFlags
 }
 
 
-#[packet( prefix = 0x24, bound = C2S, stage = Play )]
+#[packet( prefix = 0x27, bound = C2S, stage = Play )]
 pub struct PlayerActionC2SPacket {
-    pub action : PlayerAction,
+    pub status : PlayerActionStatus,
     pub pos    : BlockPos,
     pub face   : BlockFace,
     pub seq    : VarInt
 }
 #[packet_part(VarInt)]
-pub enum PlayerAction {
-    StartDigging           = 0,
-    CancelDigging          = 1,
-    FinishDigging          = 2,
-    DropItemStack          = 3,
-    DropItem               = 4,
-    ShootArrowFinishEating = 5,
-    SwapHands              = 6
+pub enum PlayerActionStatus {
+    StartDigging  = 0,
+    CancelDigging = 1,
+    FinishDigging = 2,
+    DropStack     = 3,
+    DropItem      = 4,
+    FinishUsing   = 5,
+    SwapHands     = 6
 }
 #[packet_part(u8)]
 pub enum BlockFace {
-    Bottom = 0,
-    Top    = 1,
-    North  = 2,
-    South  = 3,
-    East   = 4,
-    West   = 5
+    Down  = 0,
+    Up    = 1,
+    North = 2,
+    South = 3,
+    West  = 4,
+    East  = 5
 }
-
-
-#[packet( prefix = 0x25, bound = C2S, stage = Play )]
-pub struct PlayerCommandC2SPacket {
-    /// The id of the player.
-    pub entity     : VarInt,
-    pub action     : PlayerCommand,
-    pub jump_boost : VarInt
-}
-#[packet_part(VarInt)]
-pub enum PlayerCommand {
-    StartSneak     = 0,
-    StopSneak      = 1,
-    LeaveBed       = 2,
-    StartSprint    = 3,
-    StopSprint     = 4,
-    StartJumpHorse = 5,
-    StopJumpHorse  = 6,
-    OpenVehicleInv = 7,
-    StartElytraFly  = 8
-}
-
-
-#[packet( prefix = 0x26, bound = C2S, stage = Play )]
-pub struct PlayerInputC2SPacket {
-    pub left    : f32,
-    pub forward : f32,
-    pub flags   : PlayerInputFlags
-}
-packet_flags!{ pub struct PlayerInputFlags {
-    pub jump    : 0b00000001,
-    pub unmount : 0b00000010
-} }
-
-
-#[packet( prefix = 0x27, bound = C2S, stage = Play )]
-pub struct PongC2SPacket(pub u32);
 
 
 #[packet( prefix = 0x28, bound = C2S, stage = Play )]
+pub struct PlayerCommandC2SPacket {
+    pub entity     : VarInt,
+    pub action     : PlayerCommandAction,
+    pub jump_boost : bool
+}
+#[packet_part(VarInt)]
+pub enum PlayerCommandAction {
+    StartSneaking  = 0,
+    StopSneaking   = 1,
+    LeaveBed       = 2,
+    StartSprinting = 3,
+    StopSprinting  = 4,
+    StartHorseJump = 5,
+    StopHorseJump  = 6,
+    OpenVehicleInv = 7,
+    StartElytraFly = 8
+}
+
+
+#[packet( prefix = 0x29, bound = C2S, stage = Play )]
+pub struct PlayerInputC2SPacket {
+    pub flags : PlayerInputFlags
+}
+packet_flags!{ pub struct PlayerInputFlags {
+    pub front  : 0b00000001,
+    pub back   : 0b00000010,
+    pub left   : 0b00000100,
+    pub right  : 0b00001000,
+    pub jump   : 0b00010000,
+    pub sneak  : 0b00100000,
+    pub sprint : 0b01000000
+} }
+
+
+#[packet( prefix = 0x2A, bound = C2S, stage = Play )]
+pub struct PlayerLoadedC2SPacket;
+
+
+#[packet( prefix = 0x2B, bound = C2S, stage = Play )]
+pub struct PongC2SPacket(pub u32);
+
+
+#[packet( prefix = 0x2C, bound = C2S, stage = Play )]
 pub struct ChangeRecipeBookSettingsC2SPacket {
     pub book   : RecipeBook,
     pub open   : bool,
@@ -352,58 +346,57 @@ pub enum RecipeBook {
 }
 
 
-#[packet( prefix = 0x29, bound = C2S, stage = Play )]
-pub struct SetSeenRecipeC2SPacket {
-    pub recipe : Identifier
-}
-
-
-#[packet( prefix = 0x2A, bound = C2S, stage = Play )]
-pub struct RenameItemC2SPacket {
-    pub item_name : String
-}
-
-
-#[packet( prefix = 0x2B, bound = C2S, stage = Play )]
-pub struct ResourcePackResponseC2SPacket {
-    pub uuid   : Uuid,
-    pub status : ResourcePackStatus
-}
-
-
-#[packet( prefix = 0x2C, bound = C2S, stage = Play )]
-pub struct SeenAdvC2SPacket {
-    pub action : AdvTabAction,
-    pub tab    : Option<Identifier>
-}
-#[packet_part(VarInt)]
-pub enum AdvTabAction {
-    OpenTag     = 0,
-    CloseScreen = 1
-}
-
-
 #[packet( prefix = 0x2D, bound = C2S, stage = Play )]
-pub struct SelectTradeC2SPacket {
-    pub slot : VarInt
+pub struct SetSeenRecipeC2SPacket {
+    pub recipe : RegEntry<Recipe>
 }
 
 
 #[packet( prefix = 0x2E, bound = C2S, stage = Play )]
-pub struct SetBeaconEffectC2SPacket {
-    pub primary_effect   : Option<RegEntry<StatusEffect>>,
-    pub secondary_effect : Option<RegEntry<StatusEffect>>
+pub struct RenameItemC2SPacket {
+    pub name : String
 }
 
 
 #[packet( prefix = 0x2F, bound = C2S, stage = Play )]
-pub struct SetHotbarSlotC2SPacket {
-    // 0~8
-    pub slot : u16
+pub struct ResourcePackResponseC2SPacket {
+    pub uuid   : Uuid,
+    pub result : ResourcePackStatus
 }
 
 
 #[packet( prefix = 0x30, bound = C2S, stage = Play )]
+pub struct SeenAdvC2SPacket {
+    pub action : SeenAdvAction
+}
+#[packet_part(VarInt)]
+pub enum SeenAdvAction {
+    OpenTab     = 0,
+    CloseScreen = 1
+}
+
+
+#[packet( prefix = 0x31, bound = C2S, stage = Play )]
+pub struct SelectTraceC2SPacket {
+    pub slot_index : VarInt
+}
+
+
+#[packet( prefix = 0x32, bound = C2S, stage = Play )]
+pub struct SetBeaconEffectC2SPacket {
+    pub primary   : Option<RegEntry<StatusEffect>>,
+    pub secondary : Option<RegEntry<StatusEffect>>
+}
+
+
+#[packet( prefix = 0x33, bound = C2S, stage = Play )]
+pub struct SetHotbarIndexC2SPacket {
+    /// 0~8
+    pub hotbar_index : u16
+}
+
+
+#[packet( prefix = 0x34, bound = C2S, stage = Play )]
 pub struct ProgramCommandBlockC2SPacket {
     pub pos     : BlockPos,
     pub command : String,
@@ -423,7 +416,7 @@ packet_flags!{pub struct CommandBlockFlags {
 } }
 
 
-#[packet( prefix = 0x31, bound = C2S, stage = Play )]
+#[packet( prefix = 0x35, bound = C2S, stage = Play )]
 pub struct ProgramCommandBlockMinecartC2SPacket {
     pub entity       : VarInt,
     pub command      : String,
@@ -431,10 +424,14 @@ pub struct ProgramCommandBlockMinecartC2SPacket {
 }
 
 
-// TODO: SetCreativeModeSlotC2SPacket
+/*#[packet( prefix = 0x36, bound = C2S, stage = Play )] // TODO
+pub struct SetCreativeModeSlotC2SPacket {
+    pub slot_index : u16,
+    pub slot       : Slot
+}*/
 
 
-#[packet( prefix = 0x33, bound = C2S, stage = Play )]
+#[packet( prefix = 0x37, bound = C2S, stage = Play )]
 pub struct ProgramJigsawBlockC2SPacket {
     pub pos            : BlockPos,
     pub name           : Identifier,
@@ -448,7 +445,7 @@ pub struct ProgramJigsawBlockC2SPacket {
 }
 
 
-#[packet( prefix = 0x34, bound = C2S, stage = Play )]
+#[packet( prefix = 0x38, bound = C2S, stage = Play )]
 pub struct ProgramStructureBlockC2SPacket {
     pub pos       : BlockPos,
     pub action    : StructureBlockAction,
@@ -508,7 +505,7 @@ packet_flags!{ pub struct StructureBlockFlags {
 } }
 
 
-#[packet( prefix = 0x35, bound = C2S, stage = Play )]
+#[packet( prefix = 0x39, bound = C2S, stage = Play )]
 pub struct UpdateSignC2SPacket {
     pub pos   : BlockPos,
     pub front : bool,
@@ -519,19 +516,19 @@ pub struct UpdateSignC2SPacket {
 }
 
 
-#[packet( prefix = 0x36, bound = C2S, stage = Play )]
+#[packet( prefix = 0x3A, bound = C2S, stage = Play )]
 pub struct SwingHandC2SPacket {
     pub hand : Hand
 }
 
 
-#[packet( prefix = 0x37, bound = C2S, stage = Play )]
+#[packet( prefix = 0x3B, bound = C2S, stage = Play )]
 pub struct TeleportToEntityC2SPacket {
     pub player : Uuid
 }
 
 
-#[packet( prefix = 0x38, bound = C2S, stage = Play )]
+#[packet( prefix = 0x3C, bound = C2S, stage = Play )]
 pub struct UseItemOnC2SPacket {
     pub hand         : Hand,
     pub pos          : BlockPos,
@@ -543,17 +540,21 @@ pub struct UseItemOnC2SPacket {
     /// 0~1
     pub cursor_z     : f32,
     pub inside_block : bool,
+    pub hit_border   : bool,
     pub seq          : VarInt
 }
 
 
-#[packet( prefix = 0x39, bound = C2S, stage = Play )]
+#[packet( prefix = 0x3D, bound = C2S, stage = Play )]
 pub struct UseItemC2SPacket {
     pub hand      : Hand,
     pub seq       : VarInt,
     pub yaw_deg   : f32,
     pub pitch_deg : f32
 }
+
+
+// TODO: Rest
 
 
 packet_full_decode!{ PlayC2SPackets }

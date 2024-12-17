@@ -22,6 +22,8 @@ mod attribute_type;
 pub use attribute_type::*;
 mod particle_type;
 pub use particle_type::*;
+mod recipe;
+pub use recipe::*;
 
 
 use crate::packet::*;
