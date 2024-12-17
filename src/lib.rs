@@ -2,7 +2,8 @@
     iter_array_chunks,
     decl_macro,
     ascii_char,
-    debug_closure_helpers
+    debug_closure_helpers,
+    ip
 )]
 
 pub mod packet;
