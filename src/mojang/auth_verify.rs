@@ -1,6 +1,7 @@
 use crate::packet::{ SecretCipher, PublicKey };
 
 use std::thread::{ self, JoinHandle };
+use std::net::SocketAddr;
 use std::fmt;
 use uuid::Uuid;
 use serde::{ Deserialize as Deser, Deserializer as Deserer };
@@ -31,13 +32,20 @@ pub struct MojAuthProperty {
 
 impl MojAuth {
 
-    pub fn start_non_blocking<U : AsRef<str>, S : AsRef<str>>(username : U, server_id : S, secret_cipher : &SecretCipher, public_key : &PublicKey) -> MojAuthHandle { // TODO: Proxy-blocking
+    pub fn start_non_blocking<U : AsRef<str>, S : AsRef<str>>(block_proxies : Option<SocketAddr>, username : U, server_id : S, secret_cipher : &SecretCipher, public_key : &PublicKey) -> MojAuthHandle {
         let mut sha = Sha1::new();
         sha.update(server_id.as_ref().as_ascii().unwrap().as_bytes());
         sha.update(&secret_cipher.0.as_ref().expect("Cipher may not be a no-cipher").key);
         sha.update(&public_key.der_bytes());
         let sha = BigInt::from_signed_bytes_be(&sha.finish()).to_str_radix(16);
-        let url = format!("https://sessionserver.mojang.com/session/minecraft/hasJoined?username={}&serverId={}", username.as_ref(), sha);
+        let mut url = format!("https://sessionserver.mojang.com/session/minecraft/hasJoined?username={}&serverId={}", username.as_ref(), sha);
+        if let Some(peer_addr) = block_proxies {
+            let peer_addr = peer_addr.ip();
+            if (peer_addr.is_global()) {
+                url.push_str("&ip=");
+                url.push_str(&peer_addr.to_string());
+            }
+        }
         MojAuthHandle {
             already_done : None,
             handle : Some(thread::spawn(move || {
@@ -54,8 +62,8 @@ impl MojAuth {
         }
     }
 
-    pub fn start_blocking<U : AsRef<str>, S : AsRef<str>>(username : U, server_id : S, secret_cipher : &SecretCipher, public_key : &PublicKey) -> Result<MojAuth, MojAuthError> {
-        Self::start_non_blocking(username, server_id, secret_cipher, public_key).wait_to_finish()
+    pub fn start_blocking<U : AsRef<str>, S : AsRef<str>>(block_proxies : Option<SocketAddr>, username : U, server_id : S, secret_cipher : &SecretCipher, public_key : &PublicKey) -> Result<MojAuth, MojAuthError> {
+        Self::start_non_blocking(block_proxies, username, server_id, secret_cipher, public_key).wait_to_finish()
     }
 
 }
