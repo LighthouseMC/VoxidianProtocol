@@ -54,7 +54,7 @@ pub struct StatusResponsePlayerSample {
 pub struct StatusResponseS2CPacket(String);
 impl StatusResponseS2CPacket {
     pub fn to_response(&self) -> Result<StatusResponse, DecodeError> {
-        from_json_str(&self.0).map_err(|_| DecodeError::InvalidData )
+        from_json_str(&self.0).map_err(|_| DecodeError::InvalidData("Status response is not valid JSON".to_string()) )
     }
 }
 

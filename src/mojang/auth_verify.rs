@@ -76,15 +76,25 @@ pub struct MojAuthHandle {
 
 impl MojAuthHandle {
 
+    /// `LighthouseMCRust`
+    const NAMESPACE_LIGHTHOUSE : Uuid = Uuid::from_bytes([0x4c, 0x69, 0x67, 0x68, 0x74, 0x68, 0x6f, 0x75, 0x73, 0x65, 0x4d, 0x43, 0x52, 0x75, 0x73, 0x74]);
+
     pub fn no_data() -> Self { Self {
         already_done : Some(Err(MojAuthError::InvalidData)),
         handle       : None
     } }
 
-    pub fn already_finished(mojauth : MojAuth) -> Self { Self {
-        already_done : Some(Ok(mojauth)),
-        handle       : None
-    } }
+    pub fn already_finished<S : Into<String>>(name : S) -> Self {
+        let name = name.into();
+        Self {
+            already_done : Some(Ok(MojAuth {
+                uuid  : Uuid::new_v3(&Self::NAMESPACE_LIGHTHOUSE, name.as_bytes()),
+                name  : name,
+                props : Vec::new(), // TODO: Offline skin
+            })),
+            handle : None
+        }
+    }
 
     pub fn is_finished(&self) -> bool {
         matches!(self.already_done, Some(_)) || self.handle.as_ref().unwrap().is_finished()

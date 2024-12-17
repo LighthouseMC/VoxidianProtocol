@@ -128,7 +128,7 @@ impl NbtElement { fn encode_packet(&self, buf : &mut PacketBuf) { match (self) {
 impl PacketDecode for Nbt { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
     let tag = buf.read_u8()?;
     if (tag != NbtElement::TAG_COMPOUND) {
-        return Err(DecodeError::InvalidData);
+        return Err(DecodeError::InvalidData("Nbt root is not a compound".to_string()));
     }
     Ok(Nbt {
         name : String::new(),
@@ -182,14 +182,14 @@ impl NbtElement {
             for _ in 0..len { out.push(buf.read_decode()?); }
             Ok(Self::LArray(out))
         },
-        _ => Err(DecodeError::InvalidData)
+        tag => Err(DecodeError::InvalidData(format!("Unknown nbt tag `{}`", tag)))
     } }
 
     fn decode_string(buf : &mut PacketBuf) -> Result<String, DecodeError> {
         let     len   = buf.read_decode::<u16>()? as usize;
         let mut bytes = Vec::with_capacity(len);
         for _ in 0..len { bytes.push(buf.read_u8()?); }
-        let string = cesu8::from_java_cesu8(&bytes).map_err(|_| DecodeError::InvalidData)?;
+        let string = cesu8::from_java_cesu8(&bytes).map_err(|_| DecodeError::InvalidData("String data is not valid CESU8".to_string()))?;
         Ok(string.to_string())
     }
 

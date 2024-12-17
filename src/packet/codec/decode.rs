@@ -14,13 +14,17 @@ pub enum DecodeError {
     EndOfBuffer,
 
     /// The data in the buffer could not be parsed properly.
-    InvalidData,
+    /// 
+    /// Includes a message.
+    InvalidData(String),
 
     /// The packet decoder did not consume the length specified in the previously received header.
     UnconsumedBuffer,
 
     /// The received packet ID did not match any registered packet.
-    UnknownPacketPrefix
+    /// 
+    /// Includes the ID that wasn't recognised.
+    UnknownPacketPrefix(usize)
 
 }
 
@@ -44,7 +48,7 @@ impl PacketDecode for Uuid { fn decode(buf : &mut PacketBuf) -> Result<Self, Dec
 
 impl PacketDecode for String { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
     let len = buf.read_decode::<VarInt>()?.as_i32() as usize;
-    Ok(String::from_utf8(buf.read_u8s(len)?).map_err(|_| DecodeError::InvalidData)?)
+    Ok(String::from_utf8(buf.read_u8s(len)?).map_err(|_| DecodeError::InvalidData("String data is not valid UTF8".to_string()))?)
 } }
 
 impl<T : PacketDecode> PacketDecode for Option<T> { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {

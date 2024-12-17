@@ -5,7 +5,7 @@ use flate2::Compression;
 use flate2::write::{ ZlibEncoder, ZlibDecoder };
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum CompressionMode {
     None,
     ZLib {
@@ -59,14 +59,14 @@ impl CompressionMode {
 
         Self::ZLib { .. } => {
             let data_length = smalltext.read_decode::<VarInt>()?.as_i32();
-            if (data_length < 0) {
+            if (data_length <= 0) {
                 Ok(smalltext)
             } else {
                 let smalltext = smalltext.read_u8s(smalltext.remaining())?;
                 let mut de = ZlibDecoder::new(Vec::new());
-                de.write_all(&smalltext).map_err(|_| DecodeError::InvalidData)?;
+                de.write_all(&smalltext).map_err(|_| DecodeError::InvalidData("Compressed smalltext is not valid ZLib data".to_string()))?;
                 let mut out = PacketBuf::new();
-                out.write_u8s(&de.finish().map_err(|_| DecodeError::InvalidData)?);
+                out.write_u8s(&de.finish().map_err(|_| DecodeError::InvalidData("Compressed smalltext is not valid ZLib data".to_string()))?);
                 Ok(out)
             }
         }

@@ -159,7 +159,7 @@ pub fn packet_part(attr : TokenStream, item : TokenStream) -> TokenStream {
                 #[derive(Debug, Clone, PartialEq, Eq)]
                 enum #discriminant_ident { #discriminant_variants }
                 impl PacketEncode for #ident { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { match (self) { #encode } Ok(()) } }
-                impl PacketDecode for #ident { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> { #decode Err(DecodeError::InvalidData) } }
+                impl PacketDecode for #ident { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> { #decode Err(DecodeError::InvalidData("Packet enum discriminant not in range".to_string())) } }
             }).into()
 
 
