@@ -12,7 +12,7 @@ edition = "2024"
 
 [workspace]
 members = [
-    "voxidian-datagen",
+    "voxidian-protocol-datagen",
     "voxidian-protocol-macros"
 ]
 

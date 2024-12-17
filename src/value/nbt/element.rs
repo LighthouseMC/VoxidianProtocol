@@ -1,36 +1,5 @@
 use super::*;
 
-use std::collections::HashMap;
-
-
-#[derive(Clone, PartialEq, Default)]
-pub struct Nbt {
-    pub name : String,
-    pub root : NbtCompound
-}
-impl fmt::Debug for Nbt { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "Nbt({:?} -> Compound({:?}))", self.name, self.root)
-} }
-
-#[derive(Clone, PartialEq, Default)]
-pub struct NbtCompound(HashMap<String, NbtElement>);
-impl NbtCompound {
-    pub fn new() -> Self {
-        Self(HashMap::new())
-    }
-
-    pub fn get(&self, key: &str) -> Option<&NbtElement> {
-        self.0.get(key)
-    }
-
-    pub fn insert(&mut self, key: &str, value: NbtElement) {
-        self.0.insert(key.to_string(), value);
-    }
-}
-impl fmt::Debug for NbtCompound { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{:?}", self.0)
-} }
-
 
 #[derive(Clone, Debug, PartialEq)]
 #[repr(u8)]
@@ -77,22 +46,12 @@ impl NbtElement {
         NbtElement::LArray   (_) => Self::TAG_LARRAY,
     } }
 }
-
-
-impl PacketEncode for Nbt { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
-    buf.write_u8(NbtElement::TAG_COMPOUND);
-    self.root.encode_packet(buf);
+impl PacketEncode for NbtElement { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    buf.write_u8(self.tag());
+    self.encode_packet(buf);
     Ok(())
 } }
-impl NbtCompound { fn encode_packet(&self, buf : &mut PacketBuf) {
-    for (key, value) in &self.0 {
-        buf.write_u8(value.tag());
-        NbtElement::String(key.clone()).encode_packet(buf);
-        value.encode_packet(buf);
-    }
-    buf.write_u8(NbtElement::TAG_END);
-} }
-impl NbtElement { fn encode_packet(&self, buf : &mut PacketBuf) { match (self) {
+impl NbtElement { pub(super) fn encode_packet(&self, buf : &mut PacketBuf) { match (self) {
     Self::Byte   (value) => { buf.write_u8(*value as u8); },
     Self::Short  (value) => { let _ = buf.encode_write(value); },
     Self::Int    (value) => { let _ = buf.encode_write(value); },
@@ -123,32 +82,13 @@ impl NbtElement { fn encode_packet(&self, buf : &mut PacketBuf) { match (self) {
         for long in values { let _ = buf.encode_write(*long); }
     }
 } } }
-
-
-impl PacketDecode for Nbt { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl PacketDecode for NbtElement { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
     let tag = buf.read_u8()?;
-    if (tag != NbtElement::TAG_COMPOUND) {
-        return Err(DecodeError::InvalidData("Nbt root is not a compound".to_string()));
-    }
-    Ok(Nbt {
-        name : String::new(),
-        root : NbtCompound::decode_packet(buf)?,
-    })
-} }
-impl NbtCompound { fn decode_packet(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
-    let mut compound = Self::new();
-    while (buf.remaining() > 0) {
-        let tag = buf.read_u8()?;
-        if (tag == NbtElement::TAG_END) { break; }
-        let key = NbtElement::decode_string(buf)?;
-        let value = NbtElement::decode_packet(buf, tag)?;
-        compound.0.insert(key, value);
-    }
-    Ok(compound)
+    Self::decode_packet(buf, tag)
 } }
 impl NbtElement {
-
-    fn decode_packet(buf : &mut PacketBuf, tag : u8) -> Result<Self, DecodeError> { match (tag) {
+    
+    pub(super) fn decode_packet(buf : &mut PacketBuf, tag : u8) -> Result<Self, DecodeError> { match (tag) {
         Self::TAG_BYTE   => Ok(Self::Byte   (buf.read_u8()? as i8)),
         Self::TAG_SHORT  => Ok(Self::Short  (buf.read_decode()?)),
         Self::TAG_INT    => Ok(Self::Int    (buf.read_decode()?)),
@@ -185,7 +125,7 @@ impl NbtElement {
         tag => Err(DecodeError::InvalidData(format!("Unknown nbt tag `{}`", tag)))
     } }
 
-    fn decode_string(buf : &mut PacketBuf) -> Result<String, DecodeError> {
+    pub(super) fn decode_string(buf : &mut PacketBuf) -> Result<String, DecodeError> {
         let     len   = buf.read_decode::<u16>()? as usize;
         let mut bytes = Vec::with_capacity(len);
         for _ in 0..len { bytes.push(buf.read_u8()?); }
@@ -194,3 +134,4 @@ impl NbtElement {
     }
 
 }
+

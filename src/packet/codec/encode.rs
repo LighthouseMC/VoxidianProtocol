@@ -37,11 +37,13 @@ impl PacketEncode for Uuid { fn encode(&self, buf : &mut PacketBuf) -> Result<()
     Ok(())
 } }
 
-impl PacketEncode for String { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+impl PacketEncode for &str { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
     buf.encode_write(VarInt::from(self.len() as i32))?;
     buf.write_u8s(self.as_bytes());
     Ok(())
 } }
+
+impl PacketEncode for String { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { self.as_str().encode(buf) } }
 
 impl<T : PacketEncode> PacketEncode for Option<T> { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
     if let Some(value) = self {
