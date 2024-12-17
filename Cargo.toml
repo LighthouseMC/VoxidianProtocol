@@ -10,9 +10,10 @@ repository = "https://github.com/LighthouseMC/VoxidianProtocol"
 
 edition = "2024"
 
+build = "build.rs"
+
 [workspace]
 members = [
-    "voxidian-protocol-datagen",
     "voxidian-protocol-macros"
 ]
 
