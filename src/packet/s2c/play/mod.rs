@@ -232,22 +232,22 @@ pub struct CommandNode {
 
 #[packet( prefix = 0x12, bound = S2C, stage = Play )]
 pub struct CloseContainerS2CPacket {
-    pub window : u8
+    pub window : VarInt
 }
 
 
-// TODO: SetContainerContentS2CPacket
+// TODO: 0x13 SetContainerContentS2CPacket
 
 
 #[packet( prefix = 0x14, bound = S2C, stage = Play )]
 pub struct SetContainerPropertyS2CPacket {
-    pub window : u8,
+    pub window : VarInt,
     pub prop   : u16,
     pub value  : u16
 }
 
 
-// TODO: SetContainerSlotS2CPacket
+// TODO: 0x15 SetContainerSlotS2CPacket
 
 
 #[packet( prefix = 0x16, bound = S2C, stage = Play )]
@@ -258,7 +258,7 @@ pub struct CookieRequestS2CPacket {
 
 #[packet( prefix = 0x17, bound = S2C, stage = Play )]
 pub struct SetCooldownS2CPacket {
-    pub item  : RegEntry<Item>,
+    pub group : Identifier,
     pub ticks : VarInt
 }
 
@@ -331,38 +331,33 @@ pub struct EntityEventS2CPacket {
 
 
 #[packet( prefix = 0x20, bound = S2C, stage = Play )]
-pub struct ExplosionS2CPacket {
-    pub x              : f64,
-    pub y              : f64,
-    pub z              : f64,
-    pub strength       : f32,
-    pub records        : LengthPrefixVec<VarInt, [u8; 3]>,
-    pub player_mot_x   : f32,
-    pub player_mot_y   : f32,
-    pub player_mot_z   : f32,
-    pub blocks         : ExplosionBlockInteraction,
-    pub small_particle : Particle,
-    pub large_particle : Particle,
-    pub sound          : RegOr<SoundEvent, Sound>
+pub struct TeleportEntityS2CPacket {
+    pub entity    : VarInt,
+    pub x         : f64,
+    pub y         : f64,
+    pub z         : f64,
+    pub vel_x     : f64,
+    pub vel_y     : f64,
+    pub vel_z     : f64,
+    pub yaw_deg   : f32,
+    pub pitch_deg : f32,
+    pub ground    : bool
 }
-#[packet_part(VarInt)]
-pub enum ExplosionBlockInteraction {
-    Keep         = 0,
-    Destroy      = 1,
-    DestroyDecay = 2,
-    Trigger      = 3
+
+
+#[packet( prefix = 0x21, bound = S2C, stage = Play )]
+pub struct ExplosionS2CPacket {
+    pub x          : f64,
+    pub y          : f64,
+    pub z          : f64,
+    pub player_mot : Option<[f64; 3]>,
+    pub particle   : Particle,
+    pub sound      : RegOr<SoundEvent, Sound>
 }
 #[packet_part]
 pub struct Sound {
     pub name        : Identifier,
     pub fixed_range : Option<f32>
-}
-
-
-#[packet( prefix = 0x21, bound = S2C, stage = Play )]
-pub struct UnloadChunkS2CPacket {
-    pub chunk_z : i32,
-    pub chunk_x : i32
 }
 
 
@@ -390,9 +385,12 @@ pub enum GameEvent {
 }
 
 
-#[packet( prefix = 0x23, bound = S2C, stage = Play )]
+// TODO: 0x23
+
+
+#[packet( prefix = 0x24, bound = S2C, stage = Play )]
 pub struct OpenHorseScreenS2CPacket {
-    pub window : u8,
+    pub window : VarInt,
     pub slots  : VarInt,
     pub entity : i32
 }
@@ -400,8 +398,8 @@ pub struct OpenHorseScreenS2CPacket {
 
 #[packet( prefix = 0x24, bound = S2C, stage = Play )]
 pub struct HurtAnimationS2CPacket {
-    pub entity : VarInt,
-    pub dyaw   : f32
+    pub entity   : VarInt,
+    pub dyaw_deg : f32
 }
 
 
@@ -425,34 +423,38 @@ pub struct InitialiseWorldBorderS2CPacket {
 pub struct KeepAliveS2CPacket(pub u64);
 
 
-// TODO: ChunkDataUpdateS2CPacket
+// TODO: 0x27 ChunkDataUpdateS2CPacket
 
 
-// TODO: WorldEventS2CPacket
+// TODO: 0x28 WorldEventS2CPacket
 
 
 #[packet( prefix = 0x29, bound = S2C, stage = Play )]
 pub struct ParticleS2CPacket {
-    pub long_distance : bool,
-    pub x             : f64,
-    pub y             : f64,
-    pub z             : f64,
+    pub long_distance  : bool,
+    pub always_visible : bool,
+    pub x              : f64,
+    pub y              : f64,
+    pub z              : f64,
     /// Gaussian distribution
-    pub spread_x      : f32,
+    pub spread_x       : f32,
     /// Gaussian distribution
-    pub spread_y      : f32,
+    pub spread_y       : f32,
     /// Gaussian distribution
-    pub spread_z      : f32,
-    pub max_speed     : f32,
-    pub count         : u32,
-    pub particle      : Particle
+    pub spread_z       : f32,
+    pub max_speed      : f32,
+    pub count          : u32,
+    pub particle       : Particle
 }
 
 
-// TODO: UpdateLightS2CPacket
+// TODO: 0x2A UpdateLightS2CPacket
 
 
-#[packet( prefix = 0x2B, bound = S2C, stage = Play )]
+// TODO: 0x2B
+
+
+#[packet( prefix = 0x2C, bound = S2C, stage = Play )]
 pub struct LoginS2CPacket {
     pub entity               : i32,
     pub hardcore             : bool,
@@ -474,6 +476,7 @@ pub struct LoginS2CPacket {
     pub is_flat              : bool,
     pub death_loc            : Option<DeathLocation>,
     pub portal_cooldown      : VarInt,
+    pub sea_level            : VarInt,
     pub enforce_chat_reports : bool
 }
 #[packet_part(u8)]
@@ -491,61 +494,7 @@ pub struct DeathLocation {
 }
 
 
-/*#[packet( prefix = 0x2C, bound = S2C, stage = Play )]
-pub struct MapDataS2CPacket {
-    pub id     : VarInt,
-    /// 0~4
-    pub scale  : u8,
-    pub locked : bool,
-    pub icons  : Option<LengthPrefixVec<VarInt, MapIcon>>,
-    pub patch  : // TODO
-}
-#[packet_part]
-pub struct MapIcon {
-    pub kind : MapIconKind,
-    pub x    : i8,
-    pub z    : i8,
-    /// 0~15
-    pub dir  : u8,
-    pub name : Option<Text>
-}
-#[packet_part(VarInt)]
-pub enum MapIconKind {
-    /// Players
-    WhiteArrow       = 0,
-    /// Item frames
-    GreenArrow       = 1,
-    RedArrow         = 2,
-    BlueArrow        = 3,
-    WhiteCross       = 4,
-    RedPointer       = 5,
-    /// Off-map players
-    WhiteCircle      = 6,
-    /// Far-off-map players
-    SmallWhiteCircle = 7,
-    Mansion          = 8,
-    Monument         = 9,
-    WhiteBanner      = 10,
-    OrangeBanner     = 11,
-    MagentaBanner    = 12,
-    LightBlueBanner  = 13,
-    YellowBanner     = 14,
-    LimeBanner       = 15,
-    PinkBanner       = 16,
-    GreyBanner       = 17,
-    LightGreyBanner  = 18,
-    CyanBanner       = 19,
-    PurpleBanner     = 20,
-    BlueBanner       = 21,
-    BrownBanner      = 22,
-    GreenBanner      = 23,
-    RedBanner        = 24,
-    BlackBanner      = 25,
-    Treasure         = 26
-}*/
-
-
-// TODO: MerchantOffersS2CPacket
+// TODO: 0x2D MerchantOffersS2CPacket
 
 
 /// Deltas are calculated using `(current * 4096) - (prev * 4096)`.
@@ -582,12 +531,21 @@ pub struct UpdateEntityRotS2CPacket {
 
 
 #[packet( prefix = 0x31, bound = S2C, stage = Play )]
-pub struct MoveVehicleS2CPacket {
-    pub x         : f64,
-    pub y         : f64,
-    pub z         : f64,
-    pub yaw_deg   : f32,
-    pub pitch_deg : f32
+pub struct MoveMinecartAlongTrackS2CPacket {
+    pub entity : VarInt,
+    pub steps  : LengthPrefixVec<VarInt, MoveMinecartStep>
+}
+#[packet_part]
+pub struct MoveMinecartStep {
+    pub x      : f64,
+    pub y      : f64,
+    pub z      : f64,
+    pub vel_x  : f64,
+    pub vel_y  : f64,
+    pub vel_z  : f64,
+    pub yaw    : Angle,
+    pub pitch  : Angle,
+    pub weight : f32
 }
 
 
@@ -626,11 +584,7 @@ pub struct PingS2CPacket(pub u32);
 pub struct PingResponseS2CPacket(pub u64);
 
 
-#[packet( prefix = 0x37, bound = S2C, stage = Play )]
-pub struct PlaceGhostRecipeS2CPacket {
-    pub window : u8,
-    pub recipe : Identifier
-}
+// TODO: 0x37
 
 
 #[packet( prefix = 0x38, bound = S2C, stage = Play )]
@@ -648,26 +602,10 @@ packet_flags!{ pub struct PlayerAbilityFlags {
 } }
 
 
-/*#[packet( prefix = 0x39, bound = S2C, stage = Play )]
-pub struct PlayerChatMessageS2CPacket {
-    /// If zero, the message will bypass the client's `disableChat` option.
-    pub sender        : Uuid,
-    pub index         : VarInt,
-    pub sig           : Option<[u8; 256]>,
-    pub msg           : String,
-    pub timestamp     : u64,
-    pub salt          : u8,
-    pub prev_msgs     : LengthPrefixVec<VarInt, PreviousMessage>,
-    pub unsig_content : Option<Text>,
-    pub filter, // TODO
-    pub filter_bits, // TODO
-    pub chat_type     : RegEntry<ChatType>,
-    pub sender_name   : Text,
-    pub target_name   : Option<Text>
-}
-#[packet_part]
-pub struct PreviousMessage {
-    // TODO
+/*#[packet( prefix = 0x39, bound = S2C, stage = Play )] // TODO
+pub struct PlaceGhostRecipeS2CPacket {
+    pub window : VarInt,
+    pub recipe : RecipeDisplay
 }*/
 
 
@@ -695,7 +633,7 @@ pub struct PlayerInfoRemoveS2CPacket {
 }
 
 
-// TODO: PlayerInfoUpdateS2CPacket
+// TODO: 0x3E
 
 
 #[packet( prefix = 0x3F, bound = S2C, stage = Play )]
@@ -718,7 +656,13 @@ pub struct LookAtEntity {
 }
 
 
-#[packet( prefix = 0x40, bound = S2C, stage = Play )]
+// TODO: 0x40 PlayerInfoUpdateS2CPacket
+
+
+// TODO: 0x41
+
+
+#[packet( prefix = 0x42, bound = S2C, stage = Play )]
 pub struct SyncPlayerPosS2CPacket {
     pub adx         : f64,
     pub ady         : f64,
@@ -737,78 +681,49 @@ packet_flags!{ pub struct SyncPosFlags {
 } }
 
 
-/*#[packet( prefix = 0x41, bound = S2C, stage = Play )]
-pub struct UpdateRecipeBookS2CPacket {
-    pub action            : RecipeBookAction,
-    pub craft_book_open   : bool,
-    pub craft_book_filter : bool,
-    pub smelt_book_open   : bool,
-    pub smelt_book_filter : bool,
-    pub blast_book_open   : bool,
-    pub blast_book_filter : bool,
-    pub smoke_book_open   : bool,
-    pub smoke_book_filter : bool,
-    // TODO
+#[packet( prefix = 0x43, bound = S2C, stage = Play )]
+pub struct PlayerRotS2CPacket {
+    pub yaw_deg   : f32,
+    pub pitch_deg : f32
 }
-#[packet_part(VarInt)]
-pub enum RecipeBookAction {
-    Init   = 0,
-    Add    = 1,
-    Remove = 2
+
+
+/*#[packet( prefix = 0x44, bound = S2C, stage = Play )] // TODO
+pub struct RecipeBookAddS2CPacket {
+    pub recipes : Recipe,
+    pub replace : bool
+}
+#[packet_part]
+pub struct Recipe {
+    pub id          : RegEntry<Recipe>,
+    pub display     : RecipeDisplay,
+    pub group       : VarInt,
+    pub category    : VarInt,
+    pub ingredients : Option<LengthPrefixVec<VarInt, RecipeIngredient>>,
+    pub flags       : RecipeFlags
 }*/
 
 
-#[packet( prefix = 0x42, bound = S2C, stage = Play )]
-pub struct RemoveEntitiesS2CPacket {
-    pub entities : LengthPrefixVec<VarInt, VarInt>
-}
-
-
-#[packet( prefix = 0x43, bound = S2C, stage = Play )]
-pub struct RemoveEntityEffectS2CPacket {
-    pub entity : VarInt,
-    pub effect : RegEntry<StatusEffect>
-}
-
-
-#[packet( prefix = 0x44, bound = S2C, stage = Play )]
-pub struct ResetScoreS2CPacket {
-    pub entity_name    : String,
-    pub objective_name : Option<String>
-}
-
-
 #[packet( prefix = 0x45, bound = S2C, stage = Play )]
-pub struct RemoveResourcePackS2CPacket {
-    /// No uuid will remove all packs.
-    pub uuid : Option<Uuid>
+pub struct RecipeBookRemoveS2CPacket {
+    pub recipes : LengthPrefixVec<VarInt, RegEntry<Recipe>>
 }
 
 
 #[packet( prefix = 0x46, bound = S2C, stage = Play )]
-pub struct AddResourcePackS2CPacket {
-    pub uuid   : Uuid,
-    pub url    : String,
-    pub hash   : String,
-    pub force  : bool,
-    pub prompt : Option<Text>
+pub struct RecipeBookSettingsS2CPacket {
+    pub crafting_open   : bool,
+    pub crafting_filter : bool,
+    pub smelting_open   : bool,
+    pub smelting_filter : bool,
+    pub blasting_open   : bool,
+    pub blasting_filter : bool,
+    pub smoking_open    : bool,
+    pub smoking_filter  : bool
 }
 
 
-#[packet( prefix = 0x47, bound = S2C, stage = Play )]
-pub struct RespawnS2CPacket {
-    pub dim             : RegEntry<DimType>,
-    pub dim_name        : Identifier,
-    /// Hashed
-    pub seed            : u64,
-    pub gamemode        : Gamemode,
-    pub prev_gamemode   : Gamemode,
-    pub is_debug        : bool,
-    pub is_flat         : bool,
-    pub death_loc       : Option<DeathLocation>,
-    pub portal_cooldown : VarInt,
-    pub data_kept       : u8
-}
+// TODO: 0x47
 
 
 #[packet( prefix = 0x48, bound = S2C, stage = Play )]
@@ -839,8 +754,19 @@ pub struct ServerDataS2CPacket {
 
 
 #[packet( prefix = 0x4C, bound = S2C, stage = Play )]
-pub struct ActionBarS2CPacket {
-    pub text : Text
+pub struct RespawnS2CPacket {
+    pub dim             : RegEntry<DimType>,
+    pub dim_name        : Identifier,
+    /// Hashed
+    pub seed            : u64,
+    pub gamemode        : Gamemode,
+    pub prev_gamemode   : Gamemode,
+    pub is_debug        : bool,
+    pub is_flat         : bool,
+    pub death_loc       : Option<DeathLocation>,
+    pub portal_cooldown : VarInt,
+    pub sea_level       : VarInt,
+    pub data_kept       : u8
 }
 
 
@@ -886,11 +812,7 @@ pub struct SetCameraS2CPacket {
 }
 
 
-#[packet( prefix = 0x53, bound = S2C, stage = Play )]
-pub struct SetHotbarSlotS2CPacket {
-    /// 0~8
-    pub slot : u8
-}
+// TODO: 0x53
 
 
 #[packet( prefix = 0x54, bound = S2C, stage = Play )]
@@ -943,17 +865,13 @@ pub struct LinkEntitiesS2CPacket {
 }
 
 
-/// 1/8000 of a block per tick.
-#[packet( prefix = 0x5A, bound = S2C, stage = Play )]
-pub struct SetEntityVelS2CPacket {
-    pub entity : VarInt,
-    pub vel_x  : u16,
-    pub vel_y  : u16,
-    pub vel_z  : u16
-}
+/*#[packet( prefix = 0x5A, bound = S2C, stage = Play )] // TODO
+pub struct SetCursorItemS2CPacket {
+    pub slot : Slot
+}*/
 
 
-// TODO: SetEquipmentS2CPacket
+// TODO: 0x5B SetEquipmentS2CPacket
 
 
 #[packet( prefix = 0x5C, bound = S2C, stage = Play )]
@@ -1104,16 +1022,13 @@ pub struct SetSimDistS2CPacket {
 
 
 #[packet( prefix = 0x63, bound = S2C, stage = Play )]
-pub struct SetSubtitleTextS2CPacket {
-    pub subtitle : Text
+pub struct SetHotbarIndexS2CPacket {
+    /// 0~8
+    pub hotbar_index : VarInt
 }
 
 
-#[packet( prefix = 0x64, bound = S2C, stage = Play )]
-pub struct UpdateTimeS2CPacket {
-    pub world_age : u64,
-    pub day_time  : u64
-}
+// TODO: 0x64
 
 
 #[packet( prefix = 0x65, bound = S2C, stage = Play )]
@@ -1122,12 +1037,11 @@ pub struct SetTitleTextS2CPacket {
 }
 
 
-#[packet( prefix = 0x66, bound = S2C, stage = Play )]
-pub struct SetTitleTimesS2CPacket {
-    pub fade_in  : u32,
-    pub stay     : u32,
-    pub fade_out : u32
-}
+/*#[packet( prefix = 0x66, bound = S2C, stage = Play )]
+pub struct SetPlayerInvSlot {
+    pub inv_index : VarInt,
+    pub slot      : Slot
+}*/
 
 
 #[packet( prefix = 0x67, bound = S2C, stage = Play )]
@@ -1169,13 +1083,14 @@ pub struct SoundEffectS2CPacket {
 pub struct StartConfigS2CPacket;
 
 
-// TODO: StopSoundS2CPacket {}
+// TODO: 0x6A StopSoundS2CPacket {}
 
 
 #[packet( prefix = 0x6B, bound = S2C, stage = Play )]
-pub struct StoreCookieS2CPacket {
-    pub key     : Identifier,
-    pub payload : LengthPrefixVec<VarInt, u8>
+pub struct UpdateTimeS2CPacket {
+    pub world_age : u64,
+    pub day_time  : u64,
+    pub ticking   : bool
 }
 
 
@@ -1208,16 +1123,7 @@ pub struct PickupItemS2CPacket {
 }
 
 
-#[packet( prefix = 0x70, bound = S2C, stage = Play )]
-pub struct TeleportEntityS2CPacket {
-    pub entity : VarInt,
-    pub x      : f64,
-    pub y      : f64,
-    pub z      : f64,
-    pub yaw    : Angle,
-    pub pitch  : Angle,
-    pub ground : bool
-}
+// TODO: 0x70
 
 
 #[packet( prefix = 0x71, bound = S2C, stage = Play )]
@@ -1321,18 +1227,23 @@ packet_flags!{ pub struct EffectFlags {
 } }
 
 
-/*#[packet( prefix = 0x77, bound = S2C, stage = Play )]
-pub struct UpdateRecipesS2CPacket {
-    pub recipes : LengthPrefixVec<VarInt, Recipe>
-}
-#[packet_part]
-pub struct Recipe {
-    pub id   : Identifier,
-    // TODO
+/*#[packet( prefix = 0x77, bound = S2C, stage = Play )] // TODO
+pub struct SyncVehiclePosS2CPacket {
+    pub entity    : VarInt,
+    pub x         : f64,
+    pub y         : f64,
+    pub z         : f64,
+    pub vel_x     : f64,
+    pub vel_y     : f64,
+    pub vel_z     : f64,
+    pub yaw_deg   : f32,
+    pub pitch_deg : f32,
+    pub flags     : TeleportFlags,
+    pub ground    : bool
 }*/
 
 
-// TODO: UpdateTagsS2CPacket
+// TODO: 0x78 UpdateTagsS2CPacket
 
 
 #[packet( prefix = 0x79, bound = S2C, stage = Play )]
@@ -1352,6 +1263,22 @@ pub struct CustomReportDetailsS2CPacket {
 pub struct ServerLinksS2CPacket {
     pub links : LengthPrefixVec<VarInt, ServerLink>
 }
+
+
+// TODO: 0x7C
+
+
+// TODO: 0x7D
+
+
+/*#[packet( prefix = 0x7E, bound = S2C, stage = Play )]
+pub struct UpdateRecipesS2CPacket {
+    pub property_sets       : LengthPrefixHashMap<VarInt, Identifier, LengthPrefixVec<VarInt, RegEntry<Item>>>,
+    pub stonecutter_recipes : LengthPrefixVec<> // TODO
+}*/
+
+
+// TODO: Rest
 
 
 packet_full_decode!{ PlayS2CPackets }
