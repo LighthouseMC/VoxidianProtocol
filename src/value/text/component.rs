@@ -156,7 +156,11 @@ impl TextComponent {
         if let Some(insertion     ) = &self.insertion     { nbt.insert("insertion"     , NbtElement::String ( insertion.to_string()                )); }
         if let Some(click_event   ) = &self.click_event   { click_event.write_nbt(&mut nbt); }
         if let Some(hover_event   ) = &self.hover_event   { hover_event.write_nbt(&mut nbt); }
-        // TODO: extra
+        if (! self.extra.is_empty()) {
+            let mut extra = Vec::new();
+            for component in &self.extra { extra.push(NbtElement::Compound(component.to_nbt())); }
+            nbt.insert("extra", NbtElement::List(extra));
+        }
         nbt
     }
 }
