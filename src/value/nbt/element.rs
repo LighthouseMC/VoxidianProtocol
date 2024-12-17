@@ -12,6 +12,7 @@ pub enum NbtElement {
     Double   (f64             ) = 6,
     BArray   (Vec<i8>         ) = 7,
     String   (String          ) = 8,
+    /// You are responsible for guaranteeing that the elements of this list are all of the same type.
     List     (Vec<NbtElement> ) = 9,
     Compound (NbtCompound     ) = 10,
     IArray   (Vec<i32>        ) = 11,
