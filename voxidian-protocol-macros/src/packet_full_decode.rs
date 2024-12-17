@@ -29,7 +29,7 @@ pub fn packet_full_decode(input : TokenStream) -> TokenStream {
                 let packetid = buf.read_decode::<VarInt>().unwrap().as_i32() as usize;
                 match (packetid) {
                     #(#decode)*
-                    _ => Err(DecodeError::UnknownPacketPrefix)
+                    packetid => Err(DecodeError::UnknownPacketPrefix(packetid))
                 }
             }
         }

@@ -31,7 +31,7 @@ version = "1.0"
 
 [dependencies.uuid]
 version  = "1.11"
-features = [ "v4", "serde" ]
+features = [ "v4", "v3", "serde" ]
 
 [dependencies.cesu8]
 # Used for converting NBT strings into a format which can be packet en/decoded.

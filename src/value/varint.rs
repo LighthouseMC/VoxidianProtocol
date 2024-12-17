@@ -1,7 +1,7 @@
 use super::*;
 
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 pub struct VarInt(i32);
 
 impl VarInt {
@@ -24,6 +24,9 @@ impl VarInt {
     }
 
 }
+impl fmt::Debug for VarInt { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "VarInt({})", self.0)
+} }
 
 impl From<i32> for VarInt { fn from(value : i32) -> Self { Self(value) } }
 impl Into<i32> for VarInt { fn into(self) -> i32 { self.0 } }
@@ -54,6 +57,6 @@ impl VarInt {
                 return Ok((VarInt(x), consumed));
             }
         }
-        Err(DecodeError::InvalidData)
+        Err(DecodeError::InvalidData("VarInt data exceeded max size".to_string()))
     }
 }

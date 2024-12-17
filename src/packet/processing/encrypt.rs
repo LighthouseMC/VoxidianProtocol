@@ -91,7 +91,7 @@ impl SecretCipher {
     pub fn encrypt_u8(&mut self, plainbyte : u8) -> Result<u8, DecodeError> {
         if let Some(SecretCipherInner { en, .. }) = &mut self.0 {
             let mut cipherbyte = [0];
-            en.update(&[plainbyte], &mut cipherbyte).map_err(|_| DecodeError::InvalidData)?;
+            en.update(&[plainbyte], &mut cipherbyte).map_err(|_| DecodeError::InvalidData("Failed to encrypt packet data.".to_string()))?;
             Ok(cipherbyte[0])
         } else {
             Ok(plainbyte)
@@ -101,7 +101,7 @@ impl SecretCipher {
     pub fn decrypt(&mut self, cipherdata : PacketBuf) -> Result<PacketBuf, DecodeError> {
         if let Some(SecretCipherInner { de, .. }) = &mut self.0 {
             let mut plaindata = vec![0; cipherdata.remaining()];
-            de.update(cipherdata.as_slice(), &mut plaindata).map_err(|_| DecodeError::InvalidData)?;
+            de.update(cipherdata.as_slice(), &mut plaindata).map_err(|_| DecodeError::InvalidData("Encrypted cipherdata is not valid".to_string()))?;
             let mut out = PacketBuf::new();
             out.write_u8s(&plaindata);
             Ok(out)
@@ -113,7 +113,7 @@ impl SecretCipher {
     pub fn decrypt_u8(&mut self, cipherbyte : u8) -> Result<u8, DecodeError> {
         if let Some(SecretCipherInner { de, .. }) = &mut self.0 {
             let mut plainbyte = [0];
-            de.update(&[cipherbyte], &mut plainbyte).map_err(|_| DecodeError::InvalidData)?;
+            de.update(&[cipherbyte], &mut plainbyte).map_err(|_| DecodeError::InvalidData("Encrypted cipherdata is not valid".to_string()))?;
             Ok(plainbyte[0])
         } else {
             Ok(cipherbyte)
