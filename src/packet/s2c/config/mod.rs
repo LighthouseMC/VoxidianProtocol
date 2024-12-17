@@ -16,7 +16,7 @@ pub struct PluginMessageS2CPacket {
 
 #[packet( prefix = 0x02, bound = S2C, stage = Config )]
 pub struct DisconnectS2CPacket {
-    pub reason : Text
+    pub reason : NbtText
 }
 
 

@@ -312,7 +312,7 @@ pub struct DeleteMessageS2CPacket {
 
 #[packet( prefix = 0x1D, bound = S2C, stage = Play )]
 pub struct DisconnectS2CPacket {
-    pub reason : Text
+    pub reason : NbtText
 }
 
 
