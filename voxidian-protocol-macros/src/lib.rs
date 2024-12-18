@@ -5,11 +5,11 @@
     decl_macro
 )]
 
-use std::{ fs, path, env };
+use std::{ fs, env };
+use std::path::PathBuf;
 use std::sync::Mutex;
 use std::collections::HashMap;
 use proc_macro::{ Span, TokenStream };
-use proc_macro2::Span as Span2;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::{ quote, quote_spanned };
 use syn::{
@@ -67,11 +67,7 @@ macro get_packets_data(let $pat:pat) {
     };
     let $pat = packets_data.get_or_insert_with(
         || {
-            let mut path = path::absolute(env::current_dir().unwrap()).unwrap();
-            while (! path.join("Cargo.toml").is_file()) {
-                path = path.parent().unwrap().to_path_buf();
-            }
-            let path = path.parent().unwrap().join("voxidian-protocol").join("generated").join("packets.json");
+            let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).parent().unwrap().join("generated").join("packets.json");
             let Ok(file) = fs::read_to_string(&path) else { panic!("`packets.json` missing ({})", path.display()) };
             let Ok(data) = serde_json::from_str::<PacketsData>(&file) else { panic!("`packets.json` in invalid format") };
             data

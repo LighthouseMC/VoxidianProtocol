@@ -34,9 +34,14 @@ class MinecraftServerMixin {
 			packet_group.factory.forEachPacketType((type, ignored) -> {
 				var id = Identifier.of(
 					type.id().getNamespace(),
-					packet_group.bound.toString().toLowerCase()
-						+ "/" + packet_group.stage.toString().toLowerCase()
-						+ "/" + type.id().getPath()
+					(
+						packet_group.bound.toString().toLowerCase()
+							+ "/" + packet_group.stage.toString().toLowerCase()
+							+ "/" + type.id().getPath()
+					)
+						.replace("initialize" , "initialise" )
+						.replace("level"      , "world"      )
+						.replace("center"     , "centre"     )
 				);
 				var packet_json = new JsonObject();
 				packet_json.add("prefix" , new JsonPrimitive(MinecraftServerMixin.i        ));
