@@ -39,12 +39,7 @@ pub struct ResetChatS2CConfigPacket;
 #[packet( "minecraft:s2c/config/registry_data" )]
 pub struct RegistryDataS2CConfigPacket {
     pub registry : Identifier,
-    pub entries  : LengthPrefixVec<VarInt, RegistryDataEntry>
-}
-#[packet_part]
-pub struct RegistryDataEntry {
-    pub id   : Identifier,
-    pub data : Option<Nbt>
+    pub entries  : LengthPrefixHashMap<VarInt, Identifier, Option<Nbt>>
 }
 
 
@@ -92,7 +87,15 @@ pub struct UpdateTagsS2CConfigPacket(TODO);
 pub struct SelectKnownPacksS2CConfigPacket {
     pub known_packs : LengthPrefixVec<VarInt, KnownPack>
 }
+impl Default for SelectKnownPacksS2CConfigPacket { fn default() -> Self { Self {
+    known_packs : vec![ KnownPack {
+        namespace : "minecraft".to_string(),
+        id        : "core".to_string(),
+        version   : MINECRAFT_VERSION.to_string()
+    } ].into()
+} } }
 #[packet_part]
+#[derive(PartialEq)]
 pub struct KnownPack {
     pub namespace : String,
     pub id        : String,

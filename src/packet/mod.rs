@@ -10,6 +10,7 @@ pub(crate) use processing::*;
 pub mod c2s;
 pub mod s2c;
 
+pub(crate) use crate::MINECRAFT_VERSION;
 pub(crate) use crate::value::*;
 pub(crate) use crate::registry::*;
 pub(crate) use voxidian_protocol_macros::{ packet, packet_part, packet_full_decode };

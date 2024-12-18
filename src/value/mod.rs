@@ -18,6 +18,45 @@ mod chunk_section;
 pub use chunk_section::*;
 mod particle;
 pub use particle::*;
+mod block;
+pub use block::*;
+mod block_state;
+pub use block_state::*;
+mod dim_type;
+pub use dim_type::*;
+mod entity_type;
+pub use entity_type::*;
+mod item;
+pub use item::*;
+mod damage_type;
+pub use damage_type::*;
+mod chat_type;
+pub use chat_type::*;
+mod screen;
+pub use screen::*;
+mod status_effect;
+pub use status_effect::*;
+mod sound_event;
+pub use sound_event::*;
+mod attribute_type;
+pub use attribute_type::*;
+mod particle_type;
+pub use particle_type::*;
+mod recipe;
+pub use recipe::*;
+mod biome;
+pub use biome::*;
+mod wolf_variant;
+pub use wolf_variant::*;
+mod painting_variant;
+pub use painting_variant::*;
+mod banner_pattern;
+pub use banner_pattern::*;
+mod colour;
+pub use colour::*;
+// TODO: armour_trim_material
+// TODO: armour_trim_pattern
+// TODO: jukebox_song
 
 mod length_prefix_vec;
 pub use length_prefix_vec::*;

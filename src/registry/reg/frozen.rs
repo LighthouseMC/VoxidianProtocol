@@ -1,18 +1,16 @@
+use super::*;
 use std::ops::Deref;
-use crate::registry::Registry;
 
-pub struct Frozen<T>(Registry<T>);
 
-impl<T> Frozen<T> {
+pub struct RegistryFrozen<T>(Registry<T>);
+
+impl<T> RegistryFrozen<T> {
     pub fn freeze(reg: Registry<T>) -> Self {
-        Frozen(reg)
+        RegistryFrozen(reg)
     }
 }
-impl<T> Deref for Frozen<T> {
+impl<T> Deref for RegistryFrozen<T> {
     type Target = Registry<T>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
+    fn deref(&self) -> &Self::Target { &self.0 }
 }
 

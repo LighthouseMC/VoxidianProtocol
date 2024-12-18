@@ -17,6 +17,10 @@ impl NbtCompound {
         self.0.insert(key.into(), value);
     }
 
+    pub fn extend(&mut self, other : NbtCompound) {
+        self.0.extend(other.0.into_iter());
+    }
+
 }
 impl fmt::Debug for NbtCompound { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "{:?}", self.0)

@@ -1,31 +1,3 @@
-mod block;
-pub use block::*;
-mod block_state;
-pub use block_state::*;
-mod dim_type;
-pub use dim_type::*;
-mod entity_type;
-pub use entity_type::*;
-mod item;
-pub use item::*;
-mod damage_type;
-pub use damage_type::*;
-mod chat_type;
-pub use chat_type::*;
-mod screen;
-pub use screen::*;
-mod status_effect;
-pub use status_effect::*;
-mod sound_event;
-pub use sound_event::*;
-mod attribute_type;
-pub use attribute_type::*;
-mod particle_type;
-pub use particle_type::*;
-mod recipe;
-pub use recipe::*;
-
-
 use crate::packet::*;
 use std::marker::PhantomData;
 use std::{ fmt, any };
@@ -55,7 +27,7 @@ impl<T> RegEntry<T> {
     pub fn id(&self) -> usize { self.id }
 
     /// Looks up this RegEntry in a provided registry.
-    pub fn lookup<'r>(&self, registry: &'r Registry<T>) -> Option<&'r T> {
+    pub fn lookup<'r>(&self, registry : &'r Registry<T>) -> Option<&'r T> {
         registry.lookup(self)
     }
 }
