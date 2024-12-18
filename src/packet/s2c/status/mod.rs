@@ -25,8 +25,8 @@ fn remove_png_b64_header<'l, D : Deserer<'l>>(deser : D) -> Result<String, D::Er
     Ok(without_header.to_string())
 }
 impl StatusResponse {
-    pub fn to_packet(&self) -> StatusResponseS2CPacket {
-        StatusResponseS2CPacket(to_json_string(self).unwrap())
+    pub fn to_packet(&self) -> StatusResponseS2CStatusPacket {
+        StatusResponseS2CStatusPacket(to_json_string(self).unwrap())
     }
 }
 
@@ -50,23 +50,23 @@ pub struct StatusResponsePlayerSample {
     pub uuid : Uuid
 }
 
-#[packet( prefix = 0x00, bound = S2C, stage = Status, allow_priv = true )]
-pub struct StatusResponseS2CPacket(String);
-impl StatusResponseS2CPacket {
+#[packet( "minecraft:s2c/status/status_response" )]
+pub struct StatusResponseS2CStatusPacket(String);
+impl StatusResponseS2CStatusPacket {
     pub fn to_response(&self) -> Result<StatusResponse, DecodeError> {
         from_json_str(&self.0).map_err(|_| DecodeError::InvalidData("Status response is not valid JSON".to_string()) )
     }
 }
 
 
-#[packet( prefix = 0x01, bound = S2C, stage = Status )]
-pub struct PongResponseS2CPacket {
+#[packet( "minecraft:s2c/status/pong_response" )]
+pub struct PongResponseS2CStatusPacket {
     pub timestamp : u64
 }
 
 
 
-packet_full_decode!{ StatusS2CPackets }
+packet_full_decode!{ S2C Status }
 
 
 

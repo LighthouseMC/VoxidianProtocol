@@ -1,43 +1,43 @@
 use super::*;
 
 
-#[packet( prefix = 0x00, bound = S2C, stage = Config )]
-pub struct CookieRequestS2CPacket {
+#[packet( "minecraft:s2c/config/cookie_request" )]
+pub struct CookieRequestS2CConfigPacket {
     pub key : Identifier
 }
 
 
-#[packet( prefix = 0x01, bound = S2C, stage = Config )]
-pub struct PluginMessageS2CPacket {
+#[packet( "minecraft:s2c/config/custom_payload" )]
+pub struct CustomPayloadS2CConfigPacket {
     pub channel : Identifier,
     pub data    : ConsumeAllVec<u8>
 }
 
 
-#[packet( prefix = 0x02, bound = S2C, stage = Config )]
-pub struct DisconnectS2CPacket {
+#[packet( "minecraft:s2c/config/disconnect" )]
+pub struct DisconnectS2CConfigPacket {
     pub reason : NbtText
 }
 
 
-#[packet( prefix = 0x03, bound = S2C, stage = Config )]
-pub struct FinishConfigS2CPacket;
+#[packet( "minecraft:s2c/config/finish_configuration" )]
+pub struct FinishConfigurationS2CConfigPacket;
 
 
-#[packet( prefix = 0x04, bound = S2C, stage = Config )]
-pub struct KeepAliveS2CPacket(pub u64);
+#[packet( "minecraft:s2c/config/keep_alive" )]
+pub struct KeepAliveS2CConfigPacket(pub u64);
 
 
-#[packet( prefix = 0x05, bound = S2C, stage = Config )]
-pub struct PingS2CPacket(pub u32);
+#[packet( "minecraft:s2c/config/ping" )]
+pub struct PingS2CConfigPacket(pub u32);
 
 
-#[packet( prefix = 0x06, bound = S2C, stage = Config )]
-pub struct ResetChatS2CPacket;
+#[packet( "minecraft:s2c/config/reset_chat" )]
+pub struct ResetChatS2CConfigPacket;
 
 
-#[packet( prefix = 0x07, bound = S2C, stage = Config )]
-pub struct RegistryDataS2CPacket {
+#[packet( "minecraft:s2c/config/registry_data" )]
+pub struct RegistryDataS2CConfigPacket {
     pub registry : Identifier,
     pub entries  : LengthPrefixVec<VarInt, RegistryDataEntry>
 }
@@ -48,14 +48,14 @@ pub struct RegistryDataEntry {
 }
 
 
-#[packet( prefix = 0x08, bound = S2C, stage = Config )]
-pub struct RemoveResourcePackS2CPacket {
+#[packet( "minecraft:s2c/config/resource_pack_pop" )]
+pub struct ResourcePackPopS2CConfigPacket {
     pub uuid : Option<Uuid>
 }
 
 
-#[packet( prefix = 0x09, bound = S2C, stage = Config )]
-pub struct AddResourcePackS2CPacket {
+#[packet( "minecraft:s2c/config/resource_pack_push" )]
+pub struct ResourcePackPushS2CConfigPacket {
     pub uuid   : Uuid,
     pub url    : String,
     pub hash   : String,
@@ -64,31 +64,34 @@ pub struct AddResourcePackS2CPacket {
 }
 
 
-#[packet( prefix = 0x0A, bound = S2C, stage = Config )]
-pub struct StoreCookieS2CPacket {
+#[packet( "minecraft:s2c/config/store_cookie" )]
+pub struct StoreCookieS2CConfigPacket {
     pub key     : Identifier,
     pub payload : LengthPrefixVec<VarInt, u8>
 }
 
 
-#[packet( prefix = 0x0B, bound = S2C, stage = Config )]
-pub struct TransferS2CPacket {
+#[packet( "minecraft:s2c/config/transfer" )]
+pub struct TransferS2CConfigPacket {
     pub host : String,
     pub port : VarInt
 }
 
 
-#[packet( prefix = 0x0C, bound = S2C, stage = Config )]
-pub struct FeatureFlagsS2CPacket {
+#[packet( "minecraft:s2c/config/update_enabled_features" )]
+pub struct UpdateEnabledFeaturesS2CConfigPacket {
     pub features : LengthPrefixVec<VarInt, Identifier>
 }
 
 
-// TODO: UpdateTagsS2CPacket
+#[packet( "minecraft:s2c/config/update_tags" )]
+pub struct UpdateTagsS2CConfigPacket {
+    entry : TODO
+}
 
 
-#[packet( prefix = 0x0E, bound = S2C, stage = Config )]
-pub struct KnownPacksS2CPacket {
+#[packet( "minecraft:s2c/config/select_known_packs" )]
+pub struct SelectKnownPacksS2CConfigPacket {
     pub known_packs : LengthPrefixVec<VarInt, KnownPack>
 }
 #[packet_part]
@@ -99,8 +102,8 @@ pub struct KnownPack {
 }
 
 
-#[packet( prefix = 0x0F, bound = S2C, stage = Config )]
-pub struct CustomReportDetailsS2CPacket {
+#[packet( "minecraft:s2c/config/custom_report_details" )]
+pub struct CustomReportDetailsS2CConfigPacket {
     pub details : LengthPrefixVec<VarInt, ReportDetail>
 }
 #[packet_part]
@@ -110,8 +113,8 @@ pub struct ReportDetail {
 }
 
 
-#[packet( prefix = 0x10, bound = S2C, stage = Config )]
-pub struct ServerLinksS2CPacket {
+#[packet( "minecraft:s2c/config/server_links" )]
+pub struct ServerLinksS2CConfigPacket {
     pub links : LengthPrefixVec<VarInt, ServerLink>
 }
 #[packet_part]
@@ -133,4 +136,4 @@ pub enum BuiltInServerLink {
 }
 
 
-packet_full_decode!{ ConfigS2CPackets }
+packet_full_decode!{ S2C Config }

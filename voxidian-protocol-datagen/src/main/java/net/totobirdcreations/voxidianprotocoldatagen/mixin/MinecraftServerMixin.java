@@ -38,7 +38,11 @@ class MinecraftServerMixin {
 						+ "/" + packet_group.stage.toString().toLowerCase()
 						+ "/" + type.id().getPath()
 				);
-				packets_json.add(id.toString(), new JsonPrimitive(MinecraftServerMixin.i));
+				var packet_json = new JsonObject();
+				packet_json.add("prefix" , new JsonPrimitive(MinecraftServerMixin.i        ));
+				packet_json.add("bound"  , new JsonPrimitive(packet_group.bound.toString() ));
+				packet_json.add("stage"  , new JsonPrimitive(packet_group.stage.toString() ));
+				packets_json.add(id.toString(), packet_json);
 				MinecraftServerMixin.i += 1;
 			});
 		}

@@ -24,7 +24,7 @@ pub enum DecodeError {
     /// The received packet ID did not match any registered packet.
     /// 
     /// Includes the ID that wasn't recognised.
-    UnknownPacketPrefix(usize)
+    UnknownPacketPrefix(u8)
 
 }
 
@@ -73,7 +73,7 @@ pub trait PrefixedPacketDecode : Sized {
 
 #[cfg(test)]
 mod tests {
-    use crate::packet::c2s::handshake::{ HandshakeC2SPacket, IntendedStage };
+    use crate::packet::c2s::handshake::{ IntentionC2SHandshakePacket, IntendedStage };
 
     use super::*;
 
@@ -97,7 +97,7 @@ mod tests {
         assert_eq!(packet_id.as_i32(), 0);
         packetbuf.skip(consumed);
 
-        let packet = match (HandshakeC2SPacket::decode(&mut packetbuf)) {
+        let packet = match (IntentionC2SHandshakePacket::decode(&mut packetbuf)) {
             Ok(packet) => packet,
             Err(err) => { panic!("decode was not a success: {:?}", err); }
         };
