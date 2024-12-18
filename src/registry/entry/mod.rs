@@ -55,7 +55,7 @@ impl<T> RegEntry<T> {
     pub fn id(&self) -> usize { self.id }
 
     /// Looks up this RegEntry in a provided registry.
-    pub fn lookup(&self, registry: Registry<T>) -> Option<T> {
+    pub fn lookup<'r>(&self, registry: &'r Registry<T>) -> Option<&'r T> {
         registry.lookup(self)
     }
 }

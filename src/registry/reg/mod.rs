@@ -25,7 +25,10 @@ impl<T> Registry<T> {
     }
 
     pub fn get(&self, key: &Identifier) -> Option<&T> {
-        self.values.get(self.key_to_value.get(key))
+        let Some(idx) = self.key_to_value.get(key) else {
+            return None;
+        };
+        self.values.get(*idx)
     }
 
     pub fn insert(&mut self, key: Identifier, value: T) {
@@ -39,14 +42,14 @@ impl<T> Registry<T> {
             return;
         };
 
-        let value: &T = self.values.get(&key).expect("infallible");
+        let value: &T = self.values.get(*idx).expect("infallible");
         let new_value = func(value);
 
-        self.values[key] = new_value;
+        self.values[*idx] = new_value;
     }
 
     pub fn lookup(&self, entry: &RegEntry<T>) -> Option<&T> {
-        self.values[entry]
+        self.values.get(entry.id())
     }
 
     pub fn make_entry(&self, identifier: &Identifier) -> Option<RegEntry<T>> {
@@ -62,7 +65,7 @@ impl<T> Registry<T> {
     }
 
     pub fn freeze(self) -> Frozen<T> {
-        Frozen(self)
+        Frozen::freeze(self)
     }
 }
 
