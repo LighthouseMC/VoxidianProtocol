@@ -33,6 +33,30 @@ class MinecraftServerMixin {
 				"items",
 				Registries.ITEM
 		);
+		RegistryDump.dumpProtocol(
+				"attributes",
+				Registries.ATTRIBUTE,
+				(attr, obj) -> {
+					obj.addProperty("default", attr.getDefaultValue());
+				}
+		);
+		RegistryDump.dumpProtocol(
+				"blocks",
+				Registries.BLOCK
+		);
+		RegistryDump.dumpProtocol(
+				"data_component_type",
+				Registries.DATA_COMPONENT_TYPE
+		);
+		RegistryDump.dumpProtocol(
+				"entity_types",
+				Registries.ENTITY_TYPE,
+				(entity, obj) -> {
+					obj.addProperty("width", entity.getWidth());
+					obj.addProperty("height", entity.getHeight());
+					obj.addProperty("translation_key", entity.getTranslationKey());
+				}
+		);
 		System.exit(0);
 	}
 
