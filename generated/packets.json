@@ -294,7 +294,7 @@
     "bound": "S2C",
     "stage": "Play"
   },
-  "minecraft:s2c/play/forget_level_chunk": {
+  "minecraft:s2c/play/forget_world_chunk": {
     "prefix": 34,
     "bound": "S2C",
     "stage": "Play"
@@ -314,7 +314,7 @@
     "bound": "S2C",
     "stage": "Play"
   },
-  "minecraft:s2c/play/initialize_border": {
+  "minecraft:s2c/play/initialise_border": {
     "prefix": 38,
     "bound": "S2C",
     "stage": "Play"
@@ -324,17 +324,17 @@
     "bound": "S2C",
     "stage": "Play"
   },
-  "minecraft:s2c/play/level_chunk_with_light": {
+  "minecraft:s2c/play/world_chunk_with_light": {
     "prefix": 40,
     "bound": "S2C",
     "stage": "Play"
   },
-  "minecraft:s2c/play/level_event": {
+  "minecraft:s2c/play/world_event": {
     "prefix": 41,
     "bound": "S2C",
     "stage": "Play"
   },
-  "minecraft:s2c/play/level_particles": {
+  "minecraft:s2c/play/world_particles": {
     "prefix": 42,
     "bound": "S2C",
     "stage": "Play"
@@ -534,7 +534,7 @@
     "bound": "S2C",
     "stage": "Play"
   },
-  "minecraft:s2c/play/set_border_center": {
+  "minecraft:s2c/play/set_border_centre": {
     "prefix": 82,
     "bound": "S2C",
     "stage": "Play"
@@ -564,7 +564,7 @@
     "bound": "S2C",
     "stage": "Play"
   },
-  "minecraft:s2c/play/set_chunk_cache_center": {
+  "minecraft:s2c/play/set_chunk_cache_centre": {
     "prefix": 88,
     "bound": "S2C",
     "stage": "Play"
