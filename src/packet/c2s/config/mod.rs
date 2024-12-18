@@ -1,8 +1,8 @@
 use super::*;
 
 
-#[packet( prefix = 0x00, bound = C2S, stage = Config )]
-pub struct ClientInfoC2SPacket {
+#[packet( "minecraft:c2s/config/client_information" )]
+pub struct ClientInformationC2SConfigPacket {
     pub info : ClientInfo
 }
 #[packet_part]
@@ -38,34 +38,34 @@ packet_flags!{ pub struct SkinLayers {
 } }
 
 
-#[packet( prefix = 0x01, bound = C2S, stage = Config )]
-pub struct CookieResponseC2SPacket {
+#[packet( "minecraft:c2s/config/cookie_response" )]
+pub struct CookieResponseC2SConfigPacket {
     pub key     : Identifier,
     pub payload : Option<LengthPrefixVec<VarInt, u8>>
 }
 
 
-#[packet( prefix = 0x02, bound = C2S, stage = Config )]
-pub struct PluginMessageC2SPacket {
+#[packet( "minecraft:c2s/config/custom_payload" )]
+pub struct CustomPayloadC2SConfigPacket {
     pub channel : Identifier,
     pub data    : ConsumeAllVec<u8>
 }
 
 
-#[packet( prefix = 0x03, bound = C2S, stage = Config )]
-pub struct AcknowledgeFinishConfigC2SPacket;
+#[packet( "minecraft:c2s/config/finish_configuration" )]
+pub struct FinishConfigurationC2SConfigPacket;
 
 
-#[packet( prefix = 0x04, bound = C2S, stage = Config )]
-pub struct KeepAliveC2SPacket(pub u64);
+#[packet( "minecraft:c2s/config/keep_alive" )]
+pub struct KeepAliveC2SConfigPacket(pub u64);
 
 
-#[packet( prefix = 0x05, bound = C2S, stage = Config )]
-pub struct PongC2SPacket(pub u32);
+#[packet( "minecraft:c2s/config/pong" )]
+pub struct PongC2SConfigPacket(pub u32);
 
 
-#[packet( prefix = 0x06, bound = C2S, stage = Config )]
-pub struct ResourcePackResponseC2SPacket {
+#[packet( "minecraft:c2s/config/resource_pack" )]
+pub struct ResourcePackC2SConfigPacket {
     pub uuid   : Uuid,
     pub status : ResourcePackStatus
 }
@@ -82,10 +82,10 @@ pub enum ResourcePackStatus {
 }
 
 
-#[packet( prefix = 0x07, bound = C2S, stage = Config )]
-pub struct KnownPacksC2SPacket {
+#[packet( "minecraft:c2s/config/select_known_packs" )]
+pub struct SelectKnownPacksC2SConfigPacket {
     pub known_packs : LengthPrefixVec<VarInt, s2c::config::KnownPack>
 }
 
 
-packet_full_decode!{ ConfigC2SPackets }
+packet_full_decode!{ C2S Config }

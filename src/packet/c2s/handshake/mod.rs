@@ -1,8 +1,8 @@
 use super::*;
 
 
-#[packet( prefix = 0x00, bound = C2S, stage = Handshake )]
-pub struct HandshakeC2SPacket {
+#[packet( "minecraft:c2s/handshake/intention" )]
+pub struct IntentionC2SHandshakePacket {
     pub protocol_version : VarInt,
     pub address          : String,
     pub port             : u16,
@@ -24,4 +24,4 @@ impl IntendedStage {
 }
 
 
-packet_full_decode!{ HandshakeC2SPackets }
+packet_full_decode!{ C2S Handshake }

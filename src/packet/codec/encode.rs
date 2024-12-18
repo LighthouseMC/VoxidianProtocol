@@ -80,12 +80,12 @@ impl<T : PacketEncode + PacketMeta> PrefixedPacketEncode for T {
 
 #[cfg(test)]
 mod tests {
-    use crate::packet::c2s::handshake::{ HandshakeC2SPacket, IntendedStage };
+    use crate::packet::c2s::handshake::{ IntentionC2SHandshakePacket, IntendedStage };
     use super::*;
 
     #[test]
     fn basic_encoding() {
-        let packet = HandshakeC2SPacket {
+        let packet = IntentionC2SHandshakePacket {
             protocol_version : VarInt::from(823),
             address          : "127.0.0.1".to_string(),
             port             : 25565,

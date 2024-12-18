@@ -1,10 +1,10 @@
 pub trait PacketMeta {
-    const PREFIX : usize;
+    const PREFIX : u8;
     const BOUND  : Bound;
     const STAGE  : Stage;
 }
 impl<T : PacketMeta> PacketMeta for &T {
-    const PREFIX : usize = Self::PREFIX;
+    const PREFIX : u8    = Self::PREFIX;
     const BOUND  : Bound = Self::BOUND;
     const STAGE  : Stage = Self::STAGE;
 }

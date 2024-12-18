@@ -20,6 +20,16 @@ pub(crate) use serde_json::de::from_str as from_json_str;
 pub(crate) use uuid::Uuid;
 
 
+#[derive(Debug)]
+struct TODO(());
+impl PacketEncode for TODO { fn encode(&self, _ : &mut PacketBuf) -> Result<(), EncodeError> {
+    todo!("Packet field TODO");
+} }
+impl PacketDecode for TODO { fn decode(_ : &mut PacketBuf) -> Result<Self, DecodeError> {
+    todo!("Packet field TODO");
+} }
+
+
 pub(crate) macro packet_flags(
     $vis:vis struct $ident:ident { $(
         $fieldvis:vis $fieldident:ident : $bitmask:tt

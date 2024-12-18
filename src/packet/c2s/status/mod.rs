@@ -1,14 +1,14 @@
 use super::*;
 
 
-#[packet( prefix = 0x00, bound = C2S, stage = Status )]
-pub struct StatusRequestC2SPacket;
+#[packet( "minecraft:c2s/status/status_request" )]
+pub struct StatusRequestC2SStatusPacket;
 
 
-#[packet( prefix = 0x01, bound = C2S, stage = Status )]
-pub struct PingRequestC2SPacket {
+#[packet( "minecraft:c2s/status/ping_request" )]
+pub struct PingRequestC2SStatusPacket {
     pub timestamp : u64
 }
 
 
-packet_full_decode!{ StatusC2SPackets }
+packet_full_decode!{ C2S Status }
