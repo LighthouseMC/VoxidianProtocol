@@ -229,7 +229,7 @@ pub struct CommandsS2CPlayPacket(TODO);
 
 #[packet( "minecraft:s2c/play/container_close" )]
 pub struct ContainerCloseS2CPlayPacket {
-    pub window : u8
+    pub window : VarInt
 }
 
 
@@ -239,7 +239,7 @@ pub struct ContainerSetContentS2CPlayPacket(TODO);
 
 #[packet( "minecraft:s2c/play/container_set_data" )]
 pub struct ContainerSetDataS2CPlayPacket {
-    pub window : u8,
+    pub window : VarInt,
     pub prop   : u16,
     pub value  : u16
 }
@@ -258,7 +258,7 @@ pub struct CookieRequestS2CPlayPacket {
 
 #[packet( "minecraft:s2c/play/cooldown" )]
 pub struct CooldownS2CPlayPacket {
-    pub item  : RegEntry<Item>,
+    pub item  : Identifier,
     pub ticks : VarInt
 }
 
@@ -332,7 +332,18 @@ pub struct EntityEventS2CPlayPacket {
 
 
 #[packet( "minecraft:s2c/play/entity_position_sync" )]
-pub struct EntityPositionSyncS2CPlayPacket(TODO);
+pub struct EntityPositionSyncS2CPlayPacket {
+    entity_id: VarInt,
+    x: f64,
+    y: f64,
+    z: f64,
+    vx: f64,
+    vy: f64,
+    vz: f64,
+    yaw: f32,
+    pitch: f32,
+    on_ground: bool
+}
 
 
 #[packet( "minecraft:s2c/play/explode" )]
@@ -385,7 +396,7 @@ pub enum GameEvent {
 
 #[packet( "minecraft:s2c/play/horse_screen_open" )]
 pub struct HorseScreenOpenS2CPlayPacket  {
-    pub window : u8,
+    pub window : VarInt,
     pub slots  : VarInt,
     pub entity : i32
 }
@@ -431,6 +442,7 @@ pub struct WorldEventS2CPlayPacket(TODO);
 #[packet( "minecraft:s2c/play/world_particles" )]
 pub struct WorldParticlesS2CPlayPacket  {
     pub long_distance : bool,
+    pub always_visible: bool,
     pub x             : f64,
     pub y             : f64,
     pub z             : f64,
@@ -473,6 +485,7 @@ pub struct LoginS2CPlayPacket  {
     pub is_flat              : bool,
     pub death_loc            : Option<DeathLocation>,
     pub portal_cooldown      : VarInt,
+    pub sea_level            : VarInt,
     pub enforce_chat_reports : bool
 }
 #[packet_part(u8)]
@@ -522,11 +535,21 @@ pub struct MoveEntityPosRotS2CPlayPacket {
 
 #[packet( "minecraft:s2c/play/move_minecart_along_track" )]
 pub struct MoveMinecartAlongTrackS2CPlayPacket {
-    pub x         : f64,
-    pub y         : f64,
-    pub z         : f64,
-    pub yaw_deg   : f32,
-    pub pitch_deg : f32
+    pub entity_id: VarInt,
+    pub steps: LengthPrefixVec<VarInt, MinecartStep>
+}
+
+#[packet_part]
+pub struct MinecartStep {
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+    pub vx: f64,
+    pub vy: f64,
+    pub vz: f64,
+    pub yaw: f32,
+    pub pitch: f32,
+    pub weight: f32,
 }
 
 
@@ -649,27 +672,27 @@ pub struct LookAtEntity {
 
 
 #[packet( "minecraft:s2c/play/player_position" )]
-pub struct PlayerPositionS2CPlayPacket {
-    pub adx         : f64,
-    pub ady         : f64,
-    pub adz         : f64,
-    pub adyaw_deg   : f32,
-    pub adpitch_deg : f32,
-    pub flags       : SyncPosFlags,
-    pub transaction : VarInt
-}
-packet_flags!{ pub struct SyncPosFlags {
-    pub x     : 0b00000001,
-    pub y     : 0b00000010,
-    pub z     : 0b00000100,
-    pub pitch : 0b00001000,
-    pub yaw   : 0b00010000
-} }
-
+pub struct PlayerPositionS2CPlayPacket(TODO);
+// pub struct PlayerPositionS2CPlayPacket {
+//     pub teleport_id : VarInt,
+//     pub x           : f64,
+//     pub y           : f64,
+//     pub z           : f64,
+//     pub vx          : f64,
+//     pub vy          : f64,
+//     pub vz          : f64,
+//     pub adyaw_deg   : f32,
+//     pub adpitch_deg : f32,
+//     pub flags       : TeleportFlags,
+//     pub transaction : VarInt
+// }
 
 
 #[packet( "minecraft:s2c/play/player_rotation" )]
-pub struct PlayerRotationS2CPlayPacket(TODO);
+pub struct PlayerRotationS2CPlayPacket {
+    yaw: f64,
+    pitch: f64
+}
 
 
 #[packet( "minecraft:s2c/play/recipe_book_add" )]
@@ -733,6 +756,7 @@ pub struct RespawnS2CPlayPacket {
     pub is_flat         : bool,
     pub death_loc       : Option<DeathLocation>,
     pub portal_cooldown : VarInt,
+    pub sea_level       : VarInt,
     pub data_kept       : u8
 }
 
@@ -1043,8 +1067,9 @@ pub struct SetSubtitleTextS2CPlayPacket {
 
 #[packet( "minecraft:s2c/play/set_time" )]
 pub struct SetTimeS2CPlayPacket {
-    pub world_age : u64,
-    pub day_time  : u64
+    pub world_age              : u64,
+    pub day_time               : u64,
+    pub time_of_day_increasing : bool,
 }
 
 
@@ -1144,16 +1169,20 @@ pub struct TakeItemEntityS2CPlayPacket {
 
 
 #[packet( "minecraft:s2c/play/teleport_entity" )]
-pub struct TeleportEntityS2CPlayPacket {
-    pub entity : VarInt,
-    pub x      : f64,
-    pub y      : f64,
-    pub z      : f64,
-    pub yaw    : Angle,
-    pub pitch  : Angle,
-    pub ground : bool
-}
+pub struct TeleportEntityS2CPlayPacket(TODO);
 
+// TODO: make int
+// packet_flags!(struct TeleportFlags {
+//     pub relative_x: 0x0001,
+//     pub relative_y: 0x0002,
+//     pub relative_z: 0x0004,
+//     pub relative_yaw: 0x0008,
+//     pub relative_pitch: 0x0010,
+//     pub relative_vx: 0x0020,
+//     pub relative_vy: 0x0040,
+//     pub relative_vz: 0x0080,
+//     pub rotate_velocity: 0x0100
+// });
 
 #[packet( "minecraft:s2c/play/ticking_state" )]
 pub struct TickingStateS2CPlayPacket {
