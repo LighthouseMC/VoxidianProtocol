@@ -3,6 +3,15 @@ use super::*;
 
 #[derive(Clone, Debug)]
 pub struct Particle {
+    pub id : Identifier,
+}
+impl Particle {
+    pub fn to_nbt(&self) -> NbtCompound {
+        let mut nbt = NbtCompound::new();
+        nbt.insert("type", NbtElement::String(self.id.to_string()));
+        // TODO: Insert particle-specific data
+        nbt
+    }
 }
 
 

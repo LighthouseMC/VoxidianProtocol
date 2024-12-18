@@ -2,6 +2,8 @@ mod component;
 pub use component::*;
 mod content;
 pub use content::*;
+mod style;
+pub use style::*;
 mod colour;
 pub use colour::*;
 mod click_event;

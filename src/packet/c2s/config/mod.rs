@@ -1,4 +1,5 @@
 use super::*;
+use s2c::config::KnownPack;
 
 
 #[packet( "minecraft:c2s/config/client_information" )]
@@ -16,6 +17,26 @@ pub struct ClientInfo {
     pub text_filtering : bool,
     pub server_listing : bool
 }
+impl Default for ClientInfo { fn default() -> Self {
+    Self {
+        locale         : "en_us".to_string(),
+        view_distance  : 12,
+        chat_mode      : ClientChatMode::Enabled,
+        chat_colours   : true,
+        skin_layers    : SkinLayers {
+            cape         : true,
+            jacket       : true,
+            left_sleeve  : true,
+            right_sleeve : true,
+            left_leg     : true,
+            right_leg    : true,
+            hat          : true
+        },
+        main_hand      : ClientMainHand::Right,
+        text_filtering : false,
+        server_listing : true
+    }
+} }
 #[packet_part(VarInt)]
 pub enum ClientChatMode {
     Enabled      = 0,
@@ -84,7 +105,7 @@ pub enum ResourcePackStatus {
 
 #[packet( "minecraft:c2s/config/select_known_packs" )]
 pub struct SelectKnownPacksC2SConfigPacket {
-    pub known_packs : LengthPrefixVec<VarInt, s2c::config::KnownPack>
+    pub known_packs : LengthPrefixVec<VarInt, KnownPack>
 }
 
 

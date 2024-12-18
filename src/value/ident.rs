@@ -1,20 +1,28 @@
 use super::*;
 use std::fmt;
+use std::borrow::Cow;
 
 
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct Identifier {
-    pub namespace : String,
-    pub path      : String
+    pub namespace : Cow<'static, str>,
+    pub path      : Cow<'static, str>
 }
 impl Identifier {
 
     pub fn new<N : Into<String>, P : Into<String>>(namespace : N, path : P) -> Self { Self {
-        namespace : namespace.into(),
-        path      : path.into()
+        namespace : Cow::Owned(namespace .into()),
+        path      : Cow::Owned(path      .into())
     } }
 
     pub fn vanilla<P : Into<String>>(path : P) -> Self { Self::new("minecraft", path) }
+
+    pub const fn new_const(namespace : &'static str, path : &'static str) -> Self { Self {
+        namespace : Cow::Borrowed(namespace ),
+        path      : Cow::Borrowed(path      )
+    } }
+
+    pub const fn vanilla_const(path : &'static str) -> Self { Self::new_const("minecraft", path) }
 
 }
 impl fmt::Display for Identifier { fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -28,10 +36,7 @@ impl<T : AsRef<str>> From<T> for Identifier {
         let value = value.as_ref();
         let Some(i) = value.find(':') else { return Identifier::vanilla(value) };
         let (namespace, colon_path) = value.split_at(i);
-        Self {
-            namespace : namespace.to_string(),
-            path      : colon_path.chars().skip(1).collect()
-        }
+        Self::new(namespace, colon_path.chars().skip(1).collect::<String>())
     }
 }
 impl Ser for Identifier {

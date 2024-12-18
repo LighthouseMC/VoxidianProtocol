@@ -1,21 +1,24 @@
 mod frozen;
-
-use std::collections::HashMap;
 pub use frozen::*;
+
+use crate::packet::s2c::config::RegistryDataS2CConfigPacket;
 use crate::registry::RegEntry;
 use crate::value::Identifier;
+use super::*;
+use std::collections::HashMap;
 
 /// Represents a registry.
 pub struct Registry<T> {
     // key = Identifier
     // id = RegEntry<T> / usize
     // value = T
-    values: Vec<T>,
-    keys: Vec<Identifier>,
-    key_to_value: HashMap<Identifier, usize>,
+    values       : Vec<T>,
+    keys         : Vec<Identifier>,
+    key_to_value : HashMap<Identifier, usize>,
 }
 
 impl<T> Registry<T> {
+
     pub fn new() -> Self {
         Self {
             values: Vec::new(),
@@ -64,10 +67,27 @@ impl<T> Registry<T> {
         self.key_to_value.clear();
     }
 
-    pub fn freeze(self) -> Frozen<T> {
-        Frozen::freeze(self)
+    pub fn freeze(self) -> RegistryFrozen<T> {
+        RegistryFrozen::freeze(self)
+    }
+
+}
+
+impl<T : RegValue> Registry<T> {
+    pub fn to_registry_data_packet(&self) -> RegistryDataS2CConfigPacket {
+        let mut entries = HashMap::new();
+        for (key, idx) in &self.key_to_value {
+            let value = &self.values[*idx];
+            entries.insert(key.clone(), value.to_registry_data_packet());
+        }
+        RegistryDataS2CConfigPacket {
+            registry : T::REGISTRY_ID,
+            entries  : entries.into()
+        }
     }
 }
+
+impl<T> Default for Registry<T> { fn default() -> Self { Self::new() } }
 
 #[cfg(test)]
 mod tests {
