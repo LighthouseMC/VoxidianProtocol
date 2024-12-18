@@ -71,7 +71,7 @@ macro get_packets_data(let $pat:pat) {
             while (! path.join("Cargo.toml").is_file()) {
                 path = path.parent().unwrap().to_path_buf();
             }
-            let path = path.parent().unwrap().join("voxidian-protocol").join("generated").join("packets.json");
+            let path = path.join("generated").join("packets.json");
             let Ok(file) = fs::read_to_string(&path) else { panic!("`packets.json` missing ({})", path.display()) };
             let Ok(data) = serde_json::from_str::<PacketsData>(&file) else { panic!("`packets.json` in invalid format") };
             data
