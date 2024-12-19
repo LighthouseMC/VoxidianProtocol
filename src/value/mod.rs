@@ -72,6 +72,8 @@ mod length_prefix_hashmap;
 pub use length_prefix_hashmap::*;
 mod reg_or;
 pub use reg_or::*;
+pub use slot::*;
+mod slot;
 
 pub use uuid::{ Uuid, uuid };
 

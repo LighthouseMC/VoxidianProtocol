@@ -76,8 +76,8 @@ macro get_packets_data(let $pat:pat) {
 }
 
 #[proc_macro_attribute]
-pub fn component(input: proc_macro::TokenStream, args: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    crate::component::component_impl(input.into(), args.into()).into()
+pub fn component(attr: proc_macro::TokenStream, item: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    crate::component::component_impl(attr.into(), item.into()).into()
 }
 
 #[proc_macro_attribute]
