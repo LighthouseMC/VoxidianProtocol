@@ -60,6 +60,8 @@ pub use colour::*;
 
 mod length_prefix_vec;
 pub use length_prefix_vec::*;
+mod length_prefix_double_vec;
+pub use length_prefix_double_vec::*;
 mod consume_all_vec;
 pub use consume_all_vec::*;
 mod either;
