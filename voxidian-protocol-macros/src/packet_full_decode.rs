@@ -1,5 +1,11 @@
-#[proc_macro]
-pub fn packet_full_decode(input : TokenStream) -> TokenStream {
+use proc_macro::TokenStream;
+use proc_macro2::Ident;
+use quote::quote;
+use syn::parse_str;
+use crate::get_packets_data;
+use inflector::Inflector;
+
+pub(crate) fn packet_full_decode_impl(input : TokenStream) -> TokenStream {
     let parts = format!("{}", input).split(" ").map(|part| {
         let Ok(part) = parse_str::<Ident>(part) else { panic!("expected an identifier") };
         part
@@ -23,7 +29,7 @@ pub fn packet_full_decode(input : TokenStream) -> TokenStream {
         }
     }
     let ident = parse_str::<Ident>(&format!("{}{}Packets", bound_str, stage_str)).unwrap();
-    quote!{
+    (quote!{
         #[derive(Debug)]
         pub enum #ident { #( #fields )* }
         impl PrefixedPacketEncode for #ident { fn encode_prefixed(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { match (self) { #(#encode)* } } }
@@ -34,5 +40,5 @@ pub fn packet_full_decode(input : TokenStream) -> TokenStream {
                 packetid => Err(DecodeError::UnknownPacketPrefix(packetid))
             }
         } }
-    }.into()
+    }).into()
 }

@@ -5,7 +5,12 @@
     decl_macro
 )]
 
-use std::{ fs, env };
+mod component;
+mod packet;
+mod packet_full_decode;
+mod packet_part;
+
+use std::{fs, env };
 use std::path::PathBuf;
 use std::sync::Mutex;
 use std::collections::HashMap;
@@ -22,11 +27,6 @@ use syn::{
 };
 use serde::Deserialize as Deser;
 use inflector::Inflector;
-
-
-include!("packet.rs");
-include!("packet_part.rs");
-include!("packet_full_decode.rs");
 
 
 /// Cache
@@ -73,4 +73,24 @@ macro get_packets_data(let $pat:pat) {
             data
         }
     );
+}
+
+#[proc_macro_attribute]
+pub fn component(input: proc_macro::TokenStream, args: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    crate::component::component_impl(input.into(), args.into()).into()
+}
+
+#[proc_macro_attribute]
+pub fn packet(attr : TokenStream, item : TokenStream) -> TokenStream {
+   crate::packet::packet_impl(attr, item) 
+}
+
+#[proc_macro]
+pub fn packet_full_decode(input : TokenStream) -> TokenStream {
+    crate::packet_full_decode::packet_full_decode_impl(input)
+}
+
+#[proc_macro_attribute]
+pub fn packet_part(attr : TokenStream, item : TokenStream) -> TokenStream {
+    crate::packet_part::packet_part_impl(attr, item)
 }
