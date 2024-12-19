@@ -1,5 +1,11 @@
-#[proc_macro_attribute]
-pub fn packet_part(attr : TokenStream, item : TokenStream) -> TokenStream {
+use proc_macro::{Span, TokenStream};
+use proc_macro2::Ident;
+use quote::{quote, quote_spanned};
+use syn::{parse_macro_input, parse_str, Field, Fields, FieldsNamed, FieldsUnnamed, Index, Item, ItemEnum, ItemStruct, Type, Variant, Visibility};
+use syn::__private::TokenStream2;
+use syn::spanned::Spanned;
+
+pub(crate) fn packet_part_impl(attr : TokenStream, item : TokenStream) -> TokenStream {
     let input = item.clone();
     let input = parse_macro_input!(input as Item);
     match (&input) {
@@ -61,12 +67,12 @@ pub fn packet_part(attr : TokenStream, item : TokenStream) -> TokenStream {
 
                 };
                 let item2 : TokenStream2 = item.into();
-                quote!{
+                (quote!{
                     #[derive(Debug)]
                     #item2
                     impl PacketEncode for #ident { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { #encode Ok(()) } }
                     impl PacketDecode for #ident { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> { Ok(Self #decode) } }
-                }.into()
+                }).into()
             }
         },
 
