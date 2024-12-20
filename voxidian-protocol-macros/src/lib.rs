@@ -10,29 +10,15 @@ mod packet;
 mod packet_full_decode;
 mod packet_part;
 
-use std::{fs, env };
-use std::path::PathBuf;
+use std::env;
 use std::sync::Mutex;
 use std::collections::HashMap;
-use proc_macro::{ Span, TokenStream };
-use proc_macro2::TokenStream as TokenStream2;
-use quote::{ quote, quote_spanned };
-use syn::{
-    Field, Fields, FieldsNamed, FieldsUnnamed,
-    Ident, Index, Item, ItemEnum, ItemStruct,
-    LitStr, Meta, Type, Variant, Visibility,
-    parse_macro_input, parse_str,
-    spanned::Spanned,
-    punctuated::Punctuated
-};
+use proc_macro::TokenStream;
 use serde::Deserialize as Deser;
-use inflector::Inflector;
 
 
 /// Cache
 static PACKETS_DATA : Mutex<Option<PacketsData>> = Mutex::new(None);
-
-
 #[derive(Deser)]
 #[serde(transparent)]
 struct PacketsData {
@@ -57,8 +43,6 @@ enum PacketStage {
     Config,
     Play
 }
-
-
 macro get_packets_data(let $pat:pat) {
     PACKETS_DATA.clear_poison();
     let mut packets_data = match (PACKETS_DATA.lock()) {
@@ -67,8 +51,8 @@ macro get_packets_data(let $pat:pat) {
     };
     let $pat = packets_data.get_or_insert_with(
         || {
-            let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).parent().unwrap().join("generated").join("packets.json");
-            let Ok(file) = fs::read_to_string(&path) else { panic!("`packets.json` missing ({})", path.display()) };
+            let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).parent().unwrap().join("generated").join("packets.json");
+            let Ok(file) = std::fs::read_to_string(&path) else { panic!("`packets.json` missing ({})", path.display()) };
             let Ok(data) = serde_json::from_str::<PacketsData>(&file) else { panic!("`packets.json` in invalid format") };
             data
         }
@@ -76,13 +60,13 @@ macro get_packets_data(let $pat:pat) {
 }
 
 #[proc_macro_attribute]
-pub fn component(attr: proc_macro::TokenStream, item: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    crate::component::component_impl(attr.into(), item.into()).into()
+pub fn component(attr: TokenStream, item: TokenStream) -> TokenStream {
+    crate::component::component_impl(attr, item)
 }
 
 #[proc_macro_attribute]
 pub fn packet(attr : TokenStream, item : TokenStream) -> TokenStream {
-   crate::packet::packet_impl(attr, item) 
+    crate::packet::packet_impl(attr, item) 
 }
 
 #[proc_macro]

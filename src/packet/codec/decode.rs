@@ -69,6 +69,16 @@ pub trait PrefixedPacketDecode : Sized {
     fn decode_prefixed(buf : &mut PacketBuf) -> Result<Self, DecodeError>;
 }
 
+impl<T : PacketDecode + PacketMeta> PrefixedPacketDecode for T {
+    fn decode_prefixed(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+        let packet_id = buf.read_decode::<VarInt>()?.as_i32() as u8;
+        if (packet_id != Self::PREFIX) {
+            return Err(DecodeError::UnknownPacketPrefix(packet_id));
+        }
+        Self::decode(buf)
+    }
+}
+
 
 
 #[cfg(test)]

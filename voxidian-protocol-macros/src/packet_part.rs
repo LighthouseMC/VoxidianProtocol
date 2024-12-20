@@ -1,8 +1,7 @@
-use proc_macro::{Span, TokenStream};
-use proc_macro2::Ident;
+use proc_macro::{ Span, TokenStream };
+use proc_macro2::{ Ident, TokenStream as TokenStream2 };
 use quote::{quote, quote_spanned};
 use syn::{parse_macro_input, parse_str, Field, Fields, FieldsNamed, FieldsUnnamed, Index, Item, ItemEnum, ItemStruct, Type, Variant, Visibility};
-use syn::__private::TokenStream2;
 use syn::spanned::Spanned;
 
 pub(crate) fn packet_part_impl(attr : TokenStream, item : TokenStream) -> TokenStream {
