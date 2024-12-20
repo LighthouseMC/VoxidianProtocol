@@ -1,51 +1,53 @@
-use proc_macro::Span;
 use std::collections::HashMap;
 use std::path::PathBuf;
-use proc_macro2::{TokenStream};
-use quote::__private::ext::RepToTokensExt;
-use quote::{quote, ToTokens};
+use std::sync::Mutex;
+use proc_macro::TokenStream;
+use quote::quote;
 use serde::Deserialize;
-use syn::{parse_macro_input, ItemStruct, LitStr};
+use syn::{ parse_macro_input, ItemStruct, LitStr };
 
+/// Cache
+static COMPONENTS_DATA : Mutex<Option<ComponentTypes>> = Mutex::new(None);
 #[derive(Deserialize)]
 #[serde(transparent)]
 struct ComponentTypes {
     inner: HashMap<String, ComponentData>
 }
-
 #[derive(Deserialize)]
 struct ComponentData {
     pub protocol_id: u32
 }
-pub(crate) fn component_impl(attr: TokenStream, item: TokenStream) -> TokenStream {
-    if(attr.is_empty()) {
-        proc_macro::Span::call_site().warning("components need a constant raw string attribute").emit();
-    }
-    let attr_stream: proc_macro::TokenStream = attr.clone().into();
-    let item_stream: proc_macro::TokenStream = item.clone().into();
-
-    let structure = match syn::parse::<ItemStruct>(item_stream) {
-        Ok(s) => s,
-        Err(e) => { panic!("{}", e.to_string()); }
+macro get_components_data(let $pat:pat) {
+    COMPONENTS_DATA.clear_poison();
+    let mut components_data = match (COMPONENTS_DATA.lock()) {
+        Ok  (guard ) => guard,
+        Err (_     ) => { COMPONENTS_DATA.clear_poison(); COMPONENTS_DATA.lock().unwrap() }
     };
+    let $pat = components_data.get_or_insert_with(
+        || {
+            let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).parent().unwrap().join("generated").join("data_component_type.json");
+            let Ok(file) = std::fs::read_to_string(&path) else { panic!("`data_component_type.json` missing ({})", path.display()) };
+            let Ok(data) = serde_json::from_str::<ComponentTypes>(&file) else { panic!("`data_component_type.json` in invalid format") };
+            data
+        }
+    );
+}
 
-    let attr_path = match syn::parse::<LitStr>(attr_stream) {
-        Ok(v) => v,
-        Err(e) => { panic!("{}", e.to_string()); }
-    }.value();
 
-    let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).parent().unwrap().join("generated").join("data_component_type.json");
-    let json_string = std::fs::read_to_string(path).expect("/generated/data_component_type.json file must be present");
-    let types: ComponentTypes = serde_json::from_str(&json_string).expect("valid json expected");
+pub(crate) fn component_impl(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let item = parse_macro_input!( item as ItemStruct );
+    let attr = parse_macro_input!( attr as LitStr );
 
-    let data = types.inner.get(&attr_path).expect("expected valid entry into components table");
-    let idx = data.protocol_id;
-    let structure_name = &structure.ident;
+    get_components_data!(let types);
+    let data = &types.inner[&attr.value()];
+
+    let idx            = data.protocol_id;
+    let structure_name = &item.ident;
     quote! {
-        #structure
+        #item
 
         impl crate::value::ComponentData for #structure_name {
             const ID: u32 = #idx;
         }
-    }
+    }.into()
 }

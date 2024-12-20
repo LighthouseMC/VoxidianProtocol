@@ -1,11 +1,11 @@
 use proc_macro::TokenStream;
 use inflector::Inflector;
 use proc_macro2::Ident;
-use quote::{quote, quote_spanned};
-use syn::{parse_macro_input, parse_str, Field, Fields, FieldsNamed, FieldsUnnamed, Index, Item, ItemStruct, LitStr, Meta};
+use quote::{ quote, quote_spanned };
+use syn::{ parse_macro_input, parse_str, Field, Fields, FieldsNamed, FieldsUnnamed, Index, Item, ItemStruct, LitStr, Meta };
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use crate::{get_packets_data, PacketData};
+use crate::{ get_packets_data, PacketData };
 
 pub(crate) fn packet_impl(attr : TokenStream, item : TokenStream) -> TokenStream {
     let packet_id    = parse_macro_input!( attr as LitStr ).value();
