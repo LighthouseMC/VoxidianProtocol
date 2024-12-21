@@ -4,7 +4,7 @@ use voxidian_protocol_macros::packet_part;
 mod components;
 pub use components::*;
 
-#[packet_part]
+#[derive(Debug)]
 pub struct SlotData {
     pub item_count: VarInt,
     pub item_id: Option<VarInt>
