@@ -6,7 +6,7 @@ use inflector::Inflector;
 use proc_macro2::Ident;
 use quote::{format_ident, quote};
 use serde::Deserialize;
-use syn::{ parse_macro_input, ItemStruct, LitStr };
+use syn::{parse_macro_input, ItemStruct, LitInt, LitStr};
 
 /// Cache
 static COMPONENTS_DATA : LazyLock<ComponentTypes> = LazyLock::new(|| {
@@ -56,16 +56,34 @@ pub(crate) fn component_enum_impl() -> TokenStream {
             )
     );
 
+    let formatted_values: Vec<LitInt> = Vec::from_iter(
+        COMPONENTS_DATA.inner.values()
+            .map(|value|
+                LitInt::new(
+                    &value.protocol_id.to_string(),
+                    Span::call_site().into()
+                )
+            )
+    );
+
     (quote! {
         // TODO: #(#formatted_names(#formatted_names))
         #[derive(Debug, Clone)]
         pub enum DataComponents {
-
+            #( #formatted_names ),*
         }
 
         #[derive(Debug, Clone)]
         pub enum DataComponentTypes {
             #( #formatted_names ),*
+        }
+        
+        impl DataComponentTypes {
+            pub fn protocol_id(&self) -> u32 {
+                match self {
+                    #( #formatted_names => #formatted_values ),*
+                }
+            }
         }
 
     }).into()
