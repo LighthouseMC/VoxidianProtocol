@@ -1,8 +1,10 @@
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::{LazyLock, Mutex};
-use proc_macro::{TokenStream};
-use quote::quote;
+use proc_macro::{Span, TokenStream};
+use inflector::Inflector;
+use proc_macro2::Ident;
+use quote::{format_ident, quote};
 use serde::Deserialize;
 use syn::{ parse_macro_input, ItemStruct, LitStr };
 
@@ -44,11 +46,18 @@ pub(crate) fn component_impl(attr: TokenStream, item: TokenStream) -> TokenStrea
 }
 
 pub(crate) fn component_enum_impl() -> TokenStream {
-    for key in COMPONENTS_DATA.inner.keys() {
-        let value = COMPONENTS_DATA.inner.get(key);
-    }
+    let formatted_names: Vec<Ident> = Vec::from_iter(
+        COMPONENTS_DATA.inner.keys()
+            .map(|key|
+                Ident::new(
+                    &key.replace("minecraft:", "").to_title_case().replace(" ", ""),
+                    Span::call_site().into()
+                )
+            )
+    );
 
     (quote! {
+        // TODO: #(#formatted_names(#formatted_names))
         #[derive(Debug, Clone)]
         pub enum DataComponents {
 
@@ -56,7 +65,8 @@ pub(crate) fn component_enum_impl() -> TokenStream {
 
         #[derive(Debug, Clone)]
         pub enum DataComponentTypes {
-
+            #( #formatted_names ),*
         }
+
     }).into()
 }
