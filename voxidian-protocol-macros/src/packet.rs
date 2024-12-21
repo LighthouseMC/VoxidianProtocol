@@ -5,14 +5,13 @@ use quote::{ quote, quote_spanned };
 use syn::{ parse_macro_input, parse_str, Field, Fields, FieldsNamed, FieldsUnnamed, Index, Item, ItemStruct, LitStr, Meta };
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use crate::{ get_packets_data, PacketData };
+use crate::{PacketData, PACKETS_DATA};
 
 pub(crate) fn packet_impl(attr : TokenStream, item : TokenStream) -> TokenStream {
     let packet_id    = parse_macro_input!( attr as LitStr ).value();
     let packet_id_tc = packet_id.split("/").last().unwrap().to_title_case().replace(" ", "");
     let PacketData { prefix, bound, stage } = {
-        get_packets_data!(let packets_data);
-        let Some(packet_data) = packets_data.packets.get(&packet_id) else { panic!("Unknown packet {:?}", packet_id) };
+        let Some(packet_data) = PACKETS_DATA.packets.get(&packet_id) else { panic!("Unknown packet {:?}", packet_id) };
         *packet_data
     };
 

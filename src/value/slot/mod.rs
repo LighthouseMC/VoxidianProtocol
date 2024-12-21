@@ -1,5 +1,5 @@
 use crate::value::*;
-use voxidian_protocol_macros::packet_part;
+use voxidian_protocol_macros::{component_enum, packet_part};
 
 mod components;
 pub use components::*;
@@ -8,8 +8,8 @@ pub use components::*;
 pub struct SlotData {
     pub item_count: VarInt,
     pub item_id: RegEntry<Item>,
-    pub components: Vec<DataComponent>,
-    pub removed_components: Vec<DataComponentType>
+    pub components: Vec<DataComponents>,
+    pub removed_components: Vec<DataComponentTypes>
 }
 
 impl PacketEncode for SlotData {
@@ -56,3 +56,5 @@ impl PacketDecode for SlotData {
 pub trait ComponentData: PacketEncode + PacketDecode {
     const ID: u32;
 }
+
+component_enum!();

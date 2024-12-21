@@ -2,8 +2,8 @@ use proc_macro::TokenStream;
 use proc_macro2::Ident;
 use quote::quote;
 use syn::parse_str;
-use crate::get_packets_data;
 use inflector::Inflector;
+use crate::PACKETS_DATA;
 
 pub(crate) fn packet_full_decode_impl(input : TokenStream) -> TokenStream {
     let parts = format!("{}", input).split(" ").map(|part| {
@@ -15,11 +15,11 @@ pub(crate) fn packet_full_decode_impl(input : TokenStream) -> TokenStream {
     let bound_str = bound.to_string();
     let stage     = parts[1].clone();
     let stage_str = stage.to_string();
-    get_packets_data!(let packets_data);
+
     let mut fields = Vec::new();
     let mut encode = Vec::new();
     let mut decode = Vec::new();
-    for (packet_id, packet) in  &packets_data.packets {
+    for (packet_id, packet) in  &PACKETS_DATA.packets {
         if (format!("{:?}", packet.stage) == stage_str && format!("{:?}", packet.bound) == bound_str) {
             let packet_id_tc = parse_str::<Ident>(&packet_id.split("/").last().unwrap().to_title_case().replace(" ", "")).unwrap();
             let ident        = parse_str::<Ident>(&format!("{}{}{}Packet", packet_id_tc, bound_str, stage_str)).unwrap();
