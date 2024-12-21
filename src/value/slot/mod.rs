@@ -1,8 +1,9 @@
-use crate::value::*;
 use voxidian_protocol_macros::{component_enum, packet_part};
 
 mod components;
 pub use components::*;
+
+use crate::value::*;
 
 #[derive(Debug)]
 pub struct SlotData {
