@@ -1,3 +1,4 @@
+use crate::value::nbt::into_element::IntoNbtElement;
 use super::*;
 
 
@@ -15,6 +16,10 @@ impl NbtCompound {
 
     pub fn insert<S : Into<String>>(&mut self, key : S, value : NbtElement) {
         self.0.insert(key.into(), value);
+    }
+
+    pub fn insert_element<S : Into<String>, E: IntoNbtElement>(&mut self, key : S, value : E) {
+        self.0.insert(key.into(), value.into_nbt());
     }
 
     pub fn extend(&mut self, other : NbtCompound) {
