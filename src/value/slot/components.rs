@@ -222,4 +222,4 @@ pub struct MapDecorations {
 
 // TODO: minecraft:lock
 
-// TODO: minecraft:container_loo
+// TODO: minecraft:container_loot
