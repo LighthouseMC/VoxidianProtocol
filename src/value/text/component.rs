@@ -142,3 +142,18 @@ impl fmt::Display for TextComponent { fn fmt(&self, f : &mut fmt::Formatter<'_>)
     for extra in &self.extra { write!(f, "{}", extra)?; }
     Ok(())
 } }
+
+impl PacketEncode for TextComponent {
+    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+        let mut nbt = Nbt::default();
+        nbt.root = self.to_nbt();
+        buf.encode_write(nbt)?;
+        Ok(())
+    }
+}
+
+impl PacketDecode for TextComponent {
+    fn decode(buf: &mut PacketBuf) -> Result<Self, DecodeError> {
+        todo!()
+    }
+}
