@@ -51,3 +51,9 @@ impl<T: IntoNbtElement> IntoNbtElement for Vec<T> {
         NbtElement::List(self.into_iter().map(|x| x.into_nbt()).collect())
     }
 }
+
+impl IntoNbtElement for NbtElement {
+    fn into_nbt(self) -> NbtElement {
+        self
+    }
+}
