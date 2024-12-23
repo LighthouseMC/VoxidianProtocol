@@ -34,7 +34,7 @@ pub(crate) fn packet_full_decode_impl(input : TokenStream) -> TokenStream {
         pub enum #ident { #( #fields )* }
         impl PrefixedPacketEncode for #ident { fn encode_prefixed(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { match (self) { #(#encode)* } } }
         impl PrefixedPacketDecode for #ident { fn decode_prefixed(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
-            let packetid = buf.read_decode::<VarInt>().unwrap().as_i32() as u8;
+            let packetid = buf.read_decode::<VarInt>()?.as_i32() as u8;
             match (packetid) {
                 #(#decode)*
                 packetid => Err(DecodeError::UnknownPacketPrefix(packetid))
