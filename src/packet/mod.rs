@@ -32,7 +32,7 @@ impl PacketDecode for TODO { fn decode(_ : &mut PacketBuf) -> Result<Self, Decod
 
 
 pub(crate) macro packet_flags(
-    $vis:vis struct $ident:ident { $(
+    $vis:vis struct $ident:ident<$type:ty> { $(
         $fieldvis:vis $fieldident:ident : $bitmask:tt
     ),* $(,)? }
 ) {
@@ -42,16 +42,67 @@ pub(crate) macro packet_flags(
         $fieldvis $fieldident : bool
     ),* }
     impl PacketEncode for $ident { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
-        buf.write_u8( $(
-            (if (self.$fieldident) { $bitmask } else { 0b00000000 })
-        )|* );
+        <$type as PacketEncode>::encode(
+            &($(
+                (if (self.$fieldident) { $bitmask } else { 0b00000000 })
+            )|*),
+            buf
+        )?;
         Ok(())
     } }
     impl PacketDecode for $ident { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
-        let bits = buf.read_u8()?;
+        let bits = <$type as PacketDecode>::decode(buf)?;
         Ok(Self { $(
             $fieldident : (bits & $bitmask) != 0
         ),* })
     } }
+}
 
+#[cfg(test)]
+mod tests {
+    use crate::packet::codec::{PacketEncode, PacketDecode};
+    use super::{packet_flags, PacketBuf};
+
+
+    packet_flags! {
+        struct FlagsWithU8<u8> {
+            a: 0b001,
+            b: 0b010,
+            c: 0b100
+        }
+    }
+
+    packet_flags! {
+        struct FlagsWithI32<i32> {
+            a: 0b001,
+            b: 0b010,
+            c: 0b100
+        }
+    }
+
+    #[test]
+    pub fn test_u8_packet_flags() {
+        let flags = FlagsWithU8 {
+            a: true,
+            b: false,
+            c: true
+        };
+        let mut buf = PacketBuf::new();
+        flags.encode(&mut buf).unwrap();
+        let new_flags = FlagsWithU8::decode(&mut buf).unwrap();
+        assert_eq!(flags, new_flags);
+    }
+
+    #[test]
+    pub fn test_i32_packet_flags() {
+        let flags = FlagsWithI32 {
+            a: true,
+            b: false,
+            c: true
+        };
+        let mut buf = PacketBuf::new();
+        flags.encode(&mut buf).unwrap();
+        let new_flags = FlagsWithI32::decode(&mut buf).unwrap();
+        assert_eq!(flags, new_flags);
+    }
 }
