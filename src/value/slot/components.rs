@@ -6,58 +6,52 @@ use crate::value::PacketBuf;
 use crate::value::EncodeError;
 use crate::value::DecodeError;
 use crate::value::VarInt;
+use crate::packet::TODO;
 use voxidian_protocol_macros::{component, packet_part};
 
+use super::SlotData;
+
 #[component("minecraft:custom_data")]
-#[packet_part]
 pub struct CustomData {
     pub data: Nbt
 }
 
 #[component("minecraft:max_stack_size")]
-#[packet_part]
 pub struct MaxStackSize {
     pub amount: VarInt
 }
 
 #[component("minecraft:max_damage")]
-#[packet_part]
 pub struct MaxDamage {
     pub amount: VarInt
 }
 
 #[component("minecraft:unbreakable")]
-#[packet_part]
 pub struct Unbreakable {
     pub show_tooltip: bool
 }
 
 #[component("minecraft:custom_name")]
-#[packet_part]
 pub struct CustomName {
     pub amount: TextComponent
 }
 
 #[component("minecraft:item_name")]
-#[packet_part]
 pub struct ItemName {
     pub amount: TextComponent
 }
 
 #[component("minecraft:item_model")]
-#[packet_part]
 pub struct ItemModel {
     pub amount: Identifier
 }
 
 #[component("minecraft:lore")]
-#[packet_part]
 pub struct Lore {
     pub amount: LengthPrefixVec<VarInt, TextComponent>
 }
 
 #[component("minecraft:rarity")]
-#[packet_part]
 pub struct Rarity {
     pub rarity: RarityLevel
 }
@@ -71,7 +65,6 @@ pub enum RarityLevel {
 }
 
 #[component("minecraft:enchantments")]
-#[packet_part]
 pub struct Enchantments {
     // TODO: enchantment registry data
     pub show_in_tooltip: bool
@@ -82,47 +75,76 @@ pub struct Enchantments {
 // TODO: attribute_modifiers
 
 #[component("minecraft:custom_model_data")]
-#[packet_part]
 pub struct CustomModelData {
     // TODO: probably outdated
     pub data: VarInt
 }
 
 #[component("minecraft:hide_additional_tooltip")]
-#[packet_part]
 pub struct HideAdditionalTooltip {}
 
 #[component("minecraft:hide_tooltip")]
-#[packet_part]
 pub struct HideTooltip {}
 
 #[component("minecraft:repair_cost")]
-#[packet_part]
 pub struct RepairCost {
     pub cost: VarInt
 }
 
 #[component("minecraft:creative_slot_lock")]
-#[packet_part]
 pub struct CreativeSlotLock {}
 
 #[component("minecraft:enchantment_glint_override")]
-#[packet_part]
 pub struct EnchantmentGlintOverride {
     pub has_glint: bool
 }
 
 #[component("minecraft:intangible_projectile")]
-#[packet_part]
 pub struct IntangibleProjectile {}
 
-// TODO: minecraft:food
-// TODO: minecraft:consumable
-// TODO: minecraft:use_remainder
-// TODO: minecraft:use_cooldown
+#[component("minecraft:food")]
+pub struct Food {
+    pub food: VarInt,
+    pub saturation: f32,
+    pub can_always_eat: bool,
+}
+
+#[component("minecraft:consumable")]
+pub struct Consumable {
+    pub consume_seconds: f32,
+    pub animation: EatingAnimation,
+    pub consume_sound: Identifier,
+    pub consume_effects: TODO
+}
+
+#[packet_part(VarInt)]
+pub enum EatingAnimation {
+    None = 0,
+    Eat = 1,
+    Drink,
+    Spyglass,
+    Block,
+    Bow,
+    Spear,
+    Crossbow,
+    Shield,
+    Trident,
+    TootHorn,
+    Brush
+}
+
+#[component("minecraft:use_remainder")]
+pub struct UseRemainder {
+    pub remainder: SlotData
+}
+
+#[component("minecraft:use_cooldown")]
+pub struct UseCooldown {
+    pub seconds: f32,
+    pub cooldown_group: Identifier
+}
 
 #[component("minecraft:damage_resistant")]
-#[packet_part]
 pub struct DamageResistant {
     pub damage_type_tag: String
 }
@@ -130,7 +152,6 @@ pub struct DamageResistant {
 // TODO: minecraft:tool
 
 #[component("minecraft:enchantable")]
-#[packet_part]
 pub struct Enchantable {
     pub how_expensive: VarInt
 }
@@ -140,11 +161,9 @@ pub struct Enchantable {
 // TODO: minecraft:repairable (what is ID Set?)
 
 #[component("minecraft:glider")]
-#[packet_part]
 pub struct Glider {}
 
 #[component("minecraft:tooltip_style")]
-#[packet_part]
 pub struct TooltipStyle {
     pub style: Identifier
 }
@@ -156,13 +175,11 @@ pub struct TooltipStyle {
 // TODO: minecraft:dyed_color - make custom Color type
 
 #[component("minecraft:map_id")]
-#[packet_part]
 pub struct MapId {
     pub id: VarInt
 }
 
 #[component("minecraft:map_decorations")]
-#[packet_part]
 pub struct MapDecorations {
     pub decorations: Nbt
 }
