@@ -13,6 +13,7 @@ pub struct DimType {
     pub min_y                           : i32,
     pub max_y                           : i32,
     pub logical_height                  : u32,
+    pub height                          : u32,
     pub infiniburn                      : String, // TODO: Tag
     pub effects                         : DimEffects,
     pub ambient_light                   : f32,
@@ -40,6 +41,7 @@ impl RegValue for DimType {
         nbt.insert("min_y"                , NbtElement::Int    (self.min_y                                       ));
         nbt.insert("max_y"                , NbtElement::Int    (self.max_y                                       ));
         nbt.insert("logical_height"       , NbtElement::Int    (self.logical_height as i32                       ));
+        nbt.insert("height"               , NbtElement::Int    (self.height as i32                               ));
         nbt.insert("infiniburn"           , NbtElement::String (self.infiniburn.clone()                          ));
         nbt.insert("effects"              , NbtElement::String (self.effects.as_str().to_string()                ));
         nbt.insert("ambient_light"        , NbtElement::Float  (self.ambient_light                               ));
