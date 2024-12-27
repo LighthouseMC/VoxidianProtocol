@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 use std::path::PathBuf;
-use std::sync::{LazyLock, Mutex};
+use std::sync::LazyLock;
 use proc_macro::{Span, TokenStream};
 use inflector::Inflector;
 use proc_macro2::Ident;
-use quote::{format_ident, quote};
+use quote::quote;
 use serde::Deserialize;
 use syn::{parse_macro_input, ItemStruct, LitInt, LitStr};
 

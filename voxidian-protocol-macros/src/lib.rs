@@ -11,7 +11,7 @@ mod packet_full_decode;
 mod packet_part;
 
 use std::env;
-use std::sync::{LazyLock, Mutex};
+use std::sync::LazyLock;
 use std::collections::HashMap;
 use proc_macro::TokenStream;
 use serde::Deserialize as Deser;
@@ -55,7 +55,7 @@ pub fn component(attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
-pub fn component_enum(input : TokenStream) -> TokenStream {
+pub fn component_enum(_input: TokenStream) -> TokenStream {
     crate::component::component_enum_impl()
 }
 

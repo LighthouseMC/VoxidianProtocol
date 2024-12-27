@@ -1,4 +1,4 @@
-use voxidian_protocol_macros::{component_enum, packet_part};
+use voxidian_protocol_macros::component_enum;
 
 mod components;
 pub use components::*;
@@ -25,15 +25,16 @@ impl PacketEncode for SlotData {
         buf.encode_write(VarInt::from(self.components.len()))?;
         buf.encode_write(VarInt::from(self.removed_components.len()))?;
 
-        for component in &self.components {
+        for _component in &self.components {
             // TODO: write component
         }
 
-        for component in &self.removed_components {
+        for _component in &self.removed_components {
             // TODO: write removed component
         }
         todo!();
 
+        #[allow(unreachable_code)]
         Ok(())
     }
 }
