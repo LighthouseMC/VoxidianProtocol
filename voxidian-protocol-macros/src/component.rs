@@ -37,6 +37,7 @@ pub(crate) fn component_impl(attr: TokenStream, item: TokenStream) -> TokenStrea
     let structure_name = &item.ident;
 
     (quote! {
+        #[packet_part]
         #item
 
         impl crate::value::ComponentData for #structure_name {
