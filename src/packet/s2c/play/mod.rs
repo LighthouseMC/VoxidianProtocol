@@ -682,8 +682,7 @@ pub struct PlayerPositionS2CPlayPacket {
     pub vz          : f64,
     pub adyaw_deg   : f32,
     pub adpitch_deg : f32,
-    pub flags       : TeleportFlags,
-    pub transaction : VarInt
+    pub flags       : TeleportFlags
 }
 
 packet_flags! {
