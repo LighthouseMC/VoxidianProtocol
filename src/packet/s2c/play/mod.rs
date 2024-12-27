@@ -158,7 +158,7 @@ pub enum BossBarDivision {
     Notch12 = 3,
     Notch20 = 4
 }
-packet_flags!{ pub struct BossBarFlags {
+packet_flags!{ pub struct BossBarFlags<u8> {
     pub darken_sky  : 0b00000001,
     pub end_music   : 0b00000010,
     pub thicken_fog : 0b00000100
@@ -609,7 +609,7 @@ pub struct PlayerAbilitiesS2CPlayPacket {
     pub fly_speed : f32,
     pub fov_fac   : f32
 }
-packet_flags!{ pub struct PlayerAbilityFlags {
+packet_flags!{ pub struct PlayerAbilityFlags<u8> {
     pub invul      : 0b00000001,
     pub flying     : 0b00000010,
     pub allow_fly  : 0b00000100,
@@ -1036,7 +1036,7 @@ pub enum VanillaFormatting {
     Italic        = 20,
     Reset         = 21
 }
-packet_flags!{ pub struct TeamFriendlyFlags {
+packet_flags!{ pub struct TeamFriendlyFlags<u8> {
     pub friendly_fire  : 0b00000001,
     pub see_invisibles : 0b00000010
 } }
@@ -1242,7 +1242,7 @@ pub struct UpdateMobEffectS2CPlayPacket {
     pub dur    : VarInt,
     pub flags  : EffectFlags
 }
-packet_flags!{ pub struct EffectFlags {
+packet_flags!{ pub struct EffectFlags<u8> {
     pub ambient   : 0b00000001,
     pub particles : 0b00000010,
     pub icon      : 0b00000100,

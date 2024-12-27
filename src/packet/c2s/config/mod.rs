@@ -48,7 +48,7 @@ pub enum ClientMainHand {
     Left  = 0,
     Right = 1
 }
-packet_flags!{ pub struct SkinLayers {
+packet_flags!{ pub struct SkinLayers<u8> {
     pub cape         : 0b00000001,
     pub jacket       : 0b00000010,
     pub left_sleeve  : 0b00000100,
