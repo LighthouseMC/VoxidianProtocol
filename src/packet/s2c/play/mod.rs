@@ -672,21 +672,33 @@ pub struct LookAtEntity {
 
 
 #[packet( "minecraft:s2c/play/player_position" )]
-pub struct PlayerPositionS2CPlayPacket(TODO);
-// pub struct PlayerPositionS2CPlayPacket {
-//     pub teleport_id : VarInt,
-//     pub x           : f64,
-//     pub y           : f64,
-//     pub z           : f64,
-//     pub vx          : f64,
-//     pub vy          : f64,
-//     pub vz          : f64,
-//     pub adyaw_deg   : f32,
-//     pub adpitch_deg : f32,
-//     pub flags       : TeleportFlags,
-//     pub transaction : VarInt
-// }
+pub struct PlayerPositionS2CPlayPacket {
+    pub teleport_id : VarInt,
+    pub x           : f64,
+    pub y           : f64,
+    pub z           : f64,
+    pub vx          : f64,
+    pub vy          : f64,
+    pub vz          : f64,
+    pub adyaw_deg   : f32,
+    pub adpitch_deg : f32,
+    pub flags       : TeleportFlags,
+    pub transaction : VarInt
+}
 
+packet_flags! {
+    pub struct TeleportFlags<i32> {
+        pub relative_x : 0b1,
+        pub relative_y : 0b10,
+        pub relative_z : 0b100,
+        pub relative_pitch : 0b1000,
+        pub relative_yaw : 0b10000,
+        pub relative_vx : 0b100000,
+        pub relative_vy : 0b1000000,
+        pub relative_vz : 0b10000000,
+        pub rotate_velocity : 0b100000000,
+    }
+}
 
 #[packet( "minecraft:s2c/play/player_rotation" )]
 pub struct PlayerRotationS2CPlayPacket {
@@ -1169,20 +1181,19 @@ pub struct TakeItemEntityS2CPlayPacket {
 
 
 #[packet( "minecraft:s2c/play/teleport_entity" )]
-pub struct TeleportEntityS2CPlayPacket(TODO);
-
-// TODO: make int
-// packet_flags!(struct TeleportFlags {
-//     pub relative_x: 0x0001,
-//     pub relative_y: 0x0002,
-//     pub relative_z: 0x0004,
-//     pub relative_yaw: 0x0008,
-//     pub relative_pitch: 0x0010,
-//     pub relative_vx: 0x0020,
-//     pub relative_vy: 0x0040,
-//     pub relative_vz: 0x0080,
-//     pub rotate_velocity: 0x0100
-// });
+pub struct TeleportEntityS2CPlayPacket {
+    pub entity : VarInt,
+    pub x      : f64,
+    pub y      : f64,
+    pub z      : f64,
+    pub vx     : f64,
+    pub vy     : f64,
+    pub vz     : f64,
+    pub yaw    : f32,
+    pub pitch  : f32,
+    pub flags  : TeleportFlags,
+    pub on_g   : bool
+}
 
 #[packet( "minecraft:s2c/play/ticking_state" )]
 pub struct TickingStateS2CPlayPacket {
