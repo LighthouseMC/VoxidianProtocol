@@ -153,7 +153,7 @@ impl PacketEncode for TextComponent {
 }
 
 impl PacketDecode for TextComponent {
-    fn decode(buf: &mut PacketBuf) -> Result<Self, DecodeError> {
+    fn decode(_buf: &mut PacketBuf) -> Result<Self, DecodeError> {
         todo!()
     }
 }

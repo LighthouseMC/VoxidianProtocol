@@ -1,13 +1,12 @@
 
 use crate::value::PacketEnumOrdinal;
-use crate::value::{Identifier, LengthPrefixVec, Nbt, PacketEncode, Text, TextComponent};
+use crate::value::{Identifier, LengthPrefixVec, Nbt, PacketEncode, TextComponent};
 use crate::value::PacketDecode;
 use crate::value::PacketBuf;
 use crate::value::EncodeError;
 use crate::value::DecodeError;
 use crate::value::VarInt;
-use voxidian_protocol_macros::{component, component_enum, packet_part};
-use crate::registry::RegEntry;
+use voxidian_protocol_macros::{component, packet_part};
 
 #[component("minecraft:custom_data")]
 #[packet_part]
