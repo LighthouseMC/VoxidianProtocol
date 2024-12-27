@@ -9,6 +9,7 @@ mod component;
 mod packet;
 mod packet_full_decode;
 mod packet_part;
+mod reg_from_file;
 
 use std::env;
 use std::sync::LazyLock;
@@ -72,4 +73,9 @@ pub fn packet_full_decode(input : TokenStream) -> TokenStream {
 #[proc_macro_attribute]
 pub fn packet_part(attr : TokenStream, item : TokenStream) -> TokenStream {
     crate::packet_part::packet_part_impl(attr, item)
+}
+
+#[proc_macro]
+pub fn import_item_registry_from_file(input: TokenStream) -> TokenStream {
+    reg_from_file::item_reg_from_file_impl(input)
 }
