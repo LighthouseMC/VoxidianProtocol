@@ -42,6 +42,7 @@ public class RegistryDump {
         var top = new JsonObject();
         var keys = registry.getKeys();
         var idx = 0;
+
         for(var key : keys) {
             idx += 1;
 

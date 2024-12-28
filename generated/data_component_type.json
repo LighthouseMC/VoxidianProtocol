@@ -1,198 +1,198 @@
 {
-  "minecraft:tooltip_style": {
-    "protocol_id": 31
-  },
-  "minecraft:tool": {
-    "protocol_id": 26
-  },
-  "minecraft:use_remainder": {
-    "protocol_id": 23
-  },
-  "minecraft:hide_tooltip": {
-    "protocol_id": 16
-  },
-  "minecraft:note_block_sound": {
-    "protocol_id": 58
-  },
-  "minecraft:consumable": {
-    "protocol_id": 22
-  },
-  "minecraft:custom_model_data": {
-    "protocol_id": 14
-  },
-  "minecraft:suspicious_stew_effects": {
-    "protocol_id": 42
-  },
-  "minecraft:equippable": {
-    "protocol_id": 28
-  },
-  "minecraft:pot_decorations": {
-    "protocol_id": 61
-  },
-  "minecraft:jukebox_playable": {
-    "protocol_id": 52
-  },
-  "minecraft:custom_name": {
-    "protocol_id": 5
-  },
-  "minecraft:map_decorations": {
-    "protocol_id": 37
-  },
   "minecraft:recipes": {
     "protocol_id": 53
-  },
-  "minecraft:can_place_on": {
-    "protocol_id": 11
-  },
-  "minecraft:block_state": {
-    "protocol_id": 63
-  },
-  "minecraft:container_loot": {
-    "protocol_id": 66
-  },
-  "minecraft:banner_patterns": {
-    "protocol_id": 59
-  },
-  "minecraft:damage": {
-    "protocol_id": 3
-  },
-  "minecraft:map_post_processing": {
-    "protocol_id": 38
-  },
-  "minecraft:trim": {
-    "protocol_id": 45
-  },
-  "minecraft:written_book_content": {
-    "protocol_id": 44
-  },
-  "minecraft:bundle_contents": {
-    "protocol_id": 40
-  },
-  "minecraft:item_model": {
-    "protocol_id": 7
-  },
-  "minecraft:food": {
-    "protocol_id": 21
-  },
-  "minecraft:custom_data": {
-    "protocol_id": 0
-  },
-  "minecraft:ominous_bottle_amplifier": {
-    "protocol_id": 51
-  },
-  "minecraft:rarity": {
-    "protocol_id": 9
-  },
-  "minecraft:map_color": {
-    "protocol_id": 35
-  },
-  "minecraft:block_entity_data": {
-    "protocol_id": 49
-  },
-  "minecraft:creative_slot_lock": {
-    "protocol_id": 18
-  },
-  "minecraft:profile": {
-    "protocol_id": 57
-  },
-  "minecraft:enchantments": {
-    "protocol_id": 10
-  },
-  "minecraft:bees": {
-    "protocol_id": 64
-  },
-  "minecraft:hide_additional_tooltip": {
-    "protocol_id": 15
   },
   "minecraft:use_cooldown": {
     "protocol_id": 24
   },
-  "minecraft:lodestone_tracker": {
-    "protocol_id": 54
-  },
-  "minecraft:potion_contents": {
-    "protocol_id": 41
-  },
-  "minecraft:dyed_color": {
-    "protocol_id": 34
-  },
-  "minecraft:max_stack_size": {
-    "protocol_id": 1
-  },
-  "minecraft:fireworks": {
-    "protocol_id": 56
-  },
-  "minecraft:stored_enchantments": {
-    "protocol_id": 33
-  },
-  "minecraft:repair_cost": {
-    "protocol_id": 17
-  },
-  "minecraft:death_protection": {
-    "protocol_id": 32
-  },
-  "minecraft:repairable": {
-    "protocol_id": 29
-  },
-  "minecraft:item_name": {
-    "protocol_id": 6
-  },
-  "minecraft:base_color": {
-    "protocol_id": 60
-  },
-  "minecraft:enchantable": {
-    "protocol_id": 27
-  },
-  "minecraft:intangible_projectile": {
-    "protocol_id": 20
-  },
-  "minecraft:firework_explosion": {
-    "protocol_id": 55
-  },
-  "minecraft:attribute_modifiers": {
-    "protocol_id": 13
-  },
-  "minecraft:map_id": {
-    "protocol_id": 36
-  },
-  "minecraft:lock": {
-    "protocol_id": 65
-  },
-  "minecraft:damage_resistant": {
-    "protocol_id": 25
-  },
-  "minecraft:enchantment_glint_override": {
-    "protocol_id": 19
-  },
-  "minecraft:can_break": {
-    "protocol_id": 12
-  },
-  "minecraft:charged_projectiles": {
-    "protocol_id": 39
+  "minecraft:map_post_processing": {
+    "protocol_id": 38
   },
   "minecraft:lore": {
     "protocol_id": 8
   },
-  "minecraft:glider": {
-    "protocol_id": 30
+  "minecraft:bees": {
+    "protocol_id": 64
   },
-  "minecraft:container": {
-    "protocol_id": 62
+  "minecraft:trim": {
+    "protocol_id": 45
   },
-  "minecraft:instrument": {
-    "protocol_id": 50
-  },
-  "minecraft:unbreakable": {
-    "protocol_id": 4
+  "minecraft:creative_slot_lock": {
+    "protocol_id": 18
   },
   "minecraft:bucket_entity_data": {
     "protocol_id": 48
   },
-  "minecraft:max_damage": {
-    "protocol_id": 2
+  "minecraft:map_color": {
+    "protocol_id": 35
+  },
+  "minecraft:max_stack_size": {
+    "protocol_id": 1
+  },
+  "minecraft:hide_tooltip": {
+    "protocol_id": 16
+  },
+  "minecraft:tooltip_style": {
+    "protocol_id": 31
+  },
+  "minecraft:consumable": {
+    "protocol_id": 22
+  },
+  "minecraft:intangible_projectile": {
+    "protocol_id": 20
+  },
+  "minecraft:written_book_content": {
+    "protocol_id": 44
+  },
+  "minecraft:instrument": {
+    "protocol_id": 50
+  },
+  "minecraft:base_color": {
+    "protocol_id": 60
+  },
+  "minecraft:fireworks": {
+    "protocol_id": 56
+  },
+  "minecraft:profile": {
+    "protocol_id": 57
+  },
+  "minecraft:jukebox_playable": {
+    "protocol_id": 52
+  },
+  "minecraft:lock": {
+    "protocol_id": 65
+  },
+  "minecraft:dyed_color": {
+    "protocol_id": 34
+  },
+  "minecraft:enchantment_glint_override": {
+    "protocol_id": 19
+  },
+  "minecraft:repair_cost": {
+    "protocol_id": 17
+  },
+  "minecraft:custom_data": {
+    "protocol_id": 0
+  },
+  "minecraft:suspicious_stew_effects": {
+    "protocol_id": 42
+  },
+  "minecraft:glider": {
+    "protocol_id": 30
+  },
+  "minecraft:equippable": {
+    "protocol_id": 28
+  },
+  "minecraft:custom_name": {
+    "protocol_id": 5
+  },
+  "minecraft:damage_resistant": {
+    "protocol_id": 25
+  },
+  "minecraft:bundle_contents": {
+    "protocol_id": 40
+  },
+  "minecraft:custom_model_data": {
+    "protocol_id": 14
+  },
+  "minecraft:can_place_on": {
+    "protocol_id": 11
+  },
+  "minecraft:item_model": {
+    "protocol_id": 7
+  },
+  "minecraft:death_protection": {
+    "protocol_id": 32
   },
   "minecraft:debug_stick_state": {
     "protocol_id": 46
+  },
+  "minecraft:enchantable": {
+    "protocol_id": 27
+  },
+  "minecraft:charged_projectiles": {
+    "protocol_id": 39
+  },
+  "minecraft:block_state": {
+    "protocol_id": 63
+  },
+  "minecraft:attribute_modifiers": {
+    "protocol_id": 13
+  },
+  "minecraft:block_entity_data": {
+    "protocol_id": 49
+  },
+  "minecraft:ominous_bottle_amplifier": {
+    "protocol_id": 51
+  },
+  "minecraft:tool": {
+    "protocol_id": 26
+  },
+  "minecraft:stored_enchantments": {
+    "protocol_id": 33
+  },
+  "minecraft:firework_explosion": {
+    "protocol_id": 55
+  },
+  "minecraft:can_break": {
+    "protocol_id": 12
+  },
+  "minecraft:pot_decorations": {
+    "protocol_id": 61
+  },
+  "minecraft:rarity": {
+    "protocol_id": 9
+  },
+  "minecraft:food": {
+    "protocol_id": 21
+  },
+  "minecraft:unbreakable": {
+    "protocol_id": 4
+  },
+  "minecraft:repairable": {
+    "protocol_id": 29
+  },
+  "minecraft:lodestone_tracker": {
+    "protocol_id": 54
+  },
+  "minecraft:hide_additional_tooltip": {
+    "protocol_id": 15
+  },
+  "minecraft:container_loot": {
+    "protocol_id": 66
+  },
+  "minecraft:map_decorations": {
+    "protocol_id": 37
+  },
+  "minecraft:damage": {
+    "protocol_id": 3
+  },
+  "minecraft:enchantments": {
+    "protocol_id": 10
+  },
+  "minecraft:potion_contents": {
+    "protocol_id": 41
+  },
+  "minecraft:banner_patterns": {
+    "protocol_id": 59
+  },
+  "minecraft:use_remainder": {
+    "protocol_id": 23
+  },
+  "minecraft:max_damage": {
+    "protocol_id": 2
+  },
+  "minecraft:item_name": {
+    "protocol_id": 6
+  },
+  "minecraft:container": {
+    "protocol_id": 62
+  },
+  "minecraft:note_block_sound": {
+    "protocol_id": 58
+  },
+  "minecraft:map_id": {
+    "protocol_id": 36
   },
   "minecraft:entity_data": {
     "protocol_id": 47
