@@ -1,5 +1,3 @@
-use voxidian_protocol_macros::import_damage_type_registry_from_file;
-
 use super::*;
 
 #[derive(Serialize, Deserialize)]
@@ -9,12 +7,6 @@ pub struct DamageType {
     pub exhaustion         : f32,
     pub effects            : Option<DamageEffects>,
     pub death_message_type : Option<DeathMessageType>
-}
-
-impl DamageType {
-    pub fn vanilla_registry() -> Registry<DamageType> {
-        import_damage_type_registry_from_file!("generated/damage_types.json")
-    }
 }
 
 impl RegValue for DamageType {
@@ -87,17 +79,3 @@ impl DeathMessageType { fn as_str(&self) -> &'static str { match (self) {
     Self::FallVariants          => "fall_variants",
     Self::IntentionalGameDesign => "intentional_game_design"
 } } }
-
-#[cfg(test)]
-mod tests {
-    use crate::value::Identifier;
-
-    use super::DamageType;
-
-    #[test]
-    pub fn test_vanilla_registry() {
-        let rg = DamageType::vanilla_registry();
-
-        assert!(rg.get(&Identifier::new("minecraft", "in_fire")).is_some());
-    }
-}
