@@ -1,11 +1,11 @@
 use super::*;
 
-
+#[derive(Serialize, Deserialize)]
 pub struct WolfVariant {
-    pub wild_tex  : Identifier,
-    pub tame_tex  : Identifier,
-    pub angry_tex : Identifier,
-    pub biomes    : Vec<Identifier>
+    pub wild_texture  : Identifier,
+    pub tame_texture  : Identifier,
+    pub angry_texture : Identifier,
+    pub biomes        : Vec<Identifier>
 }
 impl RegValue for WolfVariant {
 
@@ -13,9 +13,9 @@ impl RegValue for WolfVariant {
     
     fn to_registry_data_packet(&self) -> Option<Nbt> {
         let mut nbt = NbtCompound::new();
-        nbt.insert("wild_texture"  , NbtElement::String(self.wild_tex  .to_string()));
-        nbt.insert("tame_texture"  , NbtElement::String(self.tame_tex  .to_string()));
-        nbt.insert("angry_texture" , NbtElement::String(self.angry_tex .to_string()));
+        nbt.insert("wild_texture"  , NbtElement::String(self.wild_texture.to_string()));
+        nbt.insert("tame_texture"  , NbtElement::String(self.tame_texture.to_string()));
+        nbt.insert("angry_texture" , NbtElement::String(self.angry_texture.to_string()));
         nbt.insert("biomes", NbtElement::List(self.biomes.iter().map(|biome| {
             NbtElement::String(biome.to_string())
         }).collect::<Vec<_>>()));

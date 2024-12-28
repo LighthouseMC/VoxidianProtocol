@@ -1,6 +1,7 @@
 use super::*;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Default)]
+#[derive(Serialize, Deserialize)]
 pub struct BlockPos {
     pub x : i32,
     pub y : i32,

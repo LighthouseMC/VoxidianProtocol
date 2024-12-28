@@ -1,6 +1,6 @@
 use super::*;
 
-
+#[derive(Serialize, Deserialize)]
 pub struct DimType {
     pub fixed_time                      : Option<u64>,
     pub has_skylight                    : bool,
@@ -56,9 +56,13 @@ impl RegValue for DimType {
 
 
 #[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
 pub enum DimEffects {
+    #[serde(rename = "minecraft:overworld")]
     Overworld,
+    #[serde(rename = "minecraft:the_nether")]
     Nether,
+    #[serde(rename = "minecraft:the_end")]
     End
 }
 impl DimEffects { fn as_str(&self) -> &'static str { match (self) {
@@ -67,7 +71,8 @@ impl DimEffects { fn as_str(&self) -> &'static str { match (self) {
     Self::End       => "minecraft:the_end"
 } } }
 
-
+#[derive(Serialize, Deserialize)]
+#[serde(tag = "type")]
 pub enum DimMonsterSpawnLightLevel {
     Constant(u32),
     Uniform {

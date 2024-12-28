@@ -2,7 +2,7 @@ use voxidian_protocol_macros::import_damage_type_registry_from_file;
 
 use super::*;
 
-
+#[derive(Serialize, Deserialize)]
 pub struct DamageType {
     pub message            : String,
     pub scaling            : DamageDifficultyScaling,
@@ -39,6 +39,7 @@ impl RegValue for DamageType {
 
 
 #[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
 pub enum DamageDifficultyScaling {
     Never,
     NonLivingPlayer,
@@ -52,6 +53,7 @@ impl DamageDifficultyScaling { fn as_str(&self) -> &'static str { match (self) {
 
 
 #[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
 pub enum DamageEffects {
     Hurt,
     Thorns,
@@ -71,9 +73,13 @@ impl DamageEffects { fn as_str(&self) -> &'static str { match (self) {
 
 
 #[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
 pub enum DeathMessageType {
+    #[serde(rename = "default")]
     Default,
+    #[serde(rename = "fall_variants")]
     FallVariants,
+    #[serde(rename = "intentional_game_design")]
     IntentionalGameDesign
 }
 impl DeathMessageType { fn as_str(&self) -> &'static str { match (self) {
