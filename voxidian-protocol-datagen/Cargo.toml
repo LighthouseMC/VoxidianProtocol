@@ -1,2 +1,5 @@
 [package]
 name = "voxidian-protocol-datagen"
+
+[dependencies]
+voxidian-protocol = { path = "../" }
