@@ -14,7 +14,8 @@ build = "build.rs"
 
 [workspace]
 members = [
-    "voxidian-protocol-macros"
+    "voxidian-protocol-macros",
+    "voxidian-protocol-datagen"
 ]
 
 [lints.rust]
