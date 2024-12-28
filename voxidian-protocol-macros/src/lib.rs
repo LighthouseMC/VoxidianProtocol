@@ -79,3 +79,8 @@ pub fn packet_part(attr : TokenStream, item : TokenStream) -> TokenStream {
 pub fn import_item_registry_from_file(input: TokenStream) -> TokenStream {
     reg_from_file::item_reg_from_file_impl(input)
 }
+
+#[proc_macro]
+pub fn import_damage_type_registry_from_file(input: TokenStream) -> TokenStream {
+    reg_from_file::damage_types_from_file_impl(input)
+}
