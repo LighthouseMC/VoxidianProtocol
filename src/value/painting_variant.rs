@@ -1,8 +1,8 @@
 use super::*;
 
-
+#[derive(Serialize, Deserialize)]
 pub struct PaintingVariant {
-    pub asset  : Identifier,
+    pub asset_id  : Identifier,
     pub height : u32,
     pub width  : u32,
     pub author: TextComponent,
@@ -14,7 +14,7 @@ impl RegValue for PaintingVariant {
     
     fn to_registry_data_packet(&self) -> Option<Nbt> {
         let mut nbt = NbtCompound::new();
-        nbt.insert("asset_id"  , NbtElement::String (self.asset.to_string() ));
+        nbt.insert("asset_id"  , NbtElement::String (self.asset_id.to_string() ));
         nbt.insert("height" , NbtElement::Int    (self.height as i32     ));
         nbt.insert("width"  , NbtElement::Int    (self.width  as i32     ));
         nbt.insert("author", NbtElement::Compound(self.author.to_nbt()));

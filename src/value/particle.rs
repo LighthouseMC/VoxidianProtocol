@@ -1,7 +1,8 @@
 use super::*;
-
+use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize)]
 pub struct Particle {
     pub id : Identifier,
 }

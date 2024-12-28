@@ -1,12 +1,13 @@
 use super::*;
+use serde::{Serialize, Deserialize};
 
-
+#[derive(Serialize, Deserialize)]
 pub struct Biome {
-    pub has_rain      : bool,
-    pub temp          : f32,
-    pub temp_modifier : Option<BiomeTempModifier>,
-    pub downfall      : f32,
-    pub effects       : BiomeEffects
+    pub has_precipitation      : bool,
+    pub temperature            : f32,
+    pub temperature_modifier   : Option<BiomeTempModifier>,
+    pub downfall               : f32,
+    pub effects                : BiomeEffects
 }
 impl RegValue for Biome {
 
@@ -14,9 +15,9 @@ impl RegValue for Biome {
 
     fn to_registry_data_packet(&self) -> Option<Nbt> {
         let mut nbt = NbtCompound::new();
-        nbt.insert("has_precipitation" , NbtElement::Byte  (if (self.has_rain) { 1 } else { 0 }));
-        nbt.insert("temperature"       , NbtElement::Float (self.temp));
-        if let Some(temp_modifier) = self.temp_modifier {
+        nbt.insert("has_precipitation" , NbtElement::Byte  (if (self.has_precipitation) { 1 } else { 0 }));
+        nbt.insert("temperature"       , NbtElement::Float (self.temperature));
+        if let Some(temp_modifier) = self.temperature_modifier {
             nbt.insert("temperature_modifier", NbtElement::String(temp_modifier.as_str().to_string()));
         }
         nbt.insert("downfall", NbtElement::Float(self.downfall));
@@ -54,7 +55,7 @@ impl RegValue for Biome {
                     let mut nbt = NbtCompound::new();
                     nbt.insert("sound"               , NbtElement::String (mood_sound.sound.to_string() ));
                     nbt.insert("tick_delay"          , NbtElement::Int    (mood_sound.tick_delay as i32 ));
-                    nbt.insert("block_search_extent" , NbtElement::Int    (mood_sound.tick_delay as i32 ));
+                    nbt.insert("block_search_extent" , NbtElement::Int    (mood_sound.block_search_extent as i32 ));
                     nbt.insert("offset"              , NbtElement::Double (mood_sound.offset            ));
                     NbtElement::Compound(nbt)
                 });
@@ -86,6 +87,7 @@ impl RegValue for Biome {
 
 
 #[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
 pub enum BiomeTempModifier {
     None,
     Frozen
@@ -96,6 +98,7 @@ impl BiomeTempModifier { fn as_str(&self) -> &'static str { match (self) {
 } } }
 
 
+#[derive(Serialize, Deserialize)]
 pub struct BiomeEffects {
     pub fog_colour            : Colour,
     pub water_colour          : Colour,
@@ -113,6 +116,7 @@ pub struct BiomeEffects {
 
 
 #[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
 pub enum BiomeColourModifier {
     None,
     DarkForest,
@@ -124,19 +128,19 @@ impl BiomeColourModifier { fn as_str(&self) -> &'static str { match (self) {
     Self::Swamp      => "swamp"
 } } }
 
-
+#[derive(Serialize, Deserialize)]
 pub struct BiomeParticle {
     pub options     : Particle,
     pub probability : f32
 }
 
-
+#[derive(Serialize, Deserialize)]
 pub struct BiomeAmbientSound {
     pub sound : Identifier,
     pub range : Option<f32>
 }
 
-
+#[derive(Serialize, Deserialize)]
 pub struct BiomeMoodSound {
     pub sound               : Identifier,
     pub tick_delay          : u32,
@@ -144,13 +148,13 @@ pub struct BiomeMoodSound {
     pub offset              : f64
 }
 
-
+#[derive(Serialize, Deserialize)]
 pub struct BiomeAdditionsSound {
     pub sound       : Identifier,
     pub tick_chance : f64
 }
 
-
+#[derive(Serialize, Deserialize)]
 pub struct BiomeMusic {
     pub sound     : Identifier,
     pub min_delay : u32,
