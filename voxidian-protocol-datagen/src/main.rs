@@ -36,7 +36,7 @@ fn generate_data<T: Serialize + DeserializeOwned + ToTokens>(ty: &str, directory
         impl #ty {
             #[allow(dead_code)]
             #[allow(redundant_semicolons)]
-            fn vanilla_registry() -> Registry<#ty> {
+            pub fn vanilla_registry() -> Registry<#ty> {
                 #stream;
                 registry
             }
