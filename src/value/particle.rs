@@ -4,6 +4,7 @@ use serde::{Serialize, Deserialize};
 #[derive(Clone, Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct Particle {
+    #[serde(rename = "type")]
     pub id : Identifier,
 }
 impl Particle {

@@ -29,8 +29,12 @@ impl RegValue for Biome {
             nbt.insert("water_color"     , NbtElement::Int(self.effects.water_color     .to_int()));
             nbt.insert("water_fog_color" , NbtElement::Int(self.effects.water_fog_color .to_int()));
             nbt.insert("sky_color"       , NbtElement::Int(self.effects.sky_color       .to_int()));
-            nbt.insert("foliage_color"   , NbtElement::Int(self.effects.foliage_color   .to_int()));
-            nbt.insert("grass_color"     , NbtElement::Int(self.effects.grass_color     .to_int()));
+            if let Some(foliage_color) = &self.effects.foliage_color {
+                nbt.insert("foliage_color"   , NbtElement::Int(foliage_color.to_int()));
+            }
+            if let Some(grass_color) = &self.effects.grass_color {
+                nbt.insert("grass_color"     , NbtElement::Int(grass_color.to_int()));
+            }
             if let Some(grass_colour_modifier) = &self.effects.grass_color_modifier {
                 nbt.insert("grass_color_modifier", NbtElement::String(grass_colour_modifier.as_str().to_string()))
             }
@@ -43,14 +47,21 @@ impl RegValue for Biome {
                 });
             }
             if let Some(ambient_sound) = &self.effects.ambient_sound {
-                nbt.insert("ambient_sound", {
-                    let mut nbt = NbtCompound::new();
-                    nbt.insert("sound_id", NbtElement::String(ambient_sound.sound.to_string()));
-                    if let Some(range) = ambient_sound.range {
-                        nbt.insert("range", NbtElement::Float(range));
-                    }
-                    NbtElement::Compound(nbt)
-                });
+                match ambient_sound {
+                    BiomeAmbientSound::Id(identifier) => {
+                        nbt.insert("ambient_sound", NbtElement::String(identifier.to_string()));
+                    },
+                    BiomeAmbientSound::Ranged { sound, range } => {
+                        nbt.insert("ambient_sound", {
+                            let mut nbt = NbtCompound::new();
+                            nbt.insert("sound", NbtElement::String(sound.to_string()));
+                            if let Some(range) = range {
+                                nbt.insert("range", NbtElement::Float(*range));
+                            }
+                            NbtElement::Compound(nbt)
+                        });
+                    },
+                };
             }
             if let Some(mood_sound) = &self.effects.mood_sound {
                 nbt.insert("mood_sound", {
@@ -100,7 +111,9 @@ impl RegValue for Biome {
 #[derive(Copy, Clone, PartialEq, Eq)]
 #[derive(Serialize, Deserialize)]
 pub enum BiomeTempModifier {
+    #[serde(rename = "none")]
     None,
+    #[serde(rename = "frozen")]
     Frozen
 }
 impl BiomeTempModifier { fn as_str(&self) -> &'static str { match (self) {
@@ -115,8 +128,8 @@ pub struct BiomeEffects {
     pub water_color          : Colour,
     pub water_fog_color      : Colour,
     pub sky_color            : Colour,
-    pub foliage_color        : Colour,
-    pub grass_color          : Colour,
+    pub foliage_color        : Option<Colour>,
+    pub grass_color          : Option<Colour>,
     pub grass_color_modifier : Option<BiomeColourModifier>,
     pub particle              : Option<BiomeParticle>,
     pub ambient_sound         : Option<BiomeAmbientSound>,
@@ -129,8 +142,11 @@ pub struct BiomeEffects {
 #[derive(Copy, Clone, PartialEq, Eq)]
 #[derive(Serialize, Deserialize)]
 pub enum BiomeColourModifier {
+    #[serde(rename = "none")]
     None,
+    #[serde(rename = "dark_forest")]
     DarkForest,
+    #[serde(rename = "swamp")]
     Swamp
 }
 impl BiomeColourModifier { fn as_str(&self) -> &'static str { match (self) {
@@ -146,9 +162,11 @@ pub struct BiomeParticle {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct BiomeAmbientSound {
-    pub sound : Identifier,
-    pub range : Option<f32>
+pub enum BiomeAmbientSound {
+    #[serde(untagged)]
+    Id(Identifier),
+    #[serde(untagged)]
+    Ranged { sound : Identifier, range : Option<f32>}
 }
 
 #[derive(Serialize, Deserialize)]
