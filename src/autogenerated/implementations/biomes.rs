@@ -39,8 +39,8 @@ impl ToTokens for BiomeEffects {
         let a = &self.additions_sound.convert_option();
         let b = &self.ambient_sound.convert_option();
         let c = &self.fog_color;
-        let d = &self.foliage_color;
-        let e = &self.grass_color;
+        let d = &self.foliage_color.convert_option();
+        let e = &self.grass_color.convert_option();
         let f = self.grass_color_modifier.convert_option();
         let g = &self.mood_sound.convert_option();
         let music = self.music.as_ref().map(|x| x.convert_vec()).convert_option();
@@ -84,14 +84,22 @@ impl ToTokens for BiomeAdditionsSound {
 
 impl ToTokens for BiomeAmbientSound {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let range = self.range;
-        let sound = &self.sound;
-        tokens.extend(quote! {
-            BiomeAmbientSound {
-                range: #range,
-                sound: #sound
-            }
-        });
+        match self {
+            BiomeAmbientSound::Id(identifier) => {
+                tokens.extend(quote! {
+                    BiomeAmbientSound::Id(#identifier)
+                });
+            },
+            BiomeAmbientSound::Ranged { sound, range } => {
+                let range = range.convert_option();
+                tokens.extend(quote! {
+                    BiomeAmbientSound::Ranged {
+                        sound: #sound,
+                        range: #range
+                    }
+                });
+            },
+        }
     }
 }
 
