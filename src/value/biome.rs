@@ -1,3 +1,5 @@
+use std::vec;
+
 use super::*;
 use serde::{Serialize, Deserialize};
 
@@ -23,13 +25,13 @@ impl RegValue for Biome {
         nbt.insert("downfall", NbtElement::Float(self.downfall));
         nbt.insert("effects", {
             let mut nbt = NbtCompound::new();
-            nbt.insert("fog_color"       , NbtElement::Int(self.effects.fog_colour       .to_int()));
-            nbt.insert("water_color"     , NbtElement::Int(self.effects.water_colour     .to_int()));
-            nbt.insert("water_fog_color" , NbtElement::Int(self.effects.water_fog_colour .to_int()));
-            nbt.insert("sky_color"       , NbtElement::Int(self.effects.sky_colour       .to_int()));
-            nbt.insert("foliage_color"   , NbtElement::Int(self.effects.foliage_colour   .to_int()));
-            nbt.insert("grass_color"     , NbtElement::Int(self.effects.grass_colour     .to_int()));
-            if let Some(grass_colour_modifier) = &self.effects.grass_colour_modifier {
+            nbt.insert("fog_color"       , NbtElement::Int(self.effects.fog_color       .to_int()));
+            nbt.insert("water_color"     , NbtElement::Int(self.effects.water_color     .to_int()));
+            nbt.insert("water_fog_color" , NbtElement::Int(self.effects.water_fog_color .to_int()));
+            nbt.insert("sky_color"       , NbtElement::Int(self.effects.sky_color       .to_int()));
+            nbt.insert("foliage_color"   , NbtElement::Int(self.effects.foliage_color   .to_int()));
+            nbt.insert("grass_color"     , NbtElement::Int(self.effects.grass_color     .to_int()));
+            if let Some(grass_colour_modifier) = &self.effects.grass_color_modifier {
                 nbt.insert("grass_color_modifier", NbtElement::String(grass_colour_modifier.as_str().to_string()))
             }
             if let Some(particle) = &self.effects.particle {
@@ -70,12 +72,21 @@ impl RegValue for Biome {
             }
             if let Some(music) = &self.effects.music {
                 nbt.insert("music", {
-                    let mut nbt = NbtCompound::new();
-                    nbt.insert("sound"                 , NbtElement::String (music.sound.to_string()             ));
-                    nbt.insert("min_delay"             , NbtElement::Int    (music.min_delay as i32              ));
-                    nbt.insert("max_delay"             , NbtElement::Int    (music.max_delay as i32              ));
-                    nbt.insert("replace_current_music" , NbtElement::Byte   (if (music.replace) { 1 } else { 0 } ));
-                    NbtElement::Compound(nbt)
+                    let mut arr = vec![];
+                    for song in music {
+                        let mut nbt = NbtCompound::new();
+                        nbt.insert("data", {
+                            let mut nbt = NbtCompound::new();
+                            nbt.insert("sound"                 , NbtElement::String (song.data.sound.to_string()             ));
+                            nbt.insert("min_delay"             , NbtElement::Int    (song.data.min_delay as i32              ));
+                            nbt.insert("max_delay"             , NbtElement::Int    (song.data.max_delay as i32              ));
+                            nbt.insert("replace_current_music" , NbtElement::Byte   (if (song.data.replace_current_music) { 1 } else { 0 } ));
+                            NbtElement::Compound(nbt)
+                        });
+                        nbt.insert("weight", NbtElement::Int(song.weight as i32));
+                        arr.push(NbtElement::Compound(nbt));
+                    }
+                    NbtElement::List(arr)
                 });
             }
             NbtElement::Compound(nbt)
@@ -100,18 +111,18 @@ impl BiomeTempModifier { fn as_str(&self) -> &'static str { match (self) {
 
 #[derive(Serialize, Deserialize)]
 pub struct BiomeEffects {
-    pub fog_colour            : Colour,
-    pub water_colour          : Colour,
-    pub water_fog_colour      : Colour,
-    pub sky_colour            : Colour,
-    pub foliage_colour        : Colour,
-    pub grass_colour          : Colour,
-    pub grass_colour_modifier : Option<BiomeColourModifier>,
+    pub fog_color            : Colour,
+    pub water_color          : Colour,
+    pub water_fog_color      : Colour,
+    pub sky_color            : Colour,
+    pub foliage_color        : Colour,
+    pub grass_color          : Colour,
+    pub grass_color_modifier : Option<BiomeColourModifier>,
     pub particle              : Option<BiomeParticle>,
     pub ambient_sound         : Option<BiomeAmbientSound>,
     pub mood_sound            : Option<BiomeMoodSound>,
     pub additions_sound       : Option<BiomeAdditionsSound>,
-    pub music                 : Option<BiomeMusic>
+    pub music                 : Option<Vec<BiomeMusicWeights>>
 }
 
 
@@ -155,9 +166,15 @@ pub struct BiomeAdditionsSound {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct BiomeMusicWeights {
+    pub data: BiomeMusic,
+    pub weight: u32
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct BiomeMusic {
     pub sound     : Identifier,
     pub min_delay : u32,
     pub max_delay : u32,
-    pub replace   : bool
+    pub replace_current_music   : bool
 }

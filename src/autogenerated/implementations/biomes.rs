@@ -38,16 +38,16 @@ impl ToTokens for BiomeEffects {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let a = &self.additions_sound.convert_option();
         let b = &self.ambient_sound.convert_option();
-        let c = &self.fog_colour;
-        let d = &self.foliage_colour;
-        let e = &self.grass_colour;
-        let f = self.grass_colour_modifier.convert_option();
+        let c = &self.fog_color;
+        let d = &self.foliage_color;
+        let e = &self.grass_color;
+        let f = self.grass_color_modifier.convert_option();
         let g = &self.mood_sound.convert_option();
-        let music = self.music.convert_option();
+        let music = self.music.as_ref().map(|x| x.convert_vec()).convert_option();
         let i = &self.particle.convert_option();
-        let h = &self.sky_colour;
-        let j = &self.water_colour;
-        let k = &self.water_fog_colour;
+        let h = &self.sky_color;
+        let j = &self.water_color;
+        let k = &self.water_fog_color;
         tokens.extend(quote! {
             BiomeEffects {
                 additions_sound: #a,
@@ -107,6 +107,19 @@ impl ToTokens for BiomeMoodSound {
                 offset: #offset,
                 sound: #sound,
                 tick_delay: #tick_delay
+            }
+        });
+    }
+}
+
+impl ToTokens for BiomeMusicWeights {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let weight = self.weight;
+        let data = &self.data;
+        tokens.extend(quote! {
+            BiomeMusicWeights {
+                data: #data,
+                weight: #weight
             }
         });
     }
