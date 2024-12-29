@@ -9,6 +9,10 @@ impl Colour {
         Self((b as i32) | ((g as i32) << 8) | ((r as i32) << 16))
     }
 
+    pub fn new_from_raw_int(int: i32) -> Self {
+        Colour(int)
+    }
+
 }
 impl Colour {
 
