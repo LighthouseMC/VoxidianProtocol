@@ -52,16 +52,16 @@ impl ToTokens for BiomeEffects {
             BiomeEffects {
                 additions_sound: #a,
                 ambient_sound: #b,
-                fog_colour: #c,
-                foliage_colour: #d,
-                grass_colour: #e,
-                grass_colour_modifier: #f,
+                fog_color: #c,
+                foliage_color: #d,
+                grass_color: #e,
+                grass_color_modifier: #f,
                 mood_sound: #g,
                 music: #music,
                 particle: #i,
-                sky_colour: #h,
-                water_colour: #j,
-                water_fog_colour: #k
+                sky_color: #h,
+                water_color: #j,
+                water_fog_color: #k
             }
         });
     }
@@ -136,9 +136,15 @@ impl ToTokens for BiomeMusicWeights {
 impl ToTokens for BiomeMusic {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let sound = &self.sound;
+        let a = self.max_delay;
+        let b = self.min_delay;
+        let c = self.replace_current_music;
         tokens.extend(quote! {
             BiomeMusic {
-                sound: #sound
+                sound: #sound,
+                max_delay: #a,
+                min_delay: #b,
+                replace_current_music: #c
             }
         });
     }
