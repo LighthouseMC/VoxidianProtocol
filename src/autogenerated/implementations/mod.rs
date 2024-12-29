@@ -39,9 +39,9 @@ impl<T: ToTokens> ConvertOption for Option<T> {
 
 impl ToTokens for Colour {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        
+        let i = self.to_int();
         tokens.extend(quote! {
-            Colour::new_from_raw_int(self.to_int())
+            Colour::new_from_raw_int(#i)
         });
     }
 }
