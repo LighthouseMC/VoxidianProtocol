@@ -1,5 +1,10 @@
 [package]
 name = "voxidian-protocol-datagen"
+edition = "2024"
 
 [dependencies]
-voxidian-protocol = { path = "../" }
+proc-macro2 = "1.0.92"
+quote = "1.0.38"
+serde = "1.0.217"
+serde_json = "1.0.134"
+voxidian-protocol = { path = "../", features = ["data_generator_api"]}

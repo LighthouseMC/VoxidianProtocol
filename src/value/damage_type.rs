@@ -1,8 +1,9 @@
 use super::*;
 
 #[derive(Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct DamageType {
-    pub message            : String,
+    pub message_id         : String,
     pub scaling            : DamageDifficultyScaling,
     pub exhaustion         : f32,
     pub effects            : Option<DamageEffects>,
@@ -15,7 +16,7 @@ impl RegValue for DamageType {
     
     fn to_registry_data_packet(&self) -> Option<Nbt> {
         let mut nbt = NbtCompound::new();
-        nbt.insert("message_id" , NbtElement::String (self.message.clone()              ));
+        nbt.insert("message_id" , NbtElement::String (self.message_id.clone()              ));
         nbt.insert("scaling"    , NbtElement::String (self.scaling.as_str().to_string() ));
         nbt.insert("exhaustion" , NbtElement::Float  (self.exhaustion                   ));
         if let Some(effects) = self.effects {
@@ -31,13 +32,16 @@ impl RegValue for DamageType {
 
 
 #[derive(Copy, Clone, PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub enum DamageDifficultyScaling {
+    #[serde(rename = "never")]
     Never,
+    #[serde(rename = "when_caused_by_living_non_player")]
     NonLivingPlayer,
+    #[serde(rename = "always")]
     Always
 }
-impl DamageDifficultyScaling { fn as_str(&self) -> &'static str { match (self) {
+impl DamageDifficultyScaling { pub fn as_str(&self) -> &'static str { match (self) {
     Self::Never           => "never",
     Self::NonLivingPlayer => "when_caused_by_living_non_player",
     Self::Always          => "always"
@@ -45,16 +49,22 @@ impl DamageDifficultyScaling { fn as_str(&self) -> &'static str { match (self) {
 
 
 #[derive(Copy, Clone, PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub enum DamageEffects {
+    #[serde(rename = "hurt")]
     Hurt,
+    #[serde(rename = "thorns")]
     Thorns,
+    #[serde(rename = "drowning")]
     Drowning,
+    #[serde(rename = "burning")]
     Burning,
+    #[serde(rename = "poking")]
     Poking,
+    #[serde(rename = "freezing")]
     Freezing
 }
-impl DamageEffects { fn as_str(&self) -> &'static str { match (self) {
+impl DamageEffects { pub fn as_str(&self) -> &'static str { match (self) {
     Self::Hurt     => "hurt",
     Self::Thorns   => "thorns",
     Self::Drowning => "drowning",
@@ -65,7 +75,7 @@ impl DamageEffects { fn as_str(&self) -> &'static str { match (self) {
 
 
 #[derive(Copy, Clone, PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub enum DeathMessageType {
     #[serde(rename = "default")]
     Default,
@@ -74,7 +84,7 @@ pub enum DeathMessageType {
     #[serde(rename = "intentional_game_design")]
     IntentionalGameDesign
 }
-impl DeathMessageType { fn as_str(&self) -> &'static str { match (self) {
+impl DeathMessageType { pub fn as_str(&self) -> &'static str { match (self) {
     Self::Default               => "default",
     Self::FallVariants          => "fall_variants",
     Self::IntentionalGameDesign => "intentional_game_design"
