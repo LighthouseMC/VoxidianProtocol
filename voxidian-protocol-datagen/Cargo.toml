@@ -3,8 +3,10 @@ name = "voxidian-protocol-datagen"
 edition = "2024"
 
 [dependencies]
+prettyplease = "0.2.25"
 proc-macro2 = "1.0.92"
 quote = "1.0.38"
 serde = "1.0.217"
 serde_json = "1.0.134"
+syn = { version = "2.0.93", features = ["full"] }
 voxidian-protocol = { path = "../", features = ["data_generator_api"]}
