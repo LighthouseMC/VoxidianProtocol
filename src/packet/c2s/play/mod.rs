@@ -91,7 +91,10 @@ pub struct ContainerSlotStateChangedC2SPlayPacket {
 #[packet("minecraft:c2s/play/cookie_response")]
 pub struct CookieResponseC2SPlayPacket(TODO);
 #[packet("minecraft:c2s/play/custom_payload")]
-pub struct CustomPayloadC2SPlayPacket(TODO);
+pub struct CustomPayloadC2SPlayPacket {
+    identifier: Identifier,
+    data: ConsumeAllVec<u8>
+}
 #[packet("minecraft:c2s/play/debug_sample_subscription")]
 pub struct DebugSampleSubscriptionC2SPlayPacket(TODO);
 #[packet("minecraft:c2s/play/edit_book")]
@@ -169,7 +172,10 @@ pub struct PaddleBoatC2SPlayPacket {
     right_paddle: bool
 }
 #[packet("minecraft:c2s/play/pick_item_from_block")]
-pub struct PickItemFromBlockC2SPlayPacket(TODO); // needs Position bitwise type
+pub struct PickItemFromBlockC2SPlayPacket {
+    location: BlockPos,
+    include_data: bool
+}
 #[packet("minecraft:c2s/play/pick_item_from_entity")]
 pub struct PickItemFromEntityC2SPlayPacket {
     entity_id: VarInt,
@@ -193,7 +199,7 @@ pub struct PlayerAbilitiesC2SPlayPacket {
 #[packet("minecraft:c2s/play/player_action")]
 pub struct PlayerActionC2SPlayPacket {
     status: PlayerStatus,
-    location: TODO, // needs Position bitwise type
+    location: BlockPos,
     face: BlockFace,
     sequence: VarInt
 }
@@ -308,7 +314,7 @@ pub struct SetCarriedItemC2SPlayPacket {
 }
 #[packet("minecraft:c2s/play/set_command_block")]
 pub struct SetCommandBlockC2SPlayPacket {
-    location: TODO, // requires Position bit flag
+    location: BlockPos, // requires Position bit flag
     command: String,
     mode: CommandBlockMode,
     flags: CommandBlockFlags
@@ -340,7 +346,7 @@ pub struct SetCreativeModeSlotC2SPlayPacket {
 }
 #[packet("minecraft:c2s/play/set_jigsaw_block")]
 pub struct SetJigsawBlockC2SPlayPacket {
-    location: TODO, // requires Position bit flag
+    location: BlockPos,
     name: String,
     target: String,
     pool: String,
@@ -351,7 +357,7 @@ pub struct SetJigsawBlockC2SPlayPacket {
 }
 #[packet("minecraft:c2s/play/set_structure_block")]
 pub struct SetStructureBlockC2SPlayPacket {
-    location: TODO, // requires Position bit flag
+    location: BlockPos,
     action: StructureBlockAction,
     mode: StructureBlockMode,
     name: String,
@@ -408,7 +414,7 @@ packet_flags!(struct StructureBlockFlags<u8> {
 
 #[packet("minecraft:c2s/play/sign_update")]
 pub struct SignUpdateC2SPlayPacket {
-    location: TODO, // position
+    location: BlockPos,
     is_front_text: bool,
     line1: String,
     line2: String,
@@ -427,7 +433,7 @@ pub struct TeleportToEntityC2SPlayPacket {
 #[packet("minecraft:c2s/play/use_item_on")]
 pub struct UseItemOnC2SPlayPacket {
     hand: Hand,
-    target: TODO, // requires Position bit flag
+    target: BlockPos,
     face: BlockFace,
     cursor_x: f32,
     cursor_y: f32,
