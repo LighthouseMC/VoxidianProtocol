@@ -1,5 +1,6 @@
 pub mod damage_types;
 pub mod biomes;
+pub mod block_states;
 
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
