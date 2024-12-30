@@ -134,7 +134,7 @@ pub struct MovePlayerPosC2SPlayPacket {
     pub z: f64,
     pub flags: PositionFlags
 }
-packet_flags!(struct PositionFlags<u8> {
+packet_flags!(pub struct PositionFlags<u8> {
     on_ground: 0b01,
     against_wall: 010
 });
@@ -249,7 +249,7 @@ pub struct PlayerInputC2SPlayPacket {
     pub flags: InputFlags
 }
 
-packet_flags!(struct InputFlags<u8> {
+packet_flags!(pub struct InputFlags<u8> {
     forward: 0b1,
     backward: 0b01,
     left: 0b001,
@@ -327,7 +327,7 @@ pub enum CommandBlockMode {
     Redstone
 }
 
-packet_flags!(struct CommandBlockFlags<u8> {
+packet_flags!(pub struct CommandBlockFlags<u8> {
     track_output: 0b1,
     is_conditional: 0b01,
     automatic: 0b001
@@ -406,7 +406,7 @@ pub enum StructureBlockRotationData {
     CounterClockwise90 = 3
 }
 
-packet_flags!(struct StructureBlockFlags<u8> {
+packet_flags!(pub struct StructureBlockFlags<u8> {
     ignore_entities: 0b1,
     show_air: 0b01,
     show_bounding_box: 0b001
