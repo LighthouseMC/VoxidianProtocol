@@ -183,7 +183,7 @@ pub struct PickItemFromEntityC2SPlayPacket {
 }
 #[packet("minecraft:c2s/play/ping_request")]
 pub struct PingRequestC2SPlayPacket {
-    pub id: pub i64
+    pub id: i64
 }
 #[packet("minecraft:c2s/play/place_recipe")]
 pub struct PlaceRecipeC2SPlayPacket {
