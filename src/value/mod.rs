@@ -14,8 +14,8 @@ mod vec3d;
 pub use vec3d::*;
 mod angle;
 pub use angle::*;
-mod chunk_section;
-pub use chunk_section::*;
+mod chunk_section_position;
+pub use chunk_section_position::*;
 mod particle;
 pub use particle::*;
 mod block;
@@ -72,6 +72,8 @@ mod reg_or;
 pub use reg_or::*;
 pub use slot::*;
 mod slot;
+mod chunk_section;
+pub use chunk_section::*;
 
 pub use uuid::{ Uuid, uuid };
 
