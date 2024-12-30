@@ -76,7 +76,18 @@ impl<T : PacketEncode + PacketMeta> PrefixedPacketEncode for T {
     }
 }
 
+impl<A: PacketEncode, B: PacketEncode> PacketEncode for (A, B) {
+    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+        self.0.encode(buf)?;
+        self.1.encode(buf)
+    }
+}
 
+impl<A: PacketDecode, B: PacketDecode> PacketDecode for (A, B) {
+    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+        Ok((A::decode(buf)?, B::decode(buf)?))
+    }
+}
 
 #[cfg(test)]
 mod tests {
