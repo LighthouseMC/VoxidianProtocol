@@ -432,8 +432,38 @@ pub struct KeepAliveS2CPlayPacket(pub u64);
 
 
 #[packet( "minecraft:s2c/play/world_chunk_with_light" )]
-pub struct WorldChunkWithLightS2CPlayPacket(TODO);
+pub struct WorldChunkWithLightS2CPlayPacket {
+    pub chunk_x: i32,
+    pub chunk_z: i32,
 
+    pub heightmaps: Nbt,
+    pub data: ChunkSectionData,
+
+    pub block_entities: LengthPrefixVec<VarInt, ChunkBlockEntity>,
+
+    pub sky_light_mask: LengthPrefixVec<VarInt, u64>, // TODO: BitSet type
+    pub block_light_mask: LengthPrefixVec<VarInt, u64>, // TODO: BitSet type
+    pub empty_sky_light_mask: LengthPrefixVec<VarInt, u64>, // TODO: BitSet type
+    pub empty_block_light_mask: LengthPrefixVec<VarInt, u64>, // TODO: BitSet type
+
+    // Each of these arrays should have 1 element for every 1 in their corresponding mask.
+    pub sky_light_array: LengthPrefixVec<VarInt, LightMask>,
+    pub block_light_array: LengthPrefixVec<VarInt, LightMask>
+}
+
+#[packet_part]
+pub struct ChunkBlockEntity {
+    pub packed_xz: u8,
+    pub y: i16,
+    pub entity_type: VarInt,
+    pub data: Nbt
+}
+
+#[packet_part]
+pub struct LightMask {
+    /// The length of this array should always be 2048.
+    pub light_array: LengthPrefixVec<VarInt, u8> 
+}
 
 #[packet( "minecraft:s2c/play/world_event" )]
 pub struct WorldEventS2CPlayPacket(TODO);
@@ -781,7 +811,7 @@ pub struct RotateHeadS2CPlayPacket {
 
 #[packet( "minecraft:s2c/play/section_blocks_update" )]
 pub struct SectionBlocksUpdateS2CPlayPacket {
-    pub chunk_section : ChunkSection,
+    pub chunk_section : ChunkSectionPosition,
     pub blocks        : LengthPrefixVec<VarInt, VarLong>
 }
 
