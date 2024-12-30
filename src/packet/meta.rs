@@ -4,9 +4,9 @@ pub trait PacketMeta {
     const STAGE  : Stage;
 }
 impl<T : PacketMeta> PacketMeta for &T {
-    const PREFIX : u8    = Self::PREFIX;
-    const BOUND  : Bound = Self::BOUND;
-    const STAGE  : Stage = Self::STAGE;
+    const PREFIX : u8    = T::PREFIX;
+    const BOUND  : Bound = T::BOUND;
+    const STAGE  : Stage = T::STAGE;
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
