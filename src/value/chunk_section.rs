@@ -11,6 +11,10 @@ pub struct DataArray {
 
 impl DataArray {
     pub fn to_bit_stream(&self) -> Vec<u64> {
+        if self.bits_per_entry == 0 {
+            return vec![];
+        }
+
         let entries_per_long = 64 / self.bits_per_entry;
         let needed_longs = (self.input_data.len() + entries_per_long - 1) / entries_per_long;
 
@@ -70,7 +74,7 @@ impl PacketEncode for ChunkSectionData {
 }
 
 impl PacketDecode for ChunkSectionData {
-    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+    fn decode(_buf : &mut PacketBuf) -> Result<Self, DecodeError> {
         unimplemented!()
     }
 }
@@ -98,7 +102,7 @@ impl<T, const E: usize> PacketEncode for PalettedContainer<T, E> {
 }
 
 impl<T, const E: usize> PacketDecode for PalettedContainer<T, E> {
-    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+    fn decode(_buf : &mut PacketBuf) -> Result<Self, DecodeError> {
         unimplemented!()
     }
 }
@@ -113,14 +117,14 @@ pub enum PaletteFormat<T, const E: usize> {
 impl<T, const E: usize> PaletteFormat<T, E> {
     pub fn to_data_array(&self, bits_per_entry: u8) -> DataArray {
         match self {
-            PaletteFormat::SingleValued { entry } => {
+            PaletteFormat::SingleValued { entry: _entry } => {
                 assert!(bits_per_entry == 0);
                 DataArray {
                     bits_per_entry: bits_per_entry.into(),
                     input_data: vec![]
                 }
             },
-            PaletteFormat::Indirect { mappings, data } => {
+            PaletteFormat::Indirect { mappings: _mappings, data: _data } => {
                 assert!(bits_per_entry >= 1 && bits_per_entry < 15);
                 todo!()
             },
@@ -143,20 +147,20 @@ impl<T, const E: usize> PacketEncode for PaletteFormat<T, E> {
                 VarInt::from(entry.id()).encode(buf)?;
                 Ok(())
             },
-            PaletteFormat::Indirect { mappings, data } => {
+            PaletteFormat::Indirect { mappings, data: _data } => {
                 VarInt::from(mappings.len() as i32).encode(buf)?;
                 for entry in mappings {
                     VarInt::from(entry.id()).encode(buf)?;
                 }
                 Ok(())
             },
-            PaletteFormat::Direct { data } => { Ok(()) },
+            PaletteFormat::Direct { data: _data } => { Ok(()) },
         }
     }
 }
 
 impl<T, const E: usize> PacketDecode for PaletteFormat<T, E> {
-    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+    fn decode(_buf : &mut PacketBuf) -> Result<Self, DecodeError> {
         unimplemented!()
     }
 }
