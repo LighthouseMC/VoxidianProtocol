@@ -11,27 +11,7 @@ pub struct DataArray {
 
 impl DataArray {
     pub fn to_bit_stream(&self) -> Vec<u64> {
-        let mut compressed = Vec::new();
-        let mut current_long = 0u64;
-        let mut bits_written = 0;
-
-        for value in &self.input_data {
-            let value = *value as u64;
-            let bits = self.bits_per_entry as u64;
-            let bits_remaining = 64 - bits_written;
-
-            if bits_remaining >= bits {
-                current_long |= value << bits_written;
-                bits_written += bits;
-            } else {
-                let bits_to_write = bits - bits_remaining;
-                current_long |= value << bits_written;
-                compressed.push(current_long);
-                current_long = value >> bits_remaining;
-                bits_written = bits_to_write;
-            }
-        };
-        compressed
+        todo!()
     }
 }
 
