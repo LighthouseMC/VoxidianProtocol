@@ -362,8 +362,8 @@ pub struct Sound {
     pub fixed_range : Option<f32>
 }
 
-#[packet( "minecraft:s2c/play/forget_world_chunk" )]
-pub struct ForgetWorldChunkS2CPlayPacket  {
+#[packet( "minecraft:s2c/play/forget_level_chunk" )]
+pub struct ForgetLevelChunkS2CPlayPacket  {
     pub chunk_z : i32,
     pub chunk_x : i32
 }
@@ -410,8 +410,8 @@ pub struct HurtAnimationS2CPlayPacket  {
 }
 
 
-#[packet( "minecraft:s2c/play/initialise_border" )]
-pub struct InitialiseBorderS2CPlayPacket  {
+#[packet( "minecraft:s2c/play/initialize_border" )]
+pub struct InitializeBorderS2CPlayPacket  {
     pub x               : f64,
     pub z               : f64,
     pub old_diameter    : f64,
@@ -431,8 +431,8 @@ pub struct InitialiseBorderS2CPlayPacket  {
 pub struct KeepAliveS2CPlayPacket(pub u64);
 
 
-#[packet( "minecraft:s2c/play/world_chunk_with_light" )]
-pub struct WorldChunkWithLightS2CPlayPacket {
+#[packet( "minecraft:s2c/play/level_chunk_with_light" )]
+pub struct LevelChunkWithLightS2CPlayPacket {
     pub chunk_x: i32,
     pub chunk_z: i32,
 
@@ -465,12 +465,12 @@ pub struct LightMask {
     pub light_array: LengthPrefixVec<VarInt, u8> 
 }
 
-#[packet( "minecraft:s2c/play/world_event" )]
-pub struct WorldEventS2CPlayPacket(TODO);
+#[packet( "minecraft:s2c/play/level_event" )]
+pub struct LevelEventS2CPlayPacket(TODO);
 
 
-#[packet( "minecraft:s2c/play/world_particles" )]
-pub struct WorldParticlesS2CPlayPacket  {
+#[packet( "minecraft:s2c/play/level_particles" )]
+pub struct LevelParticlesS2CPlayPacket  {
     pub long_distance : bool,
     pub always_visible: bool,
     pub x             : f64,
@@ -835,8 +835,8 @@ pub struct SetActionBarTextS2CPlayPacket {
 }
 
 
-#[packet( "minecraft:s2c/play/set_border_centre" )]
-pub struct SetBorderCentreS2CPlayPacket {
+#[packet( "minecraft:s2c/play/set_border_center" )]
+pub struct SetBorderCenterS2CPlayPacket {
     pub x : f64,
     pub z : f64
 }
@@ -879,8 +879,8 @@ pub struct SetCameraS2CPlayPacket {
 }
 
 
-#[packet( "minecraft:s2c/play/set_chunk_cache_centre" )]
-pub struct SetChunkCacheCentreS2CPlayPacket {
+#[packet( "minecraft:s2c/play/set_chunk_cache_center" )]
+pub struct SetChunkCacheCenterS2CPlayPacket {
     pub chunk_x : VarInt,
     pub chunk_z : VarInt
 }
