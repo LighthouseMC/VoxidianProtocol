@@ -5,13 +5,39 @@ use super::*;
 
 #[derive(Debug)]
 pub struct DataArray {
-    pub bits_per_entry: u8,
-    pub input_data: Vec<u32>,
+    pub bits_per_entry: usize,
+    pub input_data: Vec<u64>
 }
 
 impl DataArray {
     pub fn to_bit_stream(&self) -> Vec<u64> {
-        todo!()
+        let entries_per_long = 64 / self.bits_per_entry;
+        let needed_longs = (self.input_data.len() + entries_per_long - 1) / entries_per_long;
+
+        let mut output_data = vec![0; needed_longs];
+        
+        for (idx, value) in self.input_data.iter().enumerate() {
+            let u64_index = idx / entries_per_long;
+            let bit_index = (idx % entries_per_long) * self.bits_per_entry;
+
+            output_data[u64_index] &= !(((1 << self.bits_per_entry) - 1) << bit_index);
+            output_data[u64_index] |= value << bit_index;
+        }
+        output_data
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::DataArray;
+
+    #[test]
+    pub fn check_data_array() {
+        let arr = DataArray {
+            bits_per_entry: 5,
+            input_data: vec![1,2,2,3,4,4,5,6,6,4,8,0,7,4,3,13,15,16,9,14,10,12,0,2],
+        };
+        assert_eq!(arr.to_bit_stream(), vec![0x0020863148418841, 0x01018A7260F68C87])
     }
 }
 
@@ -90,7 +116,7 @@ impl<T, const E: usize> PaletteFormat<T, E> {
             PaletteFormat::SingleValued { entry } => {
                 assert!(bits_per_entry == 0);
                 DataArray {
-                    bits_per_entry,
+                    bits_per_entry: bits_per_entry.into(),
                     input_data: vec![]
                 }
             },
@@ -100,9 +126,9 @@ impl<T, const E: usize> PaletteFormat<T, E> {
             },
             PaletteFormat::Direct { data } => {
                 assert!(bits_per_entry == 15);
-                let input_data = data.iter().map(|entry| entry.id() as u32).collect();
+                let input_data = data.iter().map(|entry| entry.id() as u64).collect();
                 DataArray {
-                    bits_per_entry,
+                    bits_per_entry: bits_per_entry.into(),
                     input_data
                 }
             },
