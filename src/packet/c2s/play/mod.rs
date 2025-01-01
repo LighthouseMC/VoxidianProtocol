@@ -135,8 +135,8 @@ pub struct MovePlayerPosC2SPlayPacket {
     pub flags: PositionFlags
 }
 packet_flags!(pub struct PositionFlags<u8> {
-    on_ground: 0b01,
-    against_wall: 010
+    pub on_ground: 0b01,
+    pub against_wall: 010
 });
 
 #[packet("minecraft:c2s/play/move_player_pos_rot")]
@@ -250,12 +250,12 @@ pub struct PlayerInputC2SPlayPacket {
 }
 
 packet_flags!(pub struct InputFlags<u8> {
-    forward: 0b1,
-    backward: 0b01,
-    left: 0b001,
-    right: 0b0001,
-    sneak: 0b00001,
-    sprint: 0b000001
+    pub forward: 0b1,
+    pub backward: 0b01,
+    pub left: 0b001,
+    pub right: 0b0001,
+    pub sneak: 0b00001,
+    pub sprint: 0b000001
 });
 #[packet("minecraft:c2s/play/player_loaded")]
 pub struct PlayerLoadedC2SPlayPacket;
@@ -328,9 +328,9 @@ pub enum CommandBlockMode {
 }
 
 packet_flags!(pub struct CommandBlockFlags<u8> {
-    track_output: 0b1,
-    is_conditional: 0b01,
-    automatic: 0b001
+    pub track_output: 0b1,
+    pub is_conditional: 0b01,
+    pub automatic: 0b001
 });
 
 #[packet("minecraft:c2s/play/set_command_minecart")]
@@ -407,9 +407,9 @@ pub enum StructureBlockRotationData {
 }
 
 packet_flags!(pub struct StructureBlockFlags<u8> {
-    ignore_entities: 0b1,
-    show_air: 0b01,
-    show_bounding_box: 0b001
+    pub ignore_entities: 0b1,
+    pub show_air: 0b01,
+    pub show_bounding_box: 0b001
 });
 
 #[packet("minecraft:c2s/play/sign_update")]
