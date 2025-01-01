@@ -39,7 +39,7 @@ pub(crate) macro packet_flags(
 
     #[derive(Debug, Clone, PartialEq, Eq)]
     $vis struct $ident { $(
-        $fieldvis $fieldident : bool
+        $vis $fieldident : bool
     ),* }
     impl PacketEncode for $ident { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
         <$type as PacketEncode>::encode(
