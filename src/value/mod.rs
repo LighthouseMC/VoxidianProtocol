@@ -74,6 +74,8 @@ pub use slot::*;
 mod slot;
 mod chunk_section;
 pub use chunk_section::*;
+mod id_set;
+pub use id_set::*;
 
 pub use uuid::{ Uuid, uuid };
 
