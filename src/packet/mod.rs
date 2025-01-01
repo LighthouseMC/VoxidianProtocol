@@ -21,7 +21,7 @@ pub(crate) use serde_json::de::from_str as from_json_str;
 pub(crate) use uuid::Uuid;
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TODO(());
 impl PacketEncode for TODO { fn encode(&self, _ : &mut PacketBuf) -> Result<(), EncodeError> {
     todo!("Packet field TODO");

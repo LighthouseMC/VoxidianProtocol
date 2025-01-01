@@ -1,4 +1,6 @@
 
+use std::ops::Mul;
+
 use crate::value::PacketEnumOrdinal;
 use crate::value::{Identifier, LengthPrefixVec, Nbt, PacketEncode, TextComponent};
 use crate::value::PacketDecode;
@@ -7,9 +9,10 @@ use crate::value::EncodeError;
 use crate::value::DecodeError;
 use crate::value::VarInt;
 use crate::packet::TODO;
-use voxidian_protocol_macros::{component, packet_part};
+use voxidian_protocol_macros::{component, component_enum, packet_part};
 
-use super::SlotData;
+use super::s2c::play::Attribute;
+use super::{AttributeType, Block, Either, IdSet, RegEntry, SlotData};
 
 #[component("minecraft:custom_data")]
 pub struct CustomData {
@@ -70,9 +73,67 @@ pub struct Enchantments {
     pub show_in_tooltip: bool
 }
 
-// TODO: can_place_on and can_break need Block Predicates
+#[component("minecraft:can_place_on")]
+pub struct CanPlaceOn {
+    pub predicates: LengthPrefixVec<VarInt, BlockPredicate>,
+    pub show_in_tooltip: bool
+}
+#[component("minecraft:can_break")]
+pub struct CanBreak {
+    pub predicates: LengthPrefixVec<VarInt, BlockPredicate>,
+    pub show_in_tooltip: bool
+}
 
-// TODO: attribute_modifiers
+#[packet_part]
+#[derive(Clone)]
+pub struct BlockPredicate {
+    pub blocks: Option<IdSet<Block>>,
+    pub properties: Option<LengthPrefixVec<VarInt, BlockPredicateProperty>>,
+    pub nbt: Option<Nbt>
+}
+
+#[packet_part]
+#[derive(Clone)]
+pub struct BlockPredicateProperty {
+    pub property: String,
+    pub values: Either<String, (String, String)>
+}
+
+#[component("minecraft:attribute_modifiers")]
+pub struct AttributeModifiers {
+    pub modifiers: LengthPrefixVec<VarInt, AttributeModifier>,
+    pub show_in_tooltip: bool
+}
+
+#[packet_part]
+#[derive(Clone)]
+pub struct AttributeModifier {
+    pub type_id: RegEntry<AttributeType>,
+    pub unique_id: Identifier,
+    pub value: f64,
+    pub operation: AttributeOperation,
+}
+
+#[packet_part(VarInt)]
+pub enum AttributeOperation {
+    Add = 0,
+    MultiplyBase,
+    MultiplyTotal
+}
+
+#[packet_part(VarInt)]
+pub enum AttributeSlot {
+    Any = 0,
+    MainHand,
+    OffHand,
+    Hand,
+    Feet,
+    Legs,
+    Chest,
+    Head,
+    Armor,
+    Body
+}
 
 #[component("minecraft:custom_model_data")]
 pub struct CustomModelData {
@@ -149,16 +210,31 @@ pub struct DamageResistant {
     pub damage_type_tag: String
 }
 
-// TODO: minecraft:tool
+#[component("minecraft:tool")]
+pub struct Tool {
+    pub rules: LengthPrefixVec<VarInt, ToolRule>,
+    pub default_mining_speed: f32,
+    pub damage_per_block: i32
+}
+
+#[packet_part]
+#[derive(Clone)]
+pub struct ToolRule {
+    pub blocks: IdSet<Block>,
+    pub speed: Option<f32>,
+    pub correct_drops_for_blocks: Option<bool>
+}
 
 #[component("minecraft:enchantable")]
 pub struct Enchantable {
     pub how_expensive: VarInt
 }
 
-// TODO: minecraft:equippable
+#[component("minecraft:equippable")]
+pub struct Equippable(TODO);
 
-// TODO: minecraft:repairable (what is ID Set?)
+#[component("minecraft:repairable")]
+pub struct Repairable(TODO);
 
 #[component("minecraft:glider")]
 pub struct Glider {}
@@ -168,11 +244,14 @@ pub struct TooltipStyle {
     pub style: Identifier
 }
 
-// TODO: minecraft:death_protection
+#[component("minecraft:death_protection")]
+pub struct DeathProtection(TODO);
 
-// TODO: minecraft:stored_enchantments
+#[component("minecraft:stored_enchantments")]
+pub struct StoredEnchantments(TODO);
 
-// TODO: minecraft:dyed_color - make custom Color type
+#[component("minecraft:dyed_color")]
+pub struct DyedColor(TODO);
 
 #[component("minecraft:map_id")]
 pub struct MapId {
@@ -184,58 +263,97 @@ pub struct MapDecorations {
     pub decorations: Nbt
 }
 
-// TODO: minecraft:map_post_processing
+#[component("minecraft:map_post_processing")]
+pub struct MapPostProcessing(TODO);
 
-// TODO: minecraft:charged_projectiles
+#[component("minecraft:charged_projectiles")]
+pub struct ChargedProjectiles(TODO);
 
-// TODO: minecraft:bundle_contents
+#[component("minecraft:bundle_contents")]
+pub struct BundleContents(TODO);
 
-// TODO: minecraft:potion_contents
+#[component("minecraft:potion_contents")]
+pub struct PotionContents(TODO);
 
-// TODO: minecraft:suspicious_stew_effects
+#[component("minecraft:suspicious_stew_effects")]
+pub struct SuspiciousStewEffects(TODO);
 
-// TODO: minecraft:writable_book_contents
+#[component("minecraft:writable_book_content")]
+pub struct WritableBookContent(TODO);
 
-// TODO: minecraft:written_book_contents
+#[component("minecraft:written_book_content")]
+pub struct WrittenBookContent(TODO);
 
-// TODO: minecraft:trim
+#[component("minecraft:trim")]
+pub struct Trim(TODO);
 
-// TODO: minecraft:debug_stick_state
+#[component("minecraft:debug_stick_state")]
+pub struct DebugStickState(TODO);
 
-// TODO: minecraft:entity_data
+#[component("minecraft:entity_data")]
+pub struct EntityData(TODO);
 
-// TODO: minecraft:bucket_entity_data
+#[component("minecraft:bucket_entity_data")]
+pub struct BucketEntityData(TODO);
 
-// TODO: minecraft:block_entity_data
+#[component("minecraft:block_entity_data")]
+pub struct BlockEntityData(TODO);
 
-// TODO: minecraft:instrument
+#[component("minecraft:instrument")]
+pub struct Instrument(TODO);
 
-// TODO: minecraft:ominous_bottle_amplifier
+#[component("minecraft:ominous_bottle_amplifier")]
+pub struct OminousBottleAmplifier(TODO);
 
-// TODO: minecraft:jukebox_playable
+#[component("minecraft:jukebox_playable")]
+pub struct JukeboxPlayable(TODO);
 
-// TODO: minecraft:recipes
+#[component("minecraft:recipes")]
+pub struct Recipes(TODO);
 
-// TODO: minecraft:lodestone_tracker
+#[component("minecraft:lodestone_tracker")]
+pub struct LodestoneTracker(TODO);
 
-// TODO: minecraft:firework_explosion
+#[component("minecraft:firework_explosion")]
+pub struct FireworkExplosion(TODO);
 
-// TODO: minecraft:fireworks
+#[component("minecraft:fireworks")]
+pub struct Fireworks(TODO);
 
-// TODO: minecraft:profile
+#[component("minecraft:profile")]
+pub struct Profile(TODO);
 
-// TODO: minecraft:note_block_sound
+#[component("minecraft:note_block_sound")]
+pub struct NoteBlockSound(TODO);
 
-// TODO: minecraft:banner_patterns
+#[component("minecraft:banner_patterns")]
+pub struct BannerPatterns(TODO);
 
-// TODO: minecraft:base_color
+#[component("minecraft:base_color")]
+pub struct BaseColor(TODO);
 
-// TODO: minecraft:pot_decorations
+#[component("minecraft:pot_decorations")]
+pub struct PotDecorations(TODO);
 
-// TODO: minecraft:container
+#[component("minecraft:container")]
+pub struct Container(TODO);
 
-// TODO: minecraft:block_state
+#[component("minecraft:block_state")]
+pub struct BlockState(TODO);
 
-// TODO: minecraft:lock
+#[component("minecraft:lock")]
+pub struct Lock(TODO);
 
-// TODO: minecraft:container_loot
+#[component("minecraft:bees")]
+pub struct Bees(TODO);
+
+#[component("minecraft:container_loot")]
+pub struct ContainerLoot(TODO);
+
+#[component("minecraft:map_color")]
+pub struct MapColor(TODO);
+
+#[component("minecraft:damage")]
+pub struct Damage(TODO);
+
+component_enum!();

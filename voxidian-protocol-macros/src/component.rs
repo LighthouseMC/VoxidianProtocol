@@ -38,6 +38,7 @@ pub(crate) fn component_impl(attr: TokenStream, item: TokenStream) -> TokenStrea
 
     (quote! {
         #[packet_part]
+        #[derive(Clone)]
         #item
 
         impl crate::value::ComponentData for #structure_name {
@@ -68,21 +69,73 @@ pub(crate) fn component_enum_impl() -> TokenStream {
     );
 
     (quote! {
-        // TODO: #(#formatted_names(#formatted_names))
         #[derive(Debug, Clone)]
         pub enum DataComponents {
-            #( #formatted_names ),*
+            #( #formatted_names(#formatted_names) ),*
         }
 
         #[derive(Debug, Clone)]
         pub enum DataComponentTypes {
             #( #formatted_names ),*
         }
+
+        impl DataComponents {
+            pub fn as_type(&self) -> DataComponentTypes {
+                match self {
+                    #( DataComponents::#formatted_names { .. } => DataComponentTypes::#formatted_names ),*
+                }
+            }
+        }
+
+        impl PacketEncode for DataComponents {
+            fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+                match self {
+                    #( DataComponents::#formatted_names(component) => {
+                        buf.encode_write(DataComponentTypes::#formatted_names.protocol_id())?;
+                        buf.encode_write(component)
+                    } ),*
+                }
+            }
+        }
+
+        impl PacketDecode for DataComponents {
+            fn decode(buf: &mut PacketBuf) -> Result<Self, DecodeError> {
+                let id = buf.read_decode::<VarInt>()?;
+                match id.as_i32() {
+                    #( #formatted_values => {
+                        let component = buf.read_decode::<#formatted_names>()?;
+                        Ok(DataComponents::#formatted_names(component))
+                    } ),*
+                    _ => Err(DecodeError::InvalidData("Invalid component type".to_string()))
+                }
+            }
+        }
         
         impl DataComponentTypes {
-            pub fn protocol_id(&self) -> u32 {
+            pub const fn protocol_id(&self) -> i32 {
                 match self {
-                    #( #formatted_names => #formatted_values ),*
+                    #( DataComponentTypes::#formatted_names { .. } => #formatted_values ),*
+                }
+            }
+        }
+
+        impl PacketEncode for DataComponentTypes {
+            fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+                match self {
+                    #( DataComponentTypes::#formatted_names => {
+                        buf.encode_write(VarInt::from(#formatted_values))?;
+                        Ok(())
+                    } ),*
+                }
+            }
+        }
+
+        impl PacketDecode for DataComponentTypes {
+            fn decode(buf: &mut PacketBuf) -> Result<Self, DecodeError> {
+                let id = buf.read_decode::<VarInt>()?;
+                match id.as_i32() {
+                    #( #formatted_values => Ok(DataComponentTypes::#formatted_names), )*
+                    _ => Err(DecodeError::InvalidData("Invalid component type".to_string()))
                 }
             }
         }
