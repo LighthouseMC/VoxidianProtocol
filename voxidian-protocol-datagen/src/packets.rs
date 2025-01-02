@@ -91,7 +91,6 @@ fn transform_entry(entry: &PacketFlow, output: &mut PacketOutput, stage: Stage) 
         transform_flow(ec, output, stage, Bound::S2C);
     }
     transform_flow(&entry.serverbound, output, stage, Bound::C2S);
-    
 }
 
 fn transform_flow(entry: &HashMap<String, PacketEntry>, output: &mut PacketOutput, stage: Stage, bound: Bound) {
