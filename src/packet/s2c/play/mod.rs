@@ -234,7 +234,12 @@ pub struct ContainerCloseS2CPlayPacket {
 
 
 #[packet( "minecraft:s2c/play/container_set_content" )]
-pub struct ContainerSetContentS2CPlayPacket(TODO);
+pub struct ContainerSetContentS2CPlayPacket {
+    pub window_id: VarInt,
+    pub sequence: VarInt,
+    pub slots: LengthPrefixVec<VarInt, SlotData>,
+    pub cursor_item: SlotData
+}
 
 
 #[packet( "minecraft:s2c/play/container_set_data" )]
@@ -246,7 +251,12 @@ pub struct ContainerSetDataS2CPlayPacket {
 
 
 #[packet( "minecraft:s2c/play/container_set_slot" )]
-pub struct ContainerSetSlotS2CPlayPacket(TODO);
+pub struct ContainerSetSlotS2CPlayPacket {
+    pub window_id: VarInt,
+    pub state_id: VarInt,
+    pub slot: u16,
+    pub slot_data: SlotData
+}
 
 
 #[packet( "minecraft:s2c/play/cookie_request" )]
@@ -963,7 +973,9 @@ pub struct SetHealthS2CPlayPacket {
 
 
 #[packet( "minecraft:s2c/play/set_held_slot" )]
-pub struct SetHeldSlotS2CPlayPacket(TODO);
+pub struct SetHeldSlotS2CPlayPacket {
+    pub slot: VarInt
+}
 
 
 #[packet( "minecraft:s2c/play/set_objective" )]
@@ -1011,7 +1023,10 @@ pub struct SetPassengersS2CPlayPacket {
 
 
 #[packet( "minecraft:s2c/play/set_player_inventory" )]
-pub struct SetPlayerInventoryS2CPlayPacket(TODO);
+pub struct SetPlayerInventoryS2CPlayPacket {
+    pub slot: u16,
+    pub data: SlotData
+}
 
 
 #[packet( "minecraft:s2c/play/set_player_team" )]

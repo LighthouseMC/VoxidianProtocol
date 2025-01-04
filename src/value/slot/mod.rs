@@ -1,4 +1,3 @@
-use voxidian_protocol_macros::component_enum;
 
 mod components;
 pub use components::*;

@@ -1,6 +1,3 @@
-
-use std::ops::Mul;
-
 use crate::value::PacketEnumOrdinal;
 use crate::value::{Identifier, LengthPrefixVec, Nbt, PacketEncode, TextComponent};
 use crate::value::PacketDecode;
@@ -11,7 +8,6 @@ use crate::value::VarInt;
 use crate::packet::TODO;
 use voxidian_protocol_macros::{component, component_enum, packet_part};
 
-use super::s2c::play::Attribute;
 use super::{AttributeType, Block, Either, IdSet, RegEntry, SlotData};
 
 #[component("minecraft:custom_data")]
