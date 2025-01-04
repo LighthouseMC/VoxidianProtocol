@@ -25,6 +25,7 @@ unused-parens = "allow"
 data_generator_api = ["dep:proc-macro2", "dep:quote"]
 
 [dependencies]
+indexmap = "2.7.0"
 proc-macro2 = { version = "1.0.92", optional = true }
 quote = { version = "1.0.38", optional = true }
 

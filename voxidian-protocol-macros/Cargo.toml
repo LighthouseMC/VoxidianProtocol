@@ -18,6 +18,9 @@ unused-parens = "allow"
 [lib]
 proc-macro = true
 
+[dependencies.indexmap]
+version = "2.7.0"
+features = ["std"]
 
 [dependencies.syn]
 version  = "2.0"

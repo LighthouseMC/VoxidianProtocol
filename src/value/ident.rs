@@ -1,6 +1,9 @@
+use indexmap::Equivalent;
+
 use super::*;
 use std::fmt;
 use std::borrow::Cow;
+use std::hash::{DefaultHasher, Hash, Hasher};
 
 
 #[derive(Clone, PartialEq, Eq, Hash)]
@@ -57,6 +60,16 @@ impl PacketEncode for Identifier { fn encode(&self, buf : &mut PacketBuf) -> Res
 impl PacketDecode for Identifier { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
     Ok(Self::from(buf.read_decode::<String>()?))
 } }
+
+impl Equivalent<Identifier> for &Identifier {
+    fn equivalent(&self, key: &Identifier) -> bool {
+        let mut h1 = DefaultHasher::new();
+        let mut h2 = DefaultHasher::new();
+        self.hash(&mut h1);
+        key.hash(&mut h2);
+        h1.finish() == h2.finish()
+    }
+}
 
 
 #[cfg(test)]

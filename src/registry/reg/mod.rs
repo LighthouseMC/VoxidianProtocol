@@ -1,70 +1,51 @@
 mod frozen;
 pub use frozen::*;
+use indexmap::IndexMap;
 
 use crate::packet::s2c::config::RegistryDataS2CConfigPacket;
 use crate::registry::RegEntry;
-use crate::value::Identifier;
+use crate::value::{Identifier, LengthPrefixVec};
 use super::*;
-use std::collections::HashMap;
 
 /// Represents a registry.
 pub struct Registry<T> {
-    // key = Identifier
-    // id = RegEntry<T> / usize
-    // value = T
-    values       : Vec<T>,
-    keys         : Vec<Identifier>,
-    key_to_value : HashMap<Identifier, usize>,
+    map: IndexMap<Identifier, T>,
 }
 
 impl<T> Registry<T> {
 
     pub fn new() -> Self {
         Self {
-            values: Vec::new(),
-            keys: Vec::new(),
-            key_to_value: HashMap::new(),
+            map: IndexMap::new()
         }
     }
 
     pub fn get(&self, key: &Identifier) -> Option<&T> {
-        let Some(idx) = self.key_to_value.get(key) else {
-            return None;
-        };
-        self.values.get(*idx)
+        self.map.get(key)
     }
 
     pub fn insert(&mut self, key: Identifier, value: T) {
-        self.keys.push(key.clone());
-        self.values.push(value);
-        self.key_to_value.insert(key, self.values.len()-1);
+        self.map.insert(key, value);
     }
 
     pub fn map<F: FnOnce(&T) -> T>(&mut self, key: Identifier, func: F) {
-        let Some(idx) = self.key_to_value.get(&key) else {
-            return;
-        };
-
-        let value: &T = self.values.get(*idx).expect("infallible");
+        let value: &T = self.get(&key).expect("infallible");
         let new_value = func(value);
-
-        self.values[*idx] = new_value;
+        self.insert(key, new_value);
     }
 
     pub fn lookup(&self, entry: &RegEntry<T>) -> Option<&T> {
-        self.values.get(entry.id())
+        self.map.get_index(entry.id()).map(|x| x.1)
     }
 
     pub fn make_entry(&self, identifier: &Identifier) -> Option<RegEntry<T>> {
-        // Safety: Since the RegEntry is only obtainable if the Identifier is a valid entry,
-        // this code will not cause any issues with the client
-        self.key_to_value.get(&identifier).map(|x| unsafe { RegEntry::new_unchecked(*x) })
+        self.map
+            .get_full(&identifier)
+            .map(|(index, _, _)| unsafe { RegEntry::new_unchecked(index) })
     }
 
     pub fn clear(&mut self) {
-        self.keys.clear();
-        self.values.clear();
-        self.key_to_value.clear();
+        self.map.clear();
     }
 
     pub fn freeze(self) -> RegistryFrozen<T> {
@@ -75,14 +56,13 @@ impl<T> Registry<T> {
 
 impl<T : RegValue> Registry<T> {
     pub fn to_registry_data_packet(&self) -> RegistryDataS2CConfigPacket {
-        let mut entries = HashMap::new();
-        for (key, idx) in &self.key_to_value {
-            let value = &self.values[*idx];
-            entries.insert(key.clone(), value.to_registry_data_packet());
+        let mut entries = LengthPrefixVec::new();
+        for entry in self.map.iter() {
+            entries.push((entry.0.clone(), entry.1.to_registry_data_packet()));
         }
         RegistryDataS2CConfigPacket {
-            registry : T::REGISTRY_ID,
-            entries  : entries.into()
+            registry: T::REGISTRY_ID,
+            entries
         }
     }
 }

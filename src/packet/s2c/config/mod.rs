@@ -39,7 +39,7 @@ pub struct ResetChatS2CConfigPacket;
 #[packet( "minecraft:s2c/config/registry_data" )]
 pub struct RegistryDataS2CConfigPacket {
     pub registry : Identifier,
-    pub entries  : LengthPrefixHashMap<VarInt, Identifier, Option<Nbt>>
+    pub entries  : LengthPrefixVec<VarInt, (Identifier, Option<Nbt>)>
 }
 
 
