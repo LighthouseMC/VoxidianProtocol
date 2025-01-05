@@ -6,20 +6,20 @@ use crate::value::*;
 
 #[derive(Debug, Clone)]
 pub struct SlotData {
-    pub item_count: VarInt,
-    pub item_id: RegEntry<Item>,
-    pub components: Vec<DataComponents>,
-    pub removed_components: Vec<DataComponentTypes>
+    pub id                 : RegEntry<Item>,
+    pub count              : VarInt,
+    pub components         : Vec<DataComponents>,
+    pub removed_components : Vec<DataComponentTypes>
 }
 
 impl PacketEncode for SlotData {
     fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
-        buf.encode_write(self.item_count)?;
-        if self.item_count.as_i32() < 0 {
+        buf.encode_write(self.count)?;
+        if (self.count.as_i32() <= 0) {
             return Ok(());
         }
 
-        buf.encode_write(self.item_id)?;
+        buf.encode_write(self.id)?;
 
         buf.encode_write(VarInt::from(self.components.len()))?;
         buf.encode_write(VarInt::from(self.removed_components.len()))?;
@@ -31,9 +31,7 @@ impl PacketEncode for SlotData {
         for component in &self.removed_components {
             buf.encode_write(component)?;
         }
-        todo!();
 
-        #[allow(unreachable_code)]
         Ok(())
     }
 }
@@ -43,8 +41,8 @@ impl PacketDecode for SlotData {
         let item_count = buf.read_decode::<VarInt>()?;
         if item_count.as_i32() == 0 {
             return Ok(SlotData {
-                item_count: VarInt::from(0),
-                item_id: unsafe { RegEntry::new_unchecked(0) },
+                count: VarInt::from(0),
+                id: unsafe { RegEntry::new_unchecked(0) },
                 components: Vec::new(),
                 removed_components: Vec::new(),
             });
@@ -65,8 +63,8 @@ impl PacketDecode for SlotData {
         }
 
         Ok(SlotData {
-            item_count,
-            item_id,
+            count: item_count,
+            id: item_id,
             components,
             removed_components,
         })

@@ -1024,7 +1024,7 @@ pub struct SetPassengersS2CPlayPacket {
 
 #[packet( "minecraft:s2c/play/set_player_inventory" )]
 pub struct SetPlayerInventoryS2CPlayPacket {
-    pub slot: u16,
+    pub slot: VarInt,
     pub data: SlotData
 }
 

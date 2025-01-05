@@ -91,7 +91,7 @@ pub(crate) fn component_enum_impl() -> TokenStream {
             fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
                 match self {
                     #( DataComponents::#formatted_names(component) => {
-                        buf.encode_write(DataComponentTypes::#formatted_names.protocol_id())?;
+                        buf.encode_write(VarInt::from(DataComponentTypes::#formatted_names.protocol_id() as i32))?;
                         buf.encode_write(component)
                     } ),*
                 }
@@ -112,7 +112,7 @@ pub(crate) fn component_enum_impl() -> TokenStream {
         }
         
         impl DataComponentTypes {
-            pub const fn protocol_id(&self) -> i32 {
+            pub const fn protocol_id(&self) -> u16 {
                 match self {
                     #( DataComponentTypes::#formatted_names { .. } => #formatted_values ),*
                 }

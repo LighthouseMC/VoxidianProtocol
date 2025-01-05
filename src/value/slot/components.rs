@@ -1,66 +1,66 @@
 use crate::value::PacketEnumOrdinal;
-use crate::value::{Identifier, LengthPrefixVec, Nbt, PacketEncode, TextComponent};
+use crate::value::{Identifier, LengthPrefixVec, Nbt, PacketEncode, NbtText};
 use crate::value::PacketDecode;
 use crate::value::PacketBuf;
 use crate::value::EncodeError;
 use crate::value::DecodeError;
 use crate::value::VarInt;
+use crate::value::Uuid;
 use crate::packet::TODO;
+use super::{AttributeType, Block, Either, IdSet, RegEntry, SlotData};
 use voxidian_protocol_macros::{component, component_enum, packet_part};
 
-use super::{AttributeType, Block, Either, IdSet, RegEntry, SlotData};
 
 #[component("minecraft:custom_data")]
 pub struct CustomData {
-    pub data: Nbt
+    pub data : Nbt
 }
 
 #[component("minecraft:max_stack_size")]
 pub struct MaxStackSize {
-    pub amount: VarInt
+    pub amount : VarInt
 }
 
 #[component("minecraft:max_damage")]
 pub struct MaxDamage {
-    pub amount: VarInt
+    pub amount : VarInt
 }
 
 #[component("minecraft:unbreakable")]
 pub struct Unbreakable {
-    pub show_tooltip: bool
+    pub show_tooltip : bool
 }
 
 #[component("minecraft:custom_name")]
 pub struct CustomName {
-    pub amount: TextComponent
+    pub name : NbtText
 }
 
 #[component("minecraft:item_name")]
 pub struct ItemName {
-    pub amount: TextComponent
+    pub name : NbtText
 }
 
 #[component("minecraft:item_model")]
 pub struct ItemModel {
-    pub amount: Identifier
+    pub asset : Identifier
 }
 
 #[component("minecraft:lore")]
 pub struct Lore {
-    pub amount: LengthPrefixVec<VarInt, TextComponent>
+    pub lines : LengthPrefixVec<VarInt, NbtText>
 }
 
 #[component("minecraft:rarity")]
 pub struct Rarity {
-    pub rarity: RarityLevel
+    pub rarity : RarityLevel
 }
-
 #[packet_part(VarInt)]
 pub enum RarityLevel {
-    Common = 0,
+    Common   = 0,
     Uncommon = 1,
-    Rare = 2,
-    Epic = 3
+    Rare     = 2,
+    Epic     = 3
 }
 
 #[component("minecraft:enchantments")]
@@ -153,7 +153,7 @@ pub struct CreativeSlotLock {}
 
 #[component("minecraft:enchantment_glint_override")]
 pub struct EnchantmentGlintOverride {
-    pub has_glint: bool
+    pub has_glint : bool
 }
 
 #[component("minecraft:intangible_projectile")]
@@ -317,7 +317,18 @@ pub struct FireworkExplosion(TODO);
 pub struct Fireworks(TODO);
 
 #[component("minecraft:profile")]
-pub struct Profile(TODO);
+pub struct Profile {
+    pub name       : Option<String>,
+    pub uuid       : Option<Uuid>,
+    pub properties : LengthPrefixVec<VarInt, ProfileProperty>
+}
+#[packet_part]
+#[derive(Clone)]
+pub struct ProfileProperty{
+    pub name      : String,
+    pub value     : String,
+    pub signature : Option<String>
+}
 
 #[component("minecraft:note_block_sound")]
 pub struct NoteBlockSound(TODO);
@@ -351,5 +362,6 @@ pub struct MapColor(TODO);
 
 #[component("minecraft:damage")]
 pub struct Damage(TODO);
+
 
 component_enum!();

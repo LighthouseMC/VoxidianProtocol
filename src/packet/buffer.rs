@@ -43,6 +43,12 @@ impl PacketBuf {
     }
 
 }
+impl From<Vec<u8>> for PacketBuf {
+    fn from(value : Vec<u8>) -> Self { Self {
+        inner    : value,
+        read_idx : 0
+    } }
+}
 
 
 /// Deconstructors

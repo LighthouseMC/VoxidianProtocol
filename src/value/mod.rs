@@ -71,7 +71,7 @@ pub use length_prefix_hashmap::*;
 mod reg_or;
 pub use reg_or::*;
 pub use slot::*;
-mod slot;
+pub mod slot;
 mod chunk_section;
 pub use chunk_section::*;
 mod id_set;
