@@ -18,9 +18,9 @@ pub struct AddEntityS2CPlayPacket {
     pub yaw      : Angle,
     pub head_yaw : Angle,
     pub data     : VarInt,
-    pub vel_x    : f64,
-    pub vel_y    : f64,
-    pub vel_z    : f64
+    pub vel_x    : i16,
+    pub vel_y    : i16,
+    pub vel_z    : i16
 }
 
 
