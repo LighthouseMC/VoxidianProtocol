@@ -32,10 +32,13 @@ pub struct MojAuthProperty {
 
 impl MojAuth {
 
-    pub fn start_non_blocking<U : AsRef<str>, S : AsRef<str>>(block_proxies : Option<SocketAddr>, username : U, server_id : S, secret_cipher : &SecretCipher, public_key : &PublicKey) -> MojAuthHandle {
+    /// `LighthouseMCRust`
+    const NAMESPACE_LIGHTHOUSE : Uuid = Uuid::from_bytes([0x4c, 0x69, 0x67, 0x68, 0x74, 0x68, 0x6f, 0x75, 0x73, 0x65, 0x4d, 0x43, 0x52, 0x75, 0x73, 0x74]);
+
+    pub fn start_non_blocking<U : AsRef<str>, S : AsRef<str>>(block_proxies : Option<SocketAddr>, username : U, server_id : S, secret_cipher_key : &[u8], public_key : &PublicKey) -> MojAuthHandle {
         let mut sha = Sha1::new();
         sha.update(server_id.as_ref().as_ascii().unwrap().as_bytes());
-        sha.update(&secret_cipher.0.as_ref().expect("Cipher may not be a no-cipher").key);
+        sha.update(&secret_cipher_key);
         sha.update(&public_key.der_bytes());
         let sha = BigInt::from_signed_bytes_be(&sha.finish()).to_str_radix(16);
         let mut url = format!("https://sessionserver.mojang.com/session/minecraft/hasJoined?username={}&serverId={}", username.as_ref(), sha);
@@ -62,8 +65,17 @@ impl MojAuth {
         }
     }
 
-    pub fn start_blocking<U : AsRef<str>, S : AsRef<str>>(block_proxies : Option<SocketAddr>, username : U, server_id : S, secret_cipher : &SecretCipher, public_key : &PublicKey) -> Result<MojAuth, MojAuthError> {
-        Self::start_non_blocking(block_proxies, username, server_id, secret_cipher, public_key).wait_to_finish()
+    pub fn start_blocking<U : AsRef<str>, S : AsRef<str>>(block_proxies : Option<SocketAddr>, username : U, server_id : S, secret_cipher_key : &[u8], public_key : &PublicKey) -> Result<MojAuth, MojAuthError> {
+        Self::start_non_blocking(block_proxies, username, server_id, secret_cipher_key, public_key).wait_to_finish()
+    }
+
+    pub fn offline<S : Into<String>>(name : S) -> Self {
+        let name = name.into();
+        Self {
+            uuid  : Uuid::new_v3(&Self::NAMESPACE_LIGHTHOUSE, name.as_bytes()),
+            name  : name,
+            props : Vec::new(), // TODO: Offline skin
+        }
     }
 
 }
@@ -76,22 +88,14 @@ pub struct MojAuthHandle {
 
 impl MojAuthHandle {
 
-    /// `LighthouseMCRust`
-    const NAMESPACE_LIGHTHOUSE : Uuid = Uuid::from_bytes([0x4c, 0x69, 0x67, 0x68, 0x74, 0x68, 0x6f, 0x75, 0x73, 0x65, 0x4d, 0x43, 0x52, 0x75, 0x73, 0x74]);
-
     pub fn no_data() -> Self { Self {
         already_done : Some(Err(MojAuthError::InvalidData)),
         handle       : None
     } }
 
     pub fn already_finished<S : Into<String>>(name : S) -> Self {
-        let name = name.into();
         Self {
-            already_done : Some(Ok(MojAuth {
-                uuid  : Uuid::new_v3(&Self::NAMESPACE_LIGHTHOUSE, name.as_bytes()),
-                name  : name,
-                props : Vec::new(), // TODO: Offline skin
-            })),
+            already_done : Some(Ok(MojAuth::offline(name))),
             handle : None
         }
     }

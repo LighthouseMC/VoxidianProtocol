@@ -33,13 +33,13 @@ impl StatusResponse {
 #[derive(Ser, Deser, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct StatusResponseVersion {
     pub name     : String,
-    pub protocol : usize
+    pub protocol : u32
 }
 
 #[derive(Ser, Deser, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct StatusResponsePlayers {
-    pub online : usize,
-    pub max    : usize,
+    pub online : u32,
+    pub max    : u32,
     pub sample : Vec<StatusResponsePlayerSample>
 }
 

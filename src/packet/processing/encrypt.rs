@@ -8,7 +8,7 @@ use openssl::symm::{ Cipher, Crypter, Mode };
 
 
 /// A public RSA key.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PublicKey(PKey<Public>);
 impl PublicKey {
 
@@ -37,6 +37,7 @@ impl PartialEq for PublicKey { fn eq(&self, other : &Self) -> bool {
 
 
 /// A private RSA key.
+#[derive(Clone)]
 pub struct PrivateKey(PKey<Private>);
 impl PrivateKey {
 
@@ -65,6 +66,8 @@ pub(crate) struct SecretCipherInner {
                 de  : Crypter
 }
 impl SecretCipher {
+
+    pub fn key(&self) -> Option<&[u8]> { self.0.as_ref().map(|inner| inner.key.as_slice()) }
 
     pub fn no_cipher() -> Self { Self(None) }
 
