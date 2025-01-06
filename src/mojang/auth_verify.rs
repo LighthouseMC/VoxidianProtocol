@@ -1,4 +1,4 @@
-use crate::packet::{ SecretCipher, PublicKey };
+use crate::packet::PublicKey;
 
 use std::thread::{ self, JoinHandle };
 use std::net::SocketAddr;
