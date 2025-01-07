@@ -34,3 +34,17 @@ impl PacketDecode for Nbt { fn decode(buf : &mut PacketBuf) -> Result<Self, Deco
         root : NbtCompound::decode_packet(buf)?,
     })
 } }
+
+
+impl Nbt {
+    pub fn read_named(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+        let tag = buf.read_u8()?;
+        if (tag != NbtElement::TAG_COMPOUND) {
+            return Err(DecodeError::InvalidData("Nbt root is not a compound".to_string()));
+        }
+        Ok(Nbt {
+            name : NbtElement::decode_string(buf)?,
+            root : NbtCompound::decode_packet(buf)?,
+        })
+    }
+}

@@ -1,7 +1,7 @@
 use super::*;
 
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 #[repr(u8)]
 pub enum NbtElement {
     Byte     (i8              ) = 1,
@@ -88,7 +88,7 @@ impl PacketDecode for NbtElement { fn decode(buf : &mut PacketBuf) -> Result<Sel
     Self::decode_packet(buf, tag)
 } }
 impl NbtElement {
-    
+
     pub(super) fn decode_packet(buf : &mut PacketBuf, tag : u8) -> Result<Self, DecodeError> { match (tag) {
         Self::TAG_BYTE   => Ok(Self::Byte   (buf.read_u8()? as i8)),
         Self::TAG_SHORT  => Ok(Self::Short  (buf.read_decode()?)),
@@ -135,4 +135,3 @@ impl NbtElement {
     }
 
 }
-

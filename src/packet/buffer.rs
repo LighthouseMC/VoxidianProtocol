@@ -1,5 +1,7 @@
 use super::*;
 use std::{ fmt, iter, slice, vec };
+use std::io::{ self, Read };
+use flate2::read::GzDecoder;
 
 
 #[derive(Clone, Hash, Eq, PartialEq)]
@@ -40,6 +42,21 @@ impl PacketBuf {
             inner : bytes,
             read_idx : 0
         }, consumed + size))
+    }
+
+    pub fn inflate_gzip(&self) -> io::Result<Self> {
+        let mut gz = GzDecoder::new(self.inner.as_slice());
+        Self::read(&mut gz)
+    }
+
+    /// Reads all bytes from the stream, returning it as a `PacketBuf`.
+    pub fn read(f : &mut impl Read) -> io::Result<Self> {
+        let mut bytes = Vec::new();
+        f.read_to_end(&mut bytes)?;
+        Ok(Self {
+            inner : bytes,
+            read_idx : 0
+        })
     }
 
 }
