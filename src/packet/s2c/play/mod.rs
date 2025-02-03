@@ -930,8 +930,8 @@ pub enum ObjectiveLocation {
 
 #[packet( "minecraft:s2c/play/set_entity_data" )]
 pub struct SetEntityDataS2CPlayPacket {
-    entity: VarInt,
-    data: EntityMetadata
+    pub entity: VarInt,
+    pub data: EntityMetadata
 }
 
 
