@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use crate::packet::{PacketEncode, RegEntry, TODO};
 
 use super::{
-    BlockState, Identifier, Nbt, OptionVarInt, PaintingVariant, RegOr, SlotData, TextComponent,
-    VarInt, VarLong, WolfVariant,
+    BlockState, Identifier, Nbt, OptionVarInt, PaintingVariant, SlotData, TextComponent, VarInt,
+    VarLong, WolfVariant,
 };
 
 pub struct EntityMetadata {
@@ -34,39 +34,57 @@ impl PacketEncode for EntityMetadata {
     }
 }
 
-pub enum MetadataEntry {
-    Byte(u8),
-    VarInt(VarInt),
-    VarLong(VarLong),
-    Float(f32),
-    String(String),
-    TextComponent(TextComponent),
-    OptionalTextComponent(Option<TextComponent>),
-    SlotData(SlotData),
-    Rotations(f32, f32, f32),
-    Position(TODO),
-    OptionalPosition(Option<TODO>),
-    Direction(VarInt),
-    BlockState(BlockState),
-    OptionalBlockState(Option<BlockState>),
-    Nbt(Nbt),
-    Particle(VarInt, TODO),
-    Particles(TODO),
-    OptionalVarInt(OptionVarInt),
-    Pose(VarInt),
-    CatVariant(RegEntry<TODO>),
-    WolfVariant(RegEntry<WolfVariant>),
-    FrogVariant(RegEntry<TODO>),
-    OptionalGlobalPosition(Option<(Identifier, TODO)>),
-    PaintingVariant(RegOr<PaintingVariant, PaintingVariant>),
-    SnifferState(VarInt),
-    ArmadilloState(VarInt),
-    Vector3(f32, f32, f32),
-    Quaternion(f32, f32, f32, f32),
-}
+macro_rules! create_metadata_entries {
+    (
+        $($index:expr => $name:ident($type:ty)),*$(,)?
+    ) => {
+        pub enum MetadataEntry {
+            $($name($type)),*
+        }
 
-impl PacketEncode for MetadataEntry {
-    fn encode(&self, buf: &mut crate::packet::PacketBuf) -> Result<(), crate::packet::EncodeError> {
-        todo!()
-    }
+        impl PacketEncode for MetadataEntry {
+            fn encode(&self, buf: &mut crate::packet::PacketBuf) -> Result<(), crate::packet::EncodeError> {
+                match self {
+                    $(
+                        MetadataEntry::$name( value ) => {
+                            buf.write_u8($index);
+                            buf.encode_write(value)?;
+                        }
+                    )*
+                }
+                Ok(())
+            }
+        }
+
+    };
+}
+create_metadata_entries! {
+    0x00 => Byte(u8),
+    0x01 => VarInt(VarInt),
+    0x02 => VarLong(VarLong),
+    0x03 => Float(f32),
+    0x04 => String(String),
+    0x05 => TextComponent(TextComponent),
+    0x06 => OptionalTextComponent(Option<TextComponent>),
+    0x07 => SlotData(SlotData),
+    0x08 => Rotations((f32, f32, f32)),
+    0x09 => Position(TODO),
+    0x0A => OptionalPosition(Option<TODO>),
+    0x0B => Direction(VarInt),
+    0x0C => BlockState(RegEntry<BlockState>),
+    0x0D => OptionalBlockState(OptionVarInt),
+    0x0E => Nbt(Nbt),
+    0x0F => Particle((VarInt, TODO)),
+    0x10 => Particles(TODO),
+    0x11 => OptionalVarInt(OptionVarInt),
+    0x12 => Pose(VarInt),
+    0x13 => CatVariant(RegEntry<TODO>),
+    0x14 => WolfVariant(RegEntry<WolfVariant>),
+    0x15 => FrogVariant(RegEntry<TODO>),
+    0x16 => OptionalGlobalPosition(Option<(Identifier, TODO)>),
+    0x17 => PaintingVariant(RegEntry<PaintingVariant>),
+    0x18 => SnifferState(VarInt),
+    0x19 => ArmadilloState(VarInt),
+    0x1A => Vector3((f32, f32, f32)),
+    0x1B => Quaternion((f32, f32, f32, f32)),
 }
