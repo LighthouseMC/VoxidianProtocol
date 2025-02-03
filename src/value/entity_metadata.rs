@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 
-use crate::packet::{PacketEncode, RegEntry, TODO};
+use crate::packet::{PacketDecode, PacketEncode, RegEntry, TODO};
 
 use super::{
     BlockState, Identifier, Nbt, OptionVarInt, PaintingVariant, SlotData, TextComponent, VarInt,
     VarLong, WolfVariant,
 };
 
+#[derive(Debug, Clone)]
 pub struct EntityMetadata {
     inner: HashMap<u8, MetadataEntry>,
 }
@@ -38,6 +39,7 @@ macro_rules! create_metadata_entries {
     (
         $($index:expr => $name:ident($type:ty)),*$(,)?
     ) => {
+        #[derive(Debug, Clone)]
         pub enum MetadataEntry {
             $($name($type)),*
         }
@@ -58,6 +60,19 @@ macro_rules! create_metadata_entries {
 
     };
 }
+
+impl PacketDecode for MetadataEntry {
+    fn decode(_buf: &mut crate::packet::PacketBuf) -> Result<Self, crate::packet::DecodeError> {
+        todo!()
+    }
+}
+
+impl PacketDecode for EntityMetadata {
+    fn decode(_buf: &mut crate::packet::PacketBuf) -> Result<Self, crate::packet::DecodeError> {
+        todo!()
+    }
+}
+
 create_metadata_entries! {
     0x00 => Byte(u8),
     0x01 => VarInt(VarInt),
