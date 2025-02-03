@@ -343,16 +343,16 @@ pub struct EntityEventS2CPlayPacket {
 
 #[packet( "minecraft:s2c/play/entity_position_sync" )]
 pub struct EntityPositionSyncS2CPlayPacket {
-    entity_id: VarInt,
-    x: f64,
-    y: f64,
-    z: f64,
-    vx: f64,
-    vy: f64,
-    vz: f64,
-    yaw: f32,
-    pitch: f32,
-    on_ground: bool
+    pub entity_id: VarInt,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+    pub vx: f64,
+    pub vy: f64,
+    pub vz: f64,
+    pub yaw: f32,
+    pub pitch: f32,
+    pub on_ground: bool
 }
 
 
