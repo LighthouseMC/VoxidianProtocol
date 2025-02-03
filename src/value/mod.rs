@@ -71,16 +71,17 @@ pub use length_prefix_hashmap::*;
 mod reg_or;
 pub use reg_or::*;
 pub use slot::*;
-pub mod slot;
 mod chunk_section;
+pub mod slot;
 pub use chunk_section::*;
 mod id_set;
 pub use id_set::*;
+mod entity_metadata;
+pub use entity_metadata::*;
 
-pub use uuid::{ Uuid, uuid };
-
+pub use uuid::{Uuid, uuid};
 
 use crate::packet::*;
 use std::fmt;
 
-pub(super) use serde::{Serialize, Deserialize};
+pub(super) use serde::{Deserialize, Serialize};
