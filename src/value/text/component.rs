@@ -12,13 +12,22 @@ pub struct TextComponent {
 }
 impl TextComponent {
     pub fn of_literal<S : Into<String>>(literal : S) -> Self {
-        Self::default().with_literal(literal.into())
+        Self::default().with_literal(literal)
     }
     pub fn of_translate<S : Into<String>>(translation : S) -> Self {
-        Self::default().with_translate(translation.into())
+        Self::default().with_translate(translation)
+    }
+    pub fn of_translate_fallback<S : Into<String>, F : Into<String>>(translation : S, fallback : F) -> Self {
+        Self::default().with_translate_fallback(translation, fallback)
+    }
+    pub fn of_translate_interpolate<S : Into<String>, I : Into<String>>(translation : S, interpolate : impl IntoIterator<Item = I>) -> Self {
+        Self::default().with_translate_interpolate(translation, interpolate)
+    }
+    pub fn of_translate_fallback_interpolate<S : Into<String>, F : Into<String>, I : Into<String>>(translation : S, fallback : F, interpolate : impl IntoIterator<Item = I>) -> Self {
+        Self::default().with_translate_fallback_interpolate(translation, fallback, interpolate)
     }
     pub fn of_keybind<S : Into<String>>(keybind : S) -> Self {
-        Self::default().with_keybind(keybind.into())
+        Self::default().with_keybind(keybind)
     }
 }
 impl TextComponent {
