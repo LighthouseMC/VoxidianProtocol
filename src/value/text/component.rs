@@ -29,7 +29,16 @@ impl TextComponent {
         self.with_content(TextContent::Literal { literal : literal.into() })
     }
     pub fn with_translate<S : Into<String>>(&self, translation : S) -> Self {
-        self.with_content(TextContent::Translate { translate : translation.into() })
+        self.with_content(TextContent::Translate { translate : translation.into(), fallback : None, interpolate : Vec::new() })
+    }
+    pub fn with_translate_fallback<S : Into<String>, F : Into<String>>(&self, translation : S, fallback : F) -> Self {
+        self.with_content(TextContent::Translate { translate : translation.into(), fallback : Some(fallback.into()), interpolate : Vec::new() })
+    }
+    pub fn with_translate_interpolate<S : Into<String>, I : Into<String>>(&self, translation : S, interpolate : impl IntoIterator<Item = I>) -> Self {
+        self.with_content(TextContent::Translate { translate : translation.into(), fallback : None, interpolate : interpolate.into_iter().map(|e| e.into()).collect::<Vec<_>>() })
+    }
+    pub fn with_translate_fallback_interpolate<S : Into<String>, F : Into<String>, I : Into<String>>(&self, translation : S, fallback : F, interpolate : impl IntoIterator<Item = I>) -> Self {
+        self.with_content(TextContent::Translate { translate : translation.into(), fallback : Some(fallback.into()), interpolate : interpolate.into_iter().map(|e| e.into()).collect::<Vec<_>>() })
     }
     pub fn with_keybind<S : Into<String>>(&self, keybind : S) -> Self {
         self.with_content(TextContent::Keybind { keybind : keybind.into() })

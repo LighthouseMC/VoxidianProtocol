@@ -4,7 +4,7 @@ use super::*;
 #[derive(Ser, Deser, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct StatusResponse {
     pub version : StatusResponseVersion,
-    pub players : StatusResponsePlayers,
+    pub players : Option<StatusResponsePlayers>,
     #[serde(rename = "description")]
     pub desc : Text,
     #[serde(rename = "favicon", serialize_with = "add_png_b64_header", deserialize_with = "remove_png_b64_header")]
@@ -82,14 +82,14 @@ mod tests {
                 name     : "1.21.4".to_string(),
                 protocol : 769
             },
-            players : StatusResponsePlayers {
+            players : Some(StatusResponsePlayers {
                 online : 3,
                 max    : 20,
                 sample : vec![ StatusResponsePlayerSample {
                     name : "TotobirdCreation".to_string(),
                     uuid : uuid::uuid!("bd9e79ad-1065-4045-8b08-87346cff42a7")
                 } ]
-            },
+            }),
             desc : Text::from(vec![ TextComponent::of_literal("Hello!") ]),
             favicon_png_b64 : "favicon_base64_string".to_string(),
             enforce_chat_reports : false,
