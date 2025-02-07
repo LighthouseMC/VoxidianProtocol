@@ -35,8 +35,16 @@ impl TextStyle {
         if let Some(strikethrough ) =  self.strikethrough { nbt.insert("strikethrough" , NbtElement::Byte   ( if (strikethrough ) { 1 } else { 0 } )); }
         if let Some(obfuscate     ) =  self.obfuscate     { nbt.insert("obfuscated"    , NbtElement::Byte   ( if (obfuscate     ) { 1 } else { 0 } )); }
         if let Some(insertion     ) = &self.insertion     { nbt.insert("insertion"     , NbtElement::String ( insertion.to_string()                )); }
-        if let Some(click_event   ) = &self.click_event   { click_event.write_nbt(&mut nbt); }
-        if let Some(hover_event   ) = &self.hover_event   { hover_event.write_nbt(&mut nbt); }
+        if let Some(click_event) = &self.click_event {
+            let mut subnbt = NbtCompound::new();
+            click_event.write_nbt(&mut subnbt);
+            nbt.insert("clickEvent", NbtElement::Compound(subnbt));
+        }
+        if let Some(hover_event) = &self.hover_event {
+            let mut subnbt = NbtCompound::new();
+            hover_event.write_nbt(&mut subnbt);
+            nbt.insert("hoverEvent", NbtElement::Compound(subnbt));
+        }
         nbt
     }
 }

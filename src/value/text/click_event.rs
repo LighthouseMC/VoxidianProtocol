@@ -42,6 +42,7 @@ impl TextClickEvent {
             Self::SetBookPage    { page    } => ("change_page"       , page    .to_string()),
             Self::SetClipboard   { text    } => ("copy_to_clipboard" , text    .to_string()),
         };
-        buf.insert(action, NbtElement::String(value));
+        buf.insert("action", NbtElement::String(action.to_string()));
+        buf.insert("value", NbtElement::String(value));
     }
 }

@@ -472,7 +472,7 @@ pub struct ChunkBlockEntity {
 #[packet_part]
 pub struct LightMask {
     /// The length of this array should always be 2048.
-    pub light_array: LengthPrefixVec<VarInt, u8> 
+    pub light_array: LengthPrefixVec<VarInt, u8>
 }
 
 #[packet( "minecraft:s2c/play/level_event" )]
@@ -904,7 +904,9 @@ pub struct SetChunkCacheRadiusS2CPlayPacket {
 
 
 #[packet( "minecraft:s2c/play/set_cursor_item" )]
-pub struct SetCursorItemS2CPlayPacket(TODO);
+pub struct SetCursorItemS2CPlayPacket {
+    pub slot_data : SlotData
+}
 
 
 #[packet( "minecraft:s2c/play/set_default_spawn_position" )]
@@ -1207,8 +1209,8 @@ pub struct SystemChatS2CPlayPacket {
 
 #[packet( "minecraft:s2c/play/tab_list" )]
 pub struct TabListS2CPlayPacket {
-    pub header : Text,
-    pub footer : Text
+    pub header : NbtText,
+    pub footer : NbtText
 }
 
 

@@ -278,7 +278,20 @@ pub struct SuspiciousStewEffects(TODO);
 pub struct WritableBookContent(TODO);
 
 #[component("minecraft:written_book_content")]
-pub struct WrittenBookContent(TODO);
+pub struct WrittenBookContent {
+    pub title          : String,
+    pub filtered_title : Option<String>,
+    pub author         : String,
+    pub generation     : VarInt,
+    pub pages          : LengthPrefixVec<VarInt, BookPage>,
+    pub resolved       : bool
+}
+#[packet_part]
+#[derive(Clone)]
+pub struct BookPage {
+    pub content          : NbtText,
+    pub filtered_content : Option<NbtText>
+}
 
 #[component("minecraft:trim")]
 pub struct Trim(TODO);

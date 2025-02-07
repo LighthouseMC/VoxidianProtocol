@@ -22,7 +22,8 @@ impl TextHoverEvent {
             Self::ShowText   { text        } => ("show_text"   , text.to_nbt().into_inner()                 ),
             Self::ShowEntity { show_entity } => ("show_entity" , NbtElement::Compound(show_entity.to_nbt()) ),
         };
-        buf.insert(action, contents);
+        buf.insert("action", NbtElement::String(action.to_string()));
+        buf.insert("contents", contents)
     }
 }
 

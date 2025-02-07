@@ -6,7 +6,7 @@ use std::fmt;
 use uuid::Uuid;
 use serde::{ Deserialize as Deser, Deserializer as Deserer };
 use openssl::sha::Sha1;
-use reqwest::blocking as reqwest;
+use reqwest;
 use num_bigint::BigInt;
 
 
@@ -35,6 +35,31 @@ impl MojAuth {
     /// `LighthouseMCRust`
     const NAMESPACE_LIGHTHOUSE : Uuid = Uuid::from_bytes([0x4c, 0x69, 0x67, 0x68, 0x74, 0x68, 0x6f, 0x75, 0x73, 0x65, 0x4d, 0x43, 0x52, 0x75, 0x73, 0x74]);
 
+    pub async fn start<U : AsRef<str>, S : AsRef<str>>(block_proxies : Option<SocketAddr>, username : U, server_id : S, secret_cipher_key : &[u8], public_key : &PublicKey) -> Result<MojAuth, MojAuthError> {
+        let mut sha = Sha1::new();
+        sha.update(server_id.as_ref().as_ascii().unwrap().as_bytes());
+        sha.update(&secret_cipher_key);
+        sha.update(&public_key.der_bytes());
+        let sha = BigInt::from_signed_bytes_be(&sha.finish()).to_str_radix(16);
+        let mut url = format!("https://sessionserver.mojang.com/session/minecraft/hasJoined?username={}&serverId={}", username.as_ref(), sha);
+        if let Some(peer_addr) = block_proxies {
+            let peer_addr = peer_addr.ip();
+            if (peer_addr.is_global()) {
+                url.push_str("&ip=");
+                url.push_str(&peer_addr.to_string());
+            }
+        }
+        let response = reqwest::get(&url).await.map_err(|_| MojAuthError::AuthServerDown)?;
+        match (response.status().as_u16()) {
+            200 => {
+                let body = response.text().await.map_err(|_| MojAuthError::InvalidData)?;
+                Ok(serde_json::from_str::<MojAuth>(&body).expect(&format!("Body was {}", body)))
+            },
+            204 => Err(MojAuthError::Unverified),
+            _   => Err(MojAuthError::InvalidData)
+        }
+    }
+
     pub fn start_non_blocking<U : AsRef<str>, S : AsRef<str>>(block_proxies : Option<SocketAddr>, username : U, server_id : S, secret_cipher_key : &[u8], public_key : &PublicKey) -> MojAuthHandle {
         let mut sha = Sha1::new();
         sha.update(server_id.as_ref().as_ascii().unwrap().as_bytes());
@@ -52,7 +77,7 @@ impl MojAuth {
         MojAuthHandle {
             already_done : None,
             handle : Some(thread::spawn(move || {
-                let response = reqwest::get(&url).map_err(|_| MojAuthError::AuthServerDown)?;
+                let response = reqwest::blocking::get(&url).map_err(|_| MojAuthError::AuthServerDown)?;
                 match (response.status().as_u16()) {
                     200 => {
                         let body = response.text().map_err(|_| MojAuthError::InvalidData)?;
