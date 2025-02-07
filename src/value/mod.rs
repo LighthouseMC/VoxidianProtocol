@@ -38,6 +38,8 @@ mod status_effect;
 pub use status_effect::*;
 mod sound_event;
 pub use sound_event::*;
+mod sound;
+pub use sound::*;
 mod attribute_type;
 pub use attribute_type::*;
 mod particle_type;

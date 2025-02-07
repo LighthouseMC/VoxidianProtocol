@@ -366,11 +366,6 @@ pub enum ExplosionBlockInteraction {
     DestroyDecay = 2,
     Trigger      = 3
 }
-#[packet_part]
-pub struct Sound {
-    pub name        : Identifier,
-    pub fixed_range : Option<f32>
-}
 
 #[packet( "minecraft:s2c/play/forget_level_chunk" )]
 pub struct ForgetLevelChunkS2CPlayPacket  {

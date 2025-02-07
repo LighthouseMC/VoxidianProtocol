@@ -1,7 +1,9 @@
 use super::*;
 
 
-#[derive(Debug, Clone)]
+#[packet_part]
+#[derive(Clone)]
 pub struct SoundEvent {
-    pub id : Identifier
+    pub name        : Identifier,
+    pub fixed_range : Option<f32>
 }
