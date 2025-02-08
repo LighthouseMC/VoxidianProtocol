@@ -658,8 +658,8 @@ packet_flags! {
 
 #[packet("minecraft:s2c/play/player_rotation")]
 pub struct PlayerRotationS2CPlayPacket {
-    pub yaw: f64,
-    pub pitch: f64,
+    pub yaw: f32,
+    pub pitch: f32,
 }
 
 #[packet("minecraft:s2c/play/recipe_book_add")]
