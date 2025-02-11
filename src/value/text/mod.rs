@@ -15,6 +15,9 @@ pub use nbt::*;
 mod json;
 pub use json::*;
 
+#[cfg(feature = "text_xml")]
+mod xml;
+
 
 use super::*;
 
@@ -27,6 +30,9 @@ impl Text {
     }
     pub fn push(&mut self, component : TextComponent) {
         self.0.push(component);
+    }
+    pub fn into_components(self) -> Vec<TextComponent> {
+        self.0
     }
 }
 impl From<Vec<TextComponent>> for Text { fn from(from : Vec<TextComponent>) -> Self {

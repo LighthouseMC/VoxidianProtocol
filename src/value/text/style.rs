@@ -5,6 +5,7 @@ use super::*;
 pub struct TextStyle {
     #[serde(rename = "color", skip_serializing_if = "Option::is_none", default)]
     pub colour : Option<TextColour>,
+    // TODO: shadow_colour
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub font : Option<Identifier>,
     #[serde(skip_serializing_if = "Option::is_none", default)]

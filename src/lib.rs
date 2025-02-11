@@ -3,7 +3,10 @@
     decl_macro,
     ascii_char,
     debug_closure_helpers,
-    ip
+    ip,
+    let_chains,
+
+    doc_cfg
 )]
 
 pub mod packet;

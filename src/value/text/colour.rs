@@ -14,7 +14,7 @@ pub enum TextColour {
     #[serde(rename = "dark_red")]
     DarkRed,
     #[serde(rename = "dark_purple")]
-    DarkPurple,
+    Purple,
     #[serde(rename = "gold")]
     Gold,
     #[serde(rename = "gray")]
@@ -54,8 +54,50 @@ fn hex_to_rgb<'l, D : Deserer<'l>>(deser : D) -> Result<(u8, u8, u8), D::Error> 
     Err(serde::de::Error::custom("Not a hex colour code"))
 }
 impl TextColour {
+
     pub(super) fn to_nbt(&self) -> NbtElement {
         let string = to_json_string(self).unwrap();
         NbtElement::String(string[1..(string.len() - 1)].to_string())
     }
+
+    pub fn from_name<S : AsRef<str>>(name : S) -> Result<Self, ()> {
+        Ok(match (name.as_ref()) {
+            "black"                   => Self::Black,
+            "dark_blue"               => Self::DarkBlue,
+            "dark_green"              => Self::DarkGreen,
+            "dark_aqua" | "dark_cyan" => Self::DarkAqua,
+            "dark_red"                => Self::DarkRed,
+            "dark_pink" | "purple"    => Self::Purple,
+            "gold" | "orange"         => Self::Gold,
+            "grey" | "gray"           => Self::Grey,
+            "dark_grey" | "dark_gray" => Self::DarkGrey,
+            "blue"                    => Self::Blue,
+            "green"                   => Self::Green,
+            "aqua" | "cyan"           => Self::Aqua,
+            "red"                     => Self::Red,
+            "pink"                    => Self::Pink,
+            "yellow"                  => Self::Yellow,
+            "white"                   => Self::White,
+            name => { if (name.starts_with("#")) {
+                let (r, g, b) = if (name.len() == 7) { (
+                    if let Ok(v) = u8::from_str_radix(&name[1..3], 16) { v } else { return Err(()) },
+                    if let Ok(v) = u8::from_str_radix(&name[3..5], 16) { v } else { return Err(()) },
+                    if let Ok(v) = u8::from_str_radix(&name[5..7], 16) { v } else { return Err(()) }
+                ) } else if (name.len() == 4) { (
+                    if let Ok(v) = u8::from_str_radix(&name[1..2], 16) { v * 17 } else { return Err(()) },
+                    if let Ok(v) = u8::from_str_radix(&name[2..3], 16) { v * 17 } else { return Err(()) },
+                    if let Ok(v) = u8::from_str_radix(&name[3..4], 16) { v * 17 } else { return Err(()) }
+                ) } else if (name.len() == 3) {
+                    let Ok(v) = u8::from_str_radix(&name[1..3], 16) else { return Err(()) };
+                    (v, v, v)
+                } else if (name.len() == 2) {
+                    let Ok(v) = u8::from_str_radix(&name[1..2], 16) else { return Err(()) };
+                    let v = v * 17;
+                    (v, v, v)
+                } else { return Err(()) };
+                Self::RGB(r, g, b)
+            } else { return Err(()) } }
+        })
+    }
+
 }

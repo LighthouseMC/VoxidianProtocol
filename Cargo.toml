@@ -13,6 +13,7 @@ edition = "2024"
 build = "build.rs"
 
 [features]
+text_xml           = [ ]
 data_generator_api = ["dep:proc-macro2", "dep:quote"]
 
 [workspace]
