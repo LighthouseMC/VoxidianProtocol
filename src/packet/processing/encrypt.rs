@@ -69,7 +69,7 @@ impl SecretCipher {
 
     pub fn key(&self) -> Option<&[u8]> { self.0.as_ref().map(|inner| inner.key.as_slice()) }
 
-    pub fn no_cipher() -> Self { Self(None) }
+    pub const NONE : Self = Self(None);
 
     pub fn is_no_cipher(&self) -> bool { matches!(self.0, None) } // `self.de` is guaranteed to have the same `is_some` as `self.en`.
 

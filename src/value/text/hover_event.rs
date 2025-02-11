@@ -39,7 +39,7 @@ pub struct ShowEntityTextHoverEvent {
 impl ShowEntityTextHoverEvent {
     fn to_nbt(&self) -> NbtCompound {
         let mut nbt = NbtCompound::new();
-        if let Some(name) = &self.name { nbt.insert("name", NbtElement::String(name.to_json())); }
+        if let Some(name) = &self.name { nbt.insert("name", NbtElement::String(name.to_json().into_inner())); }
         nbt.insert("kind", NbtElement::String(self.kind.to_string()));
         nbt.insert("uuid", NbtElement::String(self.uuid.to_string()));
         nbt

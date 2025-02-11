@@ -13,6 +13,11 @@ pub struct PacketProcessing {
 }
 impl PacketProcessing {
 
+    pub const NONE : Self = Self {
+        secret_cipher : SecretCipher::NONE,
+        compression   : CompressionMode::None
+    };
+
     /// Includes full packet length.
     pub fn encode_encrypt(&mut self, plaintext : PacketBuf) -> Result<PacketBuf, EncodeError> {
         let mut smalltext  = self.compression.compress(plaintext)?;
@@ -23,7 +28,7 @@ impl PacketProcessing {
     }
 
     /// Queue must contain data that was **already encrypted**.
-    /// 
+    ///
     /// Also returns the number of bytes that were consumed.
     pub fn decode_from_raw_queue(&mut self, queue : impl Iterator<Item = u8>) -> Result<(PacketBuf, usize), DecodeError> {
         let (smalltext, consumed) = PacketBuf::from_raw_queue(queue)?;

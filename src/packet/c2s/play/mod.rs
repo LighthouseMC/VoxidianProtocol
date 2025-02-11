@@ -19,12 +19,29 @@ pub struct ChatAckC2SPlayPacket {
 }
 #[packet("minecraft:c2s/play/chat_command")]
 pub struct ChatCommandC2SPlayPacket {
-    pub command: String
+    pub command : String
 }
+
 #[packet("minecraft:c2s/play/chat_command_signed")]
-pub struct ChatCommandSignedC2SPlayPacket(TODO);
+pub struct ChatCommandSignedC2SPlayPacket {
+    pub command   : String,
+    pub timestamp : u64,
+    pub salt      : u64,
+    pub arg_sig   : LengthPrefixVec<VarInt, (String, [u8; 256])>,
+    pub count     : VarInt,
+    pub ack       : (u8, u8, u8)
+}
+
 #[packet("minecraft:c2s/play/chat")]
-pub struct ChatC2SPlayPacket(TODO);
+pub struct ChatC2SPlayPacket {
+    pub message   : String,
+    pub timestamp : u64,
+    pub salt      : u64,
+    pub sig       : Option<[u8; 256]>,
+    pub count     : VarInt,
+    pub ack       : (u8, u8, u8)
+}
+
 #[packet("minecraft:c2s/play/chat_session_update")]
 pub struct ChatSessionUpdateC2SPlayPacket(TODO);
 #[packet("minecraft:c2s/play/chunk_batch_received")]

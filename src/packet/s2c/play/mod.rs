@@ -119,7 +119,7 @@ pub struct BossEventS2CPlayPacket {
 #[packet_part(VarInt)]
 pub enum BossBarAction {
     Add {
-        title    : Text,
+        title    : NbtText,
         health   : f32,
         colour   : BossBarColour,
         division : BossBarDivision,
@@ -130,7 +130,7 @@ pub enum BossBarAction {
         health : f32
     },
     UpdateTitle {
-        title : Text
+        title : NbtText
     },
     UpdateStyle {
         colour   : BossBarColour,
@@ -219,7 +219,7 @@ pub struct CommandSuggestionsS2CPlayPacket {
 #[packet_part]
 pub struct CommandSuggestion {
     pub matched : String,
-    pub tooltip : Option<Text>
+    pub tooltip : Option<NbtText>
 }
 
 
@@ -329,7 +329,7 @@ pub struct DisconnectS2CPlayPacket {
 
 #[packet( "minecraft:s2c/play/disguised_chat" )]
 pub struct DisguisedChatS2CPlayPacket {
-    pub msg       : Text,
+    pub msg       : NbtText,
     pub chat_type : RegEntry<ChatType>
 }
 
@@ -671,7 +671,7 @@ pub struct PlayerCombatEnterS2CPlayPacket;
 pub struct PlayerCombatKillS2CPlayPacket {
     /// Should match the client's entity id.
     pub entity  : VarInt,
-    pub message : Text
+    pub message : NbtText
 }
 
 
@@ -786,7 +786,7 @@ pub struct ResourcePackPushS2CPlayPacket {
     pub url    : String,
     pub hash   : String,
     pub force  : bool,
-    pub prompt : Option<Text>
+    pub prompt : Option<NbtText>
 }
 
 
@@ -829,14 +829,14 @@ pub struct SelectAdvancementsTabS2CPlayPacket {
 
 #[packet( "minecraft:s2c/play/server_data" )]
 pub struct ServerDataS2CPlayPacket {
-    pub motd : Text,
+    pub motd : NbtText,
     pub icon : Option<LengthPrefixVec<VarInt, u8>>
 }
 
 
 #[packet( "minecraft:s2c/play/set_action_bar_text" )]
 pub struct SetActionBarTextS2CPlayPacket {
-    pub text : Text
+    pub text : NbtText
 }
 
 
@@ -986,13 +986,13 @@ pub struct SetObjectiveS2CPlayPacket {
 #[packet_part(u8)]
 pub enum UpdateObjectiveAction {
     Create {
-        value  : Text,
+        value  : NbtText,
         kind   : ObjectiveKind,
         format : Option<NumberFormat>
     } = 0,
     Remove = 1,
     Update {
-        value : Text,
+        value : NbtText,
         kind  : ObjectiveKind,
         format : Option<NumberFormat>
     } = 2
@@ -1009,7 +1009,7 @@ pub enum NumberFormat {
         styling : Nbt
     } = 1,
     Fixed {
-        content : Text
+        content : NbtText
     } = 2
 }
 
@@ -1037,28 +1037,28 @@ pub struct SetPlayerTeamS2CPlayPacket {
 #[packet_part(u8)]
 pub enum UpdateTeamAction {
     Create {
-        display_name   : Text,
+        display_name   : NbtText,
         friendly_flags : TeamFriendlyFlags,
         /// `always`, `hideForOtherTeams`, `hideForOwnTeam`, or `never`
         name_tag_vis   : String,
         /// `always`, `pushOtherTeams`, `pushOwnTeam`, or `never`
         collision_rule : String,
         colour         : VanillaFormatting,
-        prefix         : Text,
-        suffix         : Text,
+        prefix         : NbtText,
+        suffix         : NbtText,
         entities       : LengthPrefixVec<VarInt, String>
     } = 0,
     Remove = 1,
     Update {
-        display_name   : Text,
+        display_name   : NbtText,
         friendly_flags : TeamFriendlyFlags,
         /// `always`, `hideForOtherTeams`, `hideForOwnTeam`, or `never`
         name_tag_vis   : String,
         /// `always`, `pushOtherTeams`, `pushOwnTeam`, or `never`
         collision_rule : String,
         colour         : VanillaFormatting,
-        prefix         : Text,
-        suffix         : Text
+        prefix         : NbtText,
+        suffix         : NbtText
     } = 2,
     AddEntities {
         entities : LengthPrefixVec<VarInt, String>
@@ -1104,7 +1104,7 @@ pub struct SetScoreS2CPlayPacket {
     pub entity_name    : String,
     pub objective_name : String,
     pub value          : VarInt,
-    pub display_name   : Option<Text>,
+    pub display_name   : Option<NbtText>,
     pub number_format  : Option<NumberFormat>
 }
 
@@ -1117,7 +1117,7 @@ pub struct SetSimulationDistanceS2CPlayPacket {
 
 #[packet( "minecraft:s2c/play/set_subtitle_text" )]
 pub struct SetSubtitleTextS2CPlayPacket {
-    pub subtitle : Text
+    pub subtitle : NbtText
 }
 
 
@@ -1131,7 +1131,7 @@ pub struct SetTimeS2CPlayPacket {
 
 #[packet( "minecraft:s2c/play/set_title_text" )]
 pub struct SetTitleTextS2CPlayPacket {
-    pub title : Text
+    pub title : NbtText
 }
 
 
@@ -1197,7 +1197,7 @@ pub struct StoreCookieS2CPlayPacket {
 
 #[packet( "minecraft:s2c/play/system_chat" )]
 pub struct SystemChatS2CPlayPacket {
-    pub content      : Text,
+    pub content      : NbtText,
     pub is_actionbar : bool
 }
 

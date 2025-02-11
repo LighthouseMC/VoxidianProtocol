@@ -55,7 +55,7 @@ pub struct ResourcePackPushS2CConfigPacket {
     pub url    : String,
     pub hash   : String,
     pub forced : bool,
-    pub prompt : Option<Text>
+    pub prompt : Option<JsonText>
 }
 
 
@@ -120,7 +120,7 @@ pub struct ServerLinksS2CConfigPacket {
 }
 #[packet_part]
 pub struct ServerLink {
-    pub kind : Either<BuiltInServerLink, Text>
+    pub kind : Either<BuiltInServerLink, JsonText>
 }
 #[packet_part(VarInt)]
 pub enum BuiltInServerLink {

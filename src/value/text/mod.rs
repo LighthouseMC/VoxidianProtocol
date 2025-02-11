@@ -12,6 +12,8 @@ mod hover_event;
 pub use hover_event::*;
 mod nbt;
 pub use nbt::*;
+mod json;
+pub use json::*;
 
 
 use super::*;
@@ -35,12 +37,12 @@ impl From<TextComponent> for Text { fn from(from : TextComponent) -> Self {
 } }
 impl Text {
 
-    pub fn to_json(&self) -> String {
-        if (self.0.is_empty()) {
+    pub fn to_json(&self) -> JsonText {
+        JsonText(if (self.0.is_empty()) {
             String::from("[{\"text\":\"\"}]")
         } else {
             to_json_string(self).unwrap()
-        }
+        })
     }
 
     pub fn to_nbt(&self) -> NbtText {
@@ -57,17 +59,11 @@ impl Text {
 
 }
 impl fmt::Debug for Text { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{}", self.to_json())
+    write!(f, "{}", self.to_json().into_inner())
 } }
 impl fmt::Display for Text { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
     for component in &self.0 { write!(f, "{}", component)?; }
     Ok(())
-} }
-impl PacketEncode for Text { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
-    buf.encode_write(to_json_string(self).unwrap())
-} }
-impl PacketDecode for Text { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
-    from_json_str(&buf.read_decode::<String>()?).map_err(|_| DecodeError::InvalidData("Text data is not valid JSON".to_string()))
 } }
 
 
@@ -81,7 +77,7 @@ mod tests {
             TextComponent::of_literal("Hello,").colour(TextColour::DarkGreen),
             TextComponent::of_literal("World!").colour(TextColour::RGB(255, 127, 0))
         ]);
-        let json = text.to_json();
+        let json = text.to_json().into_inner();
         assert_eq!(json, "[{\"text\":\"Hello,\",\"color\":\"dark_green\"},{\"text\":\"World!\",\"color\":\"#ff7f00\"}]");
     }
 

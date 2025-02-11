@@ -1,7 +1,7 @@
 use super::*;
 
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct NbtText(pub(super) NbtElement);
 impl NbtText {
     pub fn into_inner(self) -> NbtElement { self.0 }

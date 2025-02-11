@@ -3,7 +3,7 @@ use super::*;
 
 #[packet( "minecraft:s2c/login/login_disconnect" )]
 pub struct LoginDisconnectS2CLoginPacket {
-    pub reason : Text
+    pub reason : JsonText
 }
 
 

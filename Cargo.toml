@@ -12,17 +12,15 @@ edition = "2024"
 
 build = "build.rs"
 
+[features]
+data_generator_api = ["dep:proc-macro2", "dep:quote"]
+
 [workspace]
 members = [
     "voxidian-protocol-macros",
     "voxidian-protocol-datagen"
 ]
 
-[lints.rust]
-unused-parens = "allow"
-
-[features]
-data_generator_api = ["dep:proc-macro2", "dep:quote"]
 
 [dependencies]
 indexmap = "2.7.0"
@@ -63,3 +61,7 @@ features = [ "blocking" ]
 [dependencies.num-bigint]
 # Used for generating Java-style signed hexdigests to send to the Mojang authentication servers.
 version = "0.4"
+
+
+[lints.rust]
+unused-parens = "allow"
