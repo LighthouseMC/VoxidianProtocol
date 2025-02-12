@@ -74,7 +74,7 @@ pub(crate) fn component_enum_impl() -> TokenStream {
             #( #formatted_names(#formatted_names) ),*
         }
 
-        #[derive(Debug, Clone)]
+        #[derive(Debug, Clone, PartialEq, Eq, Hash)]
         pub enum DataComponentTypes {
             #( #formatted_names ),*
         }
