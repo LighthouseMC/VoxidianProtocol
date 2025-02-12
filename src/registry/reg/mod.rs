@@ -52,6 +52,14 @@ impl<T> Registry<T> {
         RegistryFrozen::freeze(self)
     }
 
+    pub fn keys(&self) -> impl Iterator<Item = &Identifier> {
+        self.map.keys()
+    }
+
+    pub fn entries(&self) -> impl Iterator<Item = (&Identifier, &T)> {
+        self.map.keys().zip(self.map.values())
+    }
+
 }
 
 impl<T : RegValue> Registry<T> {

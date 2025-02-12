@@ -11,7 +11,7 @@ impl<T> RegEntry<T> {
 
     /// Creates a new RegEntry from a numeric ID into a registry.
     ///
-    /// Safety:
+    /// # Safety
     /// This function may do undefined behavior if not checked that the RegEntry
     /// is a valid entry into the provided registry when sending it to a client.
     /// Worst case scenario, sending a client an invalid registry entry may
