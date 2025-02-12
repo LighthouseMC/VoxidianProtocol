@@ -149,6 +149,9 @@ impl Text {
                 },
                 XmlEvent::TagClose(name) => {
                     let name = format!("{}", name);
+                    if (name.is_empty()) {
+                        break;
+                    }
                     if let Some(current_tag) = current_tag && (name == current_tag) {
                         break;
                     }
@@ -221,6 +224,7 @@ impl<'l> Iterator for XmlReader<'l> {
                     }
                 }
                 self.i += 1;
+                let name = name.trim().to_string();
                 Some(if (closing) { XmlEvent::TagClose(name) } else { XmlEvent::TagOpen(name) })
             },
 
