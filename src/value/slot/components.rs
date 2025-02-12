@@ -356,10 +356,14 @@ pub struct BaseColor(TODO);
 pub struct PotDecorations(TODO);
 
 #[component("minecraft:container")]
-pub struct Container(TODO);
+pub struct Container {
+    pub contents: LengthPrefixVec<VarInt, SlotData>
+}
 
 #[component("minecraft:block_state")]
-pub struct BlockState(TODO);
+pub struct BlockState {
+    pub state: LengthPrefixVec<VarInt, (String, String)>
+}
 
 #[component("minecraft:lock")]
 pub struct Lock(TODO);
@@ -374,7 +378,9 @@ pub struct ContainerLoot(TODO);
 pub struct MapColor(TODO);
 
 #[component("minecraft:damage")]
-pub struct Damage(TODO);
+pub struct Damage {
+    pub damage: VarInt
+}
 
 
 component_enum!();
