@@ -114,8 +114,14 @@ pub(crate) fn component_enum_impl() -> TokenStream {
         impl DataComponentTypes {
             pub const fn protocol_id(&self) -> u16 {
                 match self {
-                    #( DataComponentTypes::#formatted_names { .. } => #formatted_values ),*
+                    #( DataComponentTypes::#formatted_names => #formatted_values ),*
                 }
+            }
+
+            pub fn all_types() -> Vec<DataComponentTypes> {
+                vec![
+                    #( DataComponentTypes::#formatted_names ,)*
+                ]
             }
         }
 
