@@ -15,7 +15,7 @@ pub use nbt::*;
 mod json;
 pub use json::*;
 
-#[cfg(feature = "text_xml")]
+#[cfg(any(feature = "text_xml", doc))]
 mod xml;
 
 

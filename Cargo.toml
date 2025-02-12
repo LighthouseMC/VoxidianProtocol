@@ -13,8 +13,13 @@ edition = "2024"
 build = "build.rs"
 
 [features]
+# Parse of XML text representation into a Text. It is heavily inspired by Adventure MiniMessage.
 text_xml           = [ ]
+# Convert clap commands to CommandsS2CPlayPacket. Useful for building CLI-like in-game command parsers.
+commands_clap      = [ "clap" ]
+
 data_generator_api = ["dep:proc-macro2", "dep:quote"]
+
 
 [workspace]
 members = [
@@ -62,6 +67,12 @@ features = [ "blocking" ]
 [dependencies.num-bigint]
 # Used for generating Java-style signed hexdigests to send to the Mojang authentication servers.
 version = "0.4"
+
+[dependencies.clap]
+# BEFORE CHANGING, BE ABSULUTELY CERTAIN THAT THE SIGNATURE OF `::voxidian-protocol::packet::s2c::play::commands::clap::AnyTypeId`
+#  IS IDENTICAL TO THE SIGNATURE OF `::clap_builder::util::AnyValueId`.
+version  = "= 4.5.29"
+optional = true
 
 
 [lints.rust]

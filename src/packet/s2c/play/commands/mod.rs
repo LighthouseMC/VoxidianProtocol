@@ -1,6 +1,10 @@
 use super::*;
 
 
+#[cfg(any(feature = "commands_clap", doc))]
+mod clap;
+
+
 #[packet("minecraft:s2c/play/commands")]
 pub struct CommandsS2CPlayPacket {
     pub nodes      : LengthPrefixVec<VarInt, CommandNode>,
