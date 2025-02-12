@@ -116,4 +116,27 @@ impl ScreenWindowKind {
         } else { false }
     }
 
+    /// Gets what kind of slot the given screen slot is.
+    pub fn get_slot_index_group(self, screen_slot_index : usize) -> Option<ContainerSlotGroup> {
+        let count = self.container_slot_count();
+        if (self.has_player_inventory()) {
+            if (screen_slot_index < count) {
+                Some(ContainerSlotGroup::Container)
+            } else if (screen_slot_index < count + 27) {
+                Some(ContainerSlotGroup::PlayerUpper(screen_slot_index - count - 27))
+            } else if (screen_slot_index < count + 36) {
+                Some(ContainerSlotGroup::PlayerHotbar(screen_slot_index - count - 36))
+            } else { None }
+        } else if (screen_slot_index < count) {
+            Some(ContainerSlotGroup::Container)
+        } else { None }
+    }
+
+}
+
+
+pub enum ContainerSlotGroup {
+    PlayerHotbar(usize),
+    PlayerUpper(usize),
+    Container
 }
