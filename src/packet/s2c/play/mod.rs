@@ -206,8 +206,8 @@ pub struct CommandSuggestion {
     pub tooltip : Option<NbtText>
 }
 
-#[packet("minecraft:s2c/play/commands")]
-pub struct CommandsS2CPlayPacket(TODO);
+mod commands;
+pub use commands::*;
 
 #[packet("minecraft:s2c/play/container_close")]
 pub struct ContainerCloseS2CPlayPacket {
