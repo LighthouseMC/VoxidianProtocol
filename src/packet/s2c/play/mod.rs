@@ -605,9 +605,94 @@ pub struct PlayerCombatKillS2CPlayPacket {
 pub struct PlayerInfoRemoveS2CPlayPacket {
     pub uuids: LengthPrefixVec<VarInt, Uuid>,
 }
+#[derive(Debug)]
+pub struct PlayerInfoUpdateS2CPlayPacket {
+    actions: Vec<PlayerActionEntry>
+}
 
-#[packet("minecraft:s2c/play/player_info_update")]
-pub struct PlayerInfoUpdateS2CPlayPacket(TODO);
+impl PacketMeta for PlayerInfoUpdateS2CPlayPacket {
+    const PREFIX : u8 = 0x40;
+    const BOUND  : Bound = Bound::S2C;
+    const STAGE  : Stage = Stage::Play;
+}
+
+impl PacketEncode for PlayerInfoUpdateS2CPlayPacket {
+    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+        let mut value = 0u8;
+        for entry in &self.actions {
+            entry.mutate_bit_set(&mut value);
+        }
+        buf.write_u8(value);
+        for entry in &self.actions {
+            buf.encode_write(entry)?;
+        }
+        Ok(())
+    }
+}
+
+impl PacketDecode for PlayerInfoUpdateS2CPlayPacket {
+    fn decode(_buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+        todo!();
+    }
+}
+
+#[derive(Debug)]
+pub enum PlayerActionEntry {
+    AddPlayer {
+        name: String,
+        properties: LengthPrefixVec<VarInt, ProfileProperty>
+    },
+    UpdateGameMode(Gamemode),
+    Listed(bool),
+    Latency(VarInt),
+    DisplayName(NbtText),
+    ListPriority(VarInt),
+    UpdateHat(bool)
+}
+
+impl PlayerActionEntry {
+    pub fn mutate_bit_set(&self, value: &mut u8) {
+        match self {
+            PlayerActionEntry::AddPlayer { .. } => *value |= 0x01,
+            PlayerActionEntry::UpdateGameMode(_) => *value |= 0x02,
+            PlayerActionEntry::Listed(_) => *value |= 0x04,
+            PlayerActionEntry::Latency(_) => *value |= 0x08,
+            PlayerActionEntry::DisplayName(_) => *value |= 0x20,
+            PlayerActionEntry::ListPriority(_) => *value |= 0x40,
+            PlayerActionEntry::UpdateHat(_) => *value |= 0x80,
+        }
+    }
+}
+
+impl PacketEncode for PlayerActionEntry {
+    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+        match self {
+            PlayerActionEntry::AddPlayer { name, properties } => {
+                buf.encode_write(name)?;
+                buf.encode_write(properties)?;
+            },
+            PlayerActionEntry::UpdateGameMode(gamemode) => {
+                buf.encode_write(gamemode)?;
+            },
+            PlayerActionEntry::Listed(listed) => {
+                buf.encode_write(listed)?;
+            },
+            PlayerActionEntry::Latency(latency) => {
+                buf.encode_write(latency)?;
+            },
+            PlayerActionEntry::DisplayName(name) => {
+                buf.encode_write(name)?;
+            },
+            PlayerActionEntry::ListPriority(priority) => {
+                buf.encode_write(priority)?;
+            },
+            PlayerActionEntry::UpdateHat(hat) => {
+                buf.encode_write(hat)?;
+            },
+        }
+        Ok(())
+    }
+}
 
 #[packet("minecraft:s2c/play/player_look_at")]
 pub struct PlayerLookAtS2CPlayPacket {
