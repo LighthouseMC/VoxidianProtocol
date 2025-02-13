@@ -607,7 +607,7 @@ pub struct PlayerInfoRemoveS2CPlayPacket {
 }
 #[derive(Debug)]
 pub struct PlayerInfoUpdateS2CPlayPacket {
-    actions: Vec<PlayerActionEntry>
+    pub actions: Vec<PlayerActionEntry>
 }
 
 impl PacketMeta for PlayerInfoUpdateS2CPlayPacket {
