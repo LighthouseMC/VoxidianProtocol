@@ -1,6 +1,6 @@
 use super::*;
 use std::{ fmt, iter, slice, vec };
-use std::io::{ self, Read };
+use std::io::{ self, Error, ErrorKind, Read, Write };
 use flate2::read::GzDecoder;
 
 
@@ -81,6 +81,27 @@ impl PacketBuf {
 
 }
 
+impl Read for PacketBuf {
+    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        for idx in 0..buf.len() {
+            buf[idx] = self.read_u8().map_err(|e| Error::from(ErrorKind::UnexpectedEof))?;
+        }
+        Ok(buf.len())
+    }
+}
+
+impl Write for PacketBuf {
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        for element in buf {
+            self.write_u8(*element);
+        }
+        Ok(buf.len())
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+}
 
 /// Basic Operations
 impl PacketBuf {
@@ -100,11 +121,11 @@ impl PacketBuf {
         self.inner.len() - self.read_idx
     }
 
-    pub fn write_u8(&mut self, byte : u8) -> () {
+    pub fn write_u8(&mut self, byte : u8) {
         self.inner.push(byte);
     }
 
-    pub fn write_u8s(&mut self, data : &[u8]) -> () {
+    pub fn write_u8s(&mut self, data : &[u8]) {
         self.inner.extend_from_slice(data);
     }
 
