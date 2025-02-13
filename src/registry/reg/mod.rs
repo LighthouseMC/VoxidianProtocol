@@ -24,6 +24,10 @@ impl<T> Registry<T> {
         self.map.get(key)
     }
 
+    pub fn get_entry(&self, key: &Identifier) -> Option<RegEntry<T>> {
+        self.map.iter().enumerate().find_map(|(i, (id, _))| (key == id).then(|| unsafe{ RegEntry::new_unchecked(i) }))
+    }
+
     pub fn insert(&mut self, key: Identifier, value: T) {
         self.map.insert(key, value);
     }
