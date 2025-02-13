@@ -654,9 +654,9 @@ impl PlayerActionEntry {
     pub fn mutate_bit_set(&self, value: &mut u8) {
         match self {
             PlayerActionEntry::AddPlayer { .. } => *value |= 0x01,
-            PlayerActionEntry::UpdateGameMode(_) => *value |= 0x02,
-            PlayerActionEntry::Listed(_) => *value |= 0x04,
-            PlayerActionEntry::Latency(_) => *value |= 0x08,
+            PlayerActionEntry::UpdateGameMode(_) => *value |= 0x04,
+            PlayerActionEntry::Listed(_) => *value |= 0x08,
+            PlayerActionEntry::Latency(_) => *value |= 0x10,
             PlayerActionEntry::DisplayName(_) => *value |= 0x20,
             PlayerActionEntry::ListPriority(_) => *value |= 0x40,
             PlayerActionEntry::UpdateHat(_) => *value |= 0x80,
