@@ -12,21 +12,6 @@ impl VarInt {
 
     pub fn as_i32(self) -> i32 { self.into() }
 
-    pub fn as_bytes(&self) -> Vec<u8> {
-        let mut out = Vec::new();
-        let mut x = self.0 as u64;
-        loop {
-            let byte = (x & 0b01111111) as u8;
-            x >>= 7;
-            if (x == 0) {
-                out.push(byte);
-                break;
-            }
-            out.push(byte | 0b10000000);
-        }
-        out
-    }
-
 }
 impl fmt::Debug for VarInt { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "VarInt({})", self.0)
@@ -50,17 +35,57 @@ impl PacketDecode for VarInt { fn decode(buf : &mut PacketBuf) -> Result<Self, D
 impl VarInt {
     /// Also returns the number of bytes that were consumed.
     pub fn decode_iter(iter : &mut impl Iterator<Item = u8>) -> Result<(Self, usize), DecodeError> {
-        const MAX_BYTES: usize = 5;
-        let mut x = 0;
-        let mut consumed = 0;
-        for i in 0..MAX_BYTES {
-            let byte = iter.next().ok_or(DecodeError::EndOfBuffer)?;
+        let mut value: i32 = 0;
+        let mut position: u32 = 0;
+        let mut consumed: usize = 0;
+
+        loop {
+            let current_byte = iter.next().ok_or(DecodeError::EndOfBuffer)?;
             consumed += 1;
-            x |= (i32::from(byte) & 0b01111111) << (i * 7);
-            if (byte & 0b10000000 == 0) {
-                return Ok((VarInt(x), consumed));
+
+            let segment = (current_byte & 0x7F) as u32;
+            value |= (segment << position) as i32;
+
+            if (current_byte & 0x80) == 0 {
+                return Ok((VarInt(value), consumed));
+            }
+
+            position += 7;
+            if position >= 32 {
+                return Err(DecodeError::InvalidData("VarInt data exceeded max size".to_string(),));
             }
         }
-        Err(DecodeError::InvalidData("VarInt data exceeded max size".to_string()))
+    }
+
+
+
+    pub fn as_bytes(&self) -> Vec<u8> {
+        let mut out = Vec::new();
+        let mut value = self.0 as u32; // Treat as unsigned for right shifts
+
+        loop {
+            if value <= 0x7F {
+                out.push(value as u8);
+                break;
+            } else {
+                out.push(((value & 0x7F) as u8) | 0x80);
+                value >>= 7;
+            }
+        }
+
+        out
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::value::VarInt;
+
+    #[test]
+    pub fn test_negative_varints() {
+        assert_eq!(VarInt::decode_iter(&mut [0x00].into_iter()).unwrap().0.as_i32(), 0);
+        assert_eq!(VarInt::decode_iter(&mut [0xff, 0xff, 0xff, 0xff, 0x0f].into_iter()).unwrap().0.as_i32(), -1);
+        let encoded = VarInt::from(-1).as_bytes();
+        assert_eq!(VarInt::decode_iter(&mut encoded.into_iter()).unwrap().0.as_i32(), -1);
     }
 }
