@@ -198,12 +198,12 @@ impl PacketBuf {
 
 
 impl fmt::Debug for PacketBuf {
-    fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "PacketBuf(0x")?;
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "PacketBuf[")?;
         for byte in self.inner.iter().skip(self.read_idx) {
-            write!(f, "{:X}", byte)?;
+            write!(f, "{} ", byte)?;
         }
-        write!(f, ")")
+        write!(f, "]")
     }
 }
 
