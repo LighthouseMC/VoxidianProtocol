@@ -28,6 +28,6 @@ impl PacketDecode for BlockPos { fn decode(buf : &mut super::PacketBuf) -> Resul
     Ok(Self {
         x : (long >> 38) as i32,
         z : (long << 26 >> 38) as i32,
-        y : (long << 52 >> 52) as i32
+        y : ((long << 52) as i64 >> 52) as i32
     })
 } }
