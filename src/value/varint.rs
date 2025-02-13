@@ -6,6 +6,10 @@ pub struct VarInt(i32);
 
 impl VarInt {
 
+    pub const fn new(from : i32) -> Self {
+        Self(from)
+    }
+
     pub fn as_i32(self) -> i32 { self.into() }
 
     pub fn as_bytes(&self) -> Vec<u8> {

@@ -12,7 +12,19 @@ pub struct SlotData {
     pub removed_components : Vec<DataComponentTypes>
 }
 
+impl SlotData {
+
+    pub const EMPTY : Self = Self {
+        id                 : unsafe{ RegEntry::new_unchecked(0) },
+        count              : VarInt::new(0),
+        components         : Vec::new(),
+        removed_components : Vec::new()
+    };
+
+}
+
 impl PacketEncode for SlotData {
+
     fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
         buf.encode_write(self.count)?;
         if (self.count.as_i32() <= 0) {

@@ -19,7 +19,7 @@ impl<T> RegEntry<T> {
     /// This can also lead to invalid references to the packet registry.
     /// While misusing this function won't lead to any memory safety errors, it can lead to
     /// undesired behavior very easily.
-    pub unsafe fn new_unchecked(id : usize) -> Self { Self {
+    pub const unsafe fn new_unchecked(id : usize) -> Self { Self {
         id, _ph : PhantomData
     } }
 
