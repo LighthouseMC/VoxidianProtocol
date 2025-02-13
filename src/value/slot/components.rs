@@ -247,7 +247,10 @@ pub struct DeathProtection(TODO);
 pub struct StoredEnchantments(TODO);
 
 #[component("minecraft:dyed_color")]
-pub struct DyedColor(TODO);
+pub struct DyedColor {
+    pub colour : i32,
+    pub show_in_tooltip : bool
+}
 
 #[component("minecraft:map_id")]
 pub struct MapId {
