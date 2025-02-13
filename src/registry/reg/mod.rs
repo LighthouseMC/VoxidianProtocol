@@ -25,7 +25,9 @@ impl<T> Registry<T> {
     }
 
     pub fn get_entry(&self, key: &Identifier) -> Option<RegEntry<T>> {
-        self.map.iter().enumerate().find_map(|(i, (id, _))| (key == id).then(|| unsafe{ RegEntry::new_unchecked(i) }))
+        self.map
+            .get_full(key)
+            .map(|(index, _, _)| unsafe { RegEntry::new_unchecked(index) })
     }
 
     pub fn insert(&mut self, key: Identifier, value: T) {
@@ -40,12 +42,6 @@ impl<T> Registry<T> {
 
     pub fn lookup(&self, entry: &RegEntry<T>) -> Option<&T> {
         self.map.get_index(entry.id()).map(|x| x.1)
-    }
-
-    pub fn make_entry(&self, identifier: &Identifier) -> Option<RegEntry<T>> {
-        self.map
-            .get_full(&identifier)
-            .map(|(index, _, _)| unsafe { RegEntry::new_unchecked(index) })
     }
 
     pub fn clear(&mut self) {
