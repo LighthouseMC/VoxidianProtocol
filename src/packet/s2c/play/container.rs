@@ -121,14 +121,14 @@ impl ScreenWindowKind {
         let count = self.container_slot_count();
         if (self.has_player_inventory()) {
             if (screen_slot_index < count) {
-                Some(ContainerSlotGroup::Container)
+                Some(ContainerSlotGroup::Container(screen_slot_index))
             } else if (screen_slot_index < count + 27) {
-                Some(ContainerSlotGroup::PlayerUpper(screen_slot_index - count - 27))
+                Some(ContainerSlotGroup::PlayerUpper(screen_slot_index - count))
             } else if (screen_slot_index < count + 36) {
-                Some(ContainerSlotGroup::PlayerHotbar(screen_slot_index - count - 36))
+                Some(ContainerSlotGroup::PlayerHotbar(screen_slot_index - count - 27))
             } else { None }
         } else if (screen_slot_index < count) {
-            Some(ContainerSlotGroup::Container)
+            Some(ContainerSlotGroup::Container(screen_slot_index))
         } else { None }
     }
 
@@ -138,5 +138,8 @@ impl ScreenWindowKind {
 pub enum ContainerSlotGroup {
     PlayerHotbar(usize),
     PlayerUpper(usize),
-    Container
+    PlayerArmour(usize),
+    PlayerCrafting(usize),
+    PlayerOffhand,
+    Container(usize)
 }
