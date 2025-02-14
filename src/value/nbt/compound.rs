@@ -10,7 +10,7 @@ impl NbtCompound {
         Self(HashMap::new())
     }
 
-    pub fn get<S : AsRef<String>>(&self, key : S) -> Option<&NbtElement> {
+    pub fn get<S : AsRef<str>>(&self, key : S) -> Option<&NbtElement> {
         self.0.get(key.as_ref())
     }
 
