@@ -8,21 +8,6 @@ impl VarLong {
 
     pub fn as_i64(self) -> i64 { self.into() }
 
-    pub fn as_bytes(&self) -> Vec<u8> {
-        let mut out = Vec::new();
-        let mut x = self.0 as u64;
-        loop {
-            let byte = (x & 0b01111111) as u8;
-            x >>= 7;
-            if (x == 0) {
-                out.push(byte);
-                break;
-            }
-            out.push(byte | 0b10000000);
-        }
-        out
-    }
-
 }
 impl fmt::Debug for VarLong { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "VarLong({})", self.0)
@@ -44,19 +29,46 @@ impl PacketDecode for VarLong { fn decode(buf : &mut PacketBuf) -> Result<Self, 
     Ok(out)
 } }
 impl VarLong {
+    const SEGMENT_BITS: i64 = 0x7F;
+    const CONTINUE_BIT: i64 = 0x80;
+
     /// Also returns the number of bytes that were consumed.
     pub fn decode_iter(iter : &mut impl Iterator<Item = u8>) -> Result<(Self, usize), DecodeError> {
-        const MAX_BYTES: usize = 10;
-        let mut x = 0;
-        let mut consumed = 0;
-        for i in 0..MAX_BYTES {
+        let mut value: i64 = 0;
+        let mut position = 0;
+        let mut index = 0;
+        loop {
             let byte = iter.next().ok_or(DecodeError::EndOfBuffer)?;
-            consumed += 1;
-            x |= (i64::from(byte) & 0b01111111) << (i * 7);
-            if (byte & 0b10000000 == 0) {
-                return Ok((VarLong(x), consumed));
+            value |= ((byte & 0x7F) as i64) << position;
+
+            if (byte & 0x80) == 0 {
+                break;
+            }
+
+            position += 7;
+            index += 1;
+
+            if position >= 64 {
+                return Err(DecodeError::InvalidData("VarLong is too long".to_string()));
             }
         }
-        Err(DecodeError::InvalidData("VarLong data exceeded max size".to_string()))
+
+        Ok((VarLong::from(value), index + 1))
+    }
+
+
+
+    pub fn as_bytes(&self) -> Vec<u8> {
+        let mut bytes = vec![];
+        let mut data = self.0;
+        loop {
+            if (data & !(Self::SEGMENT_BITS)) == 0 {
+                bytes.push(data as u8);
+                return bytes;
+            }
+
+            bytes.push(((data & Self::SEGMENT_BITS) | Self::CONTINUE_BIT) as u8);
+            data = ((data as u64) >> 7) as i64;
+        }
     }
 }

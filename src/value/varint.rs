@@ -33,47 +33,47 @@ impl PacketDecode for VarInt { fn decode(buf : &mut PacketBuf) -> Result<Self, D
     Ok(out)
 } }
 impl VarInt {
+    const SEGMENT_BITS: i32 = 0x7F;
+    const CONTINUE_BIT: i32 = 0x80;
+
     /// Also returns the number of bytes that were consumed.
     pub fn decode_iter(iter : &mut impl Iterator<Item = u8>) -> Result<(Self, usize), DecodeError> {
-        let mut value: i32 = 0;
-        let mut position: u32 = 0;
-        let mut consumed: usize = 0;
-
+        let mut value = 0;
+        let mut position = 0;
+        let mut index = 0;
         loop {
-            let current_byte = iter.next().ok_or(DecodeError::EndOfBuffer)?;
-            consumed += 1;
+            let byte = iter.next().ok_or(DecodeError::EndOfBuffer)?;
+            value |= ((byte & 0x7F) as i32) << position;
 
-            let segment = (current_byte & 0x7F) as u32;
-            value |= (segment << position) as i32;
-
-            if (current_byte & 0x80) == 0 {
-                return Ok((VarInt(value), consumed));
+            if (byte & 0x80) == 0 {
+                break;
             }
 
             position += 7;
+            index += 1;
+
             if position >= 32 {
-                return Err(DecodeError::InvalidData("VarInt data exceeded max size".to_string(),));
+                return Err(DecodeError::InvalidData("VarInt is too long".to_string()));
             }
         }
+
+        Ok((VarInt::from(value), index + 1))
     }
 
 
 
     pub fn as_bytes(&self) -> Vec<u8> {
-        let mut out = Vec::new();
-        let mut value = self.0 as u32; // Treat as unsigned for right shifts
-
+        let mut bytes = vec![];
+        let mut data = self.0;
         loop {
-            if value <= 0x7F {
-                out.push(value as u8);
-                break;
-            } else {
-                out.push(((value & 0x7F) as u8) | 0x80);
-                value >>= 7;
+            if (data & !(Self::SEGMENT_BITS)) == 0 {
+                bytes.push(data as u8);
+                return bytes;
             }
-        }
 
-        out
+            bytes.push(((data & Self::SEGMENT_BITS) | Self::CONTINUE_BIT) as u8);
+            data = ((data as u32) >> 7) as i32;
+        }
     }
 }
 
