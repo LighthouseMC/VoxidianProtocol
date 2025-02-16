@@ -23,10 +23,10 @@ pub(crate) use uuid::Uuid;
 
 #[derive(Debug, Clone)]
 pub struct TODO(());
-impl PacketEncode for TODO { fn encode(&self, _ : &mut PacketBuf) -> Result<(), EncodeError> {
+impl PacketEncode for TODO { #[track_caller] fn encode(&self, _ : &mut PacketBuf) -> Result<(), EncodeError> {
     todo!("Packet field TODO");
 } }
-impl PacketDecode for TODO { fn decode(_ : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl PacketDecode for TODO { #[track_caller] fn decode(_ : &mut PacketBuf) -> Result<Self, DecodeError> {
     todo!("Packet field TODO");
 } }
 

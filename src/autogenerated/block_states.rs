@@ -36,7 +36,7 @@ pub static BLOCK_STATE_DEFAULTS: LazyLock<HashMap<Identifier, BlockState>> = Laz
 
     for state in BLOCK_STATES.iter() {
         if !map.contains_key(&state.block_state.id)
-            && !state.block_state.properties.contains(&(String::from("waterlogged"), String::from("true"))) {            
+            && !state.block_state.properties.contains(&(String::from("waterlogged"), String::from("true"))) {
             let cloned_state = state.block_state.clone();
             map.insert(state.block_state.id.clone(), cloned_state);
         }
@@ -50,8 +50,8 @@ impl BlockState {
         BLOCK_STATES.iter().map(|state| state.block_state.clone()).collect()
     }
 
-    pub fn default_for(block_id: Identifier) -> Option<BlockState> {
-        BLOCK_STATE_DEFAULTS.get(&block_id).cloned()
+    pub fn default_for(block_id: &Identifier) -> Option<BlockState> {
+        BLOCK_STATE_DEFAULTS.get(block_id).cloned()
     }
 
     /// Tries to force a BlockState to be valid by removing invalid properties and adding default properties that aren't present.
@@ -65,7 +65,7 @@ impl BlockState {
             if(!self.properties.iter().any(|x| x.0 == property.0)) {
                 self.properties.push(property.clone());
             }
-            
+
         }
 
         self.properties = self

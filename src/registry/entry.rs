@@ -38,6 +38,12 @@ impl<T> Clone for RegEntry<T> {
     } }
 }
 impl<T> Copy for RegEntry<T> { }
+impl<T> PartialEq for RegEntry<T> {
+    fn eq(&self, other : &Self) -> bool {
+        self.id == other.id
+    }
+}
+impl<T> Eq for RegEntry<T> { }
 impl<T> fmt::Debug for RegEntry<T> {
     fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "RegEntry<{}>({})", any::type_name::<T>(), self.id)

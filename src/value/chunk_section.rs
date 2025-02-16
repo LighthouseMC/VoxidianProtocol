@@ -11,7 +11,7 @@ pub struct DataArray {
 
 impl DataArray {
     pub fn to_bit_stream(&self) -> Vec<u64> {
-        if self.bits_per_entry == 0 {
+        if (self.bits_per_entry == 0) {
             return vec![];
         }
 
@@ -19,7 +19,7 @@ impl DataArray {
         let needed_longs = (self.input_data.len() + entries_per_long - 1) / entries_per_long;
 
         let mut output_data = vec![0; needed_longs];
-        
+
         for (idx, value) in self.input_data.iter().enumerate() {
             let u64_index = idx / entries_per_long;
             let bit_index = (idx % entries_per_long) * self.bits_per_entry;
@@ -120,19 +120,24 @@ impl<T, const E: usize> PaletteFormat<T, E> {
             PaletteFormat::SingleValued { entry: _entry } => {
                 assert!(bits_per_entry == 0);
                 DataArray {
-                    bits_per_entry: bits_per_entry.into(),
-                    input_data: vec![]
+                    bits_per_entry : bits_per_entry.into(),
+                    input_data     : Vec::new()
                 }
             },
-            PaletteFormat::Indirect { mappings: _mappings, data: _data } => {
-                assert!(bits_per_entry >= 1 && bits_per_entry < 15);
+            PaletteFormat::Indirect { mappings : _, data } => {
+                assert!(bits_per_entry >= 1);
+                /*let input_data = data.iter().map(|entry| *entry as u64).collect();
+                DataArray {
+                    bits_per_entry : bits_per_entry.into(),
+                    input_data
+                }*/
                 todo!()
             },
             PaletteFormat::Direct { data } => {
                 assert!(bits_per_entry == 15);
                 let input_data = data.iter().map(|entry| entry.id() as u64).collect();
                 DataArray {
-                    bits_per_entry: bits_per_entry.into(),
+                    bits_per_entry : bits_per_entry.into(),
                     input_data
                 }
             },
@@ -145,17 +150,16 @@ impl<T, const E: usize> PacketEncode for PaletteFormat<T, E> {
         match self {
             PaletteFormat::SingleValued { entry } => {
                 VarInt::from(entry.id()).encode(buf)?;
-                Ok(())
             },
-            PaletteFormat::Indirect { mappings, data: _data } => {
-                VarInt::from(mappings.len() as i32).encode(buf)?;
+            PaletteFormat::Indirect { mappings, data : _ } => {
+                VarInt::from(mappings.len()).encode(buf)?;
                 for entry in mappings {
                     VarInt::from(entry.id()).encode(buf)?;
                 }
-                Ok(())
             },
-            PaletteFormat::Direct { data: _data } => { Ok(()) },
+            PaletteFormat::Direct { data : _ } => { },
         }
+        Ok(())
     }
 }
 
