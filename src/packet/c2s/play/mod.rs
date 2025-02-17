@@ -43,7 +43,14 @@ pub struct ChatC2SPlayPacket {
 }
 
 #[packet("minecraft:c2s/play/chat_session_update")]
-pub struct ChatSessionUpdateC2SPlayPacket(TODO);
+pub struct ChatSessionUpdateC2SPlayPacket {
+    pub session_id: Uuid,
+
+    pub expiry: u64,
+    pub key: LengthPrefixVec<VarInt, u8>,
+    pub sig: LengthPrefixVec<VarInt, u8>,
+}
+
 #[packet("minecraft:c2s/play/chunk_batch_received")]
 pub struct ChunkBatchReceivedC2SPlayPacket {
     pub chunks_per_second: f32
