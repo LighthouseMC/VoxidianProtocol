@@ -7,14 +7,14 @@ pub trait PacketDecode : Sized {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum DecodeError {
 
     /// The end of the buffer has been reached.
     EndOfBuffer,
 
     /// The data in the buffer could not be parsed properly.
-    /// 
+    ///
     /// Includes a message.
     InvalidData(String),
 
@@ -22,10 +22,21 @@ pub enum DecodeError {
     UnconsumedBuffer,
 
     /// The received packet ID did not match any registered packet.
-    /// 
+    ///
     /// Includes the ID that wasn't recognised.
     UnknownPacketPrefix(u8)
 
+}
+
+impl fmt::Display for DecodeError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match (self) {
+            Self::EndOfBuffer                 => write!(f, "end of buffer"),
+            Self::InvalidData(err)            => write!(f, "invalid data: {}", err),
+            Self::UnconsumedBuffer            => write!(f, "unconsumed buffer"),
+            Self::UnknownPacketPrefix(prefix) => write!(f, "unknown packet prefix {:#04x}", prefix)
+        }
+    }
 }
 
 

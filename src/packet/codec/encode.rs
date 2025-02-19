@@ -10,6 +10,14 @@ pub enum EncodeError {
     SendFailed,
 }
 
+impl fmt::Display for EncodeError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match (self) {
+            Self::SendFailed => write!(f, "failed to send")
+        }
+    }
+}
+
 impl<T: PacketEncode> PacketEncode for &T {
     fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
         (*self).encode(buf)

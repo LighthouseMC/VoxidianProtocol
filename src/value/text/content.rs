@@ -11,6 +11,7 @@ pub enum TextContent {
     Translate {
         translate   : String,
         fallback    : Option<String>,
+        #[serde(rename = "with")]
         interpolate : Vec<String>
     },
     Keybind {
