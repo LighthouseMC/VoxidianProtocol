@@ -30,7 +30,7 @@ pub(crate) fn packet_full_decode_impl(input : TokenStream) -> TokenStream {
     }
     let ident = parse_str::<Ident>(&format!("{}{}Packets", bound_str, stage_str)).unwrap();
     (quote!{
-        #[derive(Debug)]
+        #[derive(Debug, Clone)]
         pub enum #ident { #( #fields )* }
         impl PrefixedPacketEncode for #ident { fn encode_prefixed(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { match (self) { #(#encode)* } } }
         impl PrefixedPacketDecode for #ident { fn decode_prefixed(buf : &mut PacketBuf) -> Result<Self, DecodeError> {

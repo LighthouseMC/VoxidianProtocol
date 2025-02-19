@@ -1,7 +1,6 @@
 use super::*;
 
 #[packet_part]
-#[derive(Clone)]
 pub struct Block {
     pub id : Identifier
 }

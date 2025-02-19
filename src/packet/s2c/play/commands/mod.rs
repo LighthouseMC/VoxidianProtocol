@@ -12,7 +12,7 @@ pub struct CommandsS2CPlayPacket {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct CommandNode {
     pub kind           : CommandNodeKind,
     pub is_executable  : bool,
@@ -84,7 +84,7 @@ impl PacketDecode for CommandNode {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum CommandNodeKind {
     Root,
     Literal {
@@ -98,7 +98,7 @@ pub enum CommandNodeKind {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum CommandNodeParser {
     Bool,
     Float {

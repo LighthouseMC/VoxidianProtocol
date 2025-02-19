@@ -605,7 +605,7 @@ pub struct PlayerCombatKillS2CPlayPacket {
 pub struct PlayerInfoRemoveS2CPlayPacket {
     pub uuids: LengthPrefixVec<VarInt, Uuid>,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PlayerInfoUpdateS2CPlayPacket {
     pub actions: Vec<(Uuid, Vec<PlayerActionEntry>)>,
 }
@@ -645,7 +645,7 @@ impl PacketDecode for PlayerInfoUpdateS2CPlayPacket {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum PlayerActionEntry {
     AddPlayer {
         name: String,
@@ -810,8 +810,12 @@ pub struct RespawnS2CPlayPacket {
     pub death_loc: Option<DeathLocation>,
     pub portal_cooldown: VarInt,
     pub sea_level: VarInt,
-    pub data_kept: u8,
+    pub data_kept: RespawnDataKept
 }
+packet_flags! { pub struct RespawnDataKept<u8> {
+    pub keep_attributes : 0b00000001,
+    pub keep_metadata   : 0b00000010
+} }
 
 #[packet("minecraft:s2c/play/rotate_head")]
 pub struct RotateHeadS2CPlayPacket {

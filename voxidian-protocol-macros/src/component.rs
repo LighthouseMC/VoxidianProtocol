@@ -38,7 +38,6 @@ pub(crate) fn component_impl(attr: TokenStream, item: TokenStream) -> TokenStrea
 
     (quote! {
         #[packet_part]
-        #[derive(Clone)]
         #item
 
         impl crate::value::ComponentData for #structure_name {
@@ -110,7 +109,7 @@ pub(crate) fn component_enum_impl() -> TokenStream {
                 }
             }
         }
-        
+
         impl DataComponentTypes {
             pub const fn protocol_id(&self) -> u16 {
                 match self {

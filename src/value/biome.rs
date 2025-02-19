@@ -3,7 +3,7 @@ use std::vec;
 use super::*;
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Biome {
     pub has_precipitation      : bool,
     pub temperature            : f32,
@@ -122,7 +122,7 @@ impl BiomeTempModifier { fn as_str(&self) -> &'static str { match (self) {
 } } }
 
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct BiomeEffects {
     pub fog_color            : Colour,
     pub water_color          : Colour,
@@ -139,8 +139,7 @@ pub struct BiomeEffects {
 }
 
 
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, Clone, PartialEq, Eq, Debug)]
 pub enum BiomeColourModifier {
     #[serde(rename = "none")]
     None,
@@ -155,13 +154,13 @@ impl BiomeColourModifier { fn as_str(&self) -> &'static str { match (self) {
     Self::Swamp      => "swamp"
 } } }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct BiomeParticle {
     pub options     : Particle,
     pub probability : f32
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum BiomeAmbientSound {
     #[serde(untagged)]
     Id(Identifier),
@@ -169,7 +168,7 @@ pub enum BiomeAmbientSound {
     Ranged { sound : Identifier, range : Option<f32>}
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct BiomeMoodSound {
     pub sound               : Identifier,
     pub tick_delay          : u32,
@@ -177,19 +176,19 @@ pub struct BiomeMoodSound {
     pub offset              : f64
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct BiomeAdditionsSound {
     pub sound       : Identifier,
     pub tick_chance : f64
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct BiomeMusicWeights {
     pub data: BiomeMusic,
     pub weight: u32
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct BiomeMusic {
     pub sound     : Identifier,
     pub min_delay : u32,

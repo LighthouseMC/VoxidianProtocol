@@ -104,6 +104,7 @@ pub(crate) fn packet_impl(attr : TokenStream, item : TokenStream) -> TokenStream
             let bound_ident = parse_str::<Ident>(&format!("{:?}", bound)).unwrap();
             let stage_ident = parse_str::<Ident>(&format!("{:?}", stage)).unwrap();
             (quote!{
+                #[derive(Clone)]
                 #(#attrs)* #vis #struct_token #ident #generics #new_fields #semi_token
                 impl fmt::Debug for #ident { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result { #debug } }
                 impl PacketMeta for #ident {

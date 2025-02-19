@@ -3,7 +3,7 @@ use std::vec;
 use voxidian_protocol_macros::packet_part;
 use super::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct DataArray {
     pub bits_per_entry: usize,
     pub input_data: Vec<u64>
@@ -56,7 +56,7 @@ impl PacketEncode for DataArray {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ChunkSectionData {
     pub sections: Vec<ChunkSection>
 }
@@ -86,7 +86,7 @@ pub struct ChunkSection {
     pub biomes: PalettedContainer<Biome, 64>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PalettedContainer<T, const E: usize> {
     pub bits_per_entry: u8,
     pub format: PaletteFormat<T, E>
@@ -107,7 +107,7 @@ impl<T, const E: usize> PacketDecode for PalettedContainer<T, E> {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum PaletteFormat<T, const E: usize> {
     SingleValued { entry: RegEntry<T> },
     Indirect { mappings: Vec<RegEntry<T>>, data: [usize; E] },

@@ -67,7 +67,7 @@ pub(crate) fn packet_part_impl(attr : TokenStream, item : TokenStream) -> TokenS
                 };
                 let item2 : TokenStream2 = item.into();
                 (quote!{
-                    #[derive(Debug)]
+                    #[derive(Debug, Clone)]
                     #item2
                     impl PacketEncode for #ident { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { #encode Ok(()) } }
                     impl PacketDecode for #ident { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> { Ok(Self #decode) } }

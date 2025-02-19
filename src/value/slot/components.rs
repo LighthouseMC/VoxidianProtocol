@@ -81,7 +81,6 @@ pub struct CanBreak {
 }
 
 #[packet_part]
-#[derive(Clone)]
 pub struct BlockPredicate {
     pub blocks: Option<IdSet<Block>>,
     pub properties: Option<LengthPrefixVec<VarInt, BlockPredicateProperty>>,
@@ -89,7 +88,6 @@ pub struct BlockPredicate {
 }
 
 #[packet_part]
-#[derive(Clone)]
 pub struct BlockPredicateProperty {
     pub property: String,
     pub values: Either<String, (String, String)>
@@ -102,7 +100,6 @@ pub struct AttributeModifiers {
 }
 
 #[packet_part]
-#[derive(Clone)]
 pub struct AttributeModifier {
     pub type_id: RegEntry<AttributeType>,
     pub unique_id: Identifier,
@@ -214,7 +211,6 @@ pub struct Tool {
 }
 
 #[packet_part]
-#[derive(Clone)]
 pub struct ToolRule {
     pub blocks: IdSet<Block>,
     pub speed: Option<f32>,
@@ -290,7 +286,6 @@ pub struct WrittenBookContent {
     pub resolved       : bool
 }
 #[packet_part]
-#[derive(Clone)]
 pub struct BookPage {
     pub content          : NbtText,
     pub filtered_content : Option<NbtText>
@@ -339,7 +334,6 @@ pub struct Profile {
     pub properties : LengthPrefixVec<VarInt, ProfileProperty>
 }
 #[packet_part]
-#[derive(Clone)]
 pub struct ProfileProperty{
     pub name      : String,
     pub value     : String,
