@@ -1,6 +1,11 @@
 use super::*;
 
 
+pub trait TryIntoS2CLoginPackets {
+    fn try_into_s2c_login(self) -> Option<S2CLoginPackets>;
+}
+
+
 #[packet( "minecraft:s2c/login/login_disconnect" )]
 pub struct LoginDisconnectS2CLoginPacket {
     pub reason : JsonText

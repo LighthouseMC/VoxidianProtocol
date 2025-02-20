@@ -1,6 +1,11 @@
 use super::*;
 
 
+pub trait TryIntoC2SStatusPackets {
+    fn try_into_c2s_status(self) -> Option<C2SStatusPackets>;
+}
+
+
 #[packet( "minecraft:c2s/status/status_request" )]
 pub struct StatusRequestC2SStatusPacket;
 

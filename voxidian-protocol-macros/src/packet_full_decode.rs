@@ -16,6 +16,9 @@ pub(crate) fn packet_full_decode_impl(input : TokenStream) -> TokenStream {
     let stage     = parts[1].clone();
     let stage_str = stage.to_string();
 
+    let mut try_intos = Vec::new();
+    let packets_ident = parse_str::<Ident>(&format!("{}{}Packets", bound_str, stage_str)).unwrap();
+
     let mut fields = Vec::new();
     let mut encode = Vec::new();
     let mut decode = Vec::new();
@@ -26,19 +29,49 @@ pub(crate) fn packet_full_decode_impl(input : TokenStream) -> TokenStream {
             fields.push(quote!{ #packet_id_tc(#ident), });
             encode.push(quote!{ Self::#packet_id_tc(packet) => PrefixedPacketEncode::encode_prefixed(packet, buf), });
             decode.push(quote!{ #ident::PREFIX => { Ok(Self::#packet_id_tc(PacketDecode::decode(buf)?)) } });
+            for other_stage in ["Handshake", "Status", "Login", "Config", "Play"] {
+                if (bound_str == "S2C" && other_stage == "Handshake") { continue; }
+                let bound_ident = parse_str::<Ident>(&bound_str.to_lowercase()).unwrap();
+                let other_stage_ident = parse_str::<Ident>(&other_stage.to_lowercase()).unwrap();
+                let try_into_ident = parse_str::<Ident>(&format!("TryInto{}{}Packets", bound_str, other_stage)).unwrap();
+                let try_into_fn_ident = parse_str::<Ident>(&format!("try_into_{}_{}", bound_str.to_lowercase(), other_stage.to_lowercase())).unwrap();
+                let try_into_ret_ident = parse_str::<Ident>(&format!("{}{}Packets", bound_str, other_stage)).unwrap();
+                let result = if (stage_str == other_stage) { quote!{ Some(#packets_ident::#packet_id_tc(self)) } } else { quote!{ None } };
+                try_intos.push(quote!{
+                    impl crate::packet::#bound_ident::#other_stage_ident::#try_into_ident for #ident {
+                        fn #try_into_fn_ident(self) -> Option<crate::packet::#bound_ident::#other_stage_ident::#try_into_ret_ident> { #result }
+                    }
+                });
+            }
         }
     }
-    let ident = parse_str::<Ident>(&format!("{}{}Packets", bound_str, stage_str)).unwrap();
+
+    for other_stage in ["Handshake", "Status", "Login", "Config", "Play"] {
+        if (bound_str == "S2C" && other_stage == "Handshake") { continue; }
+        let bound_ident = parse_str::<Ident>(&bound_str.to_lowercase()).unwrap();
+        let other_stage_ident = parse_str::<Ident>(&other_stage.to_lowercase()).unwrap();
+        let try_into_ident = parse_str::<Ident>(&format!("TryInto{}{}Packets", bound_str, other_stage)).unwrap();
+        let try_into_fn_ident = parse_str::<Ident>(&format!("try_into_{}_{}", bound_str.to_lowercase(), other_stage.to_lowercase())).unwrap();
+        let try_into_ret_ident = parse_str::<Ident>(&format!("{}{}Packets", bound_str, other_stage)).unwrap();
+        let result = if (stage_str == other_stage) { quote!{ Some(self) } } else { quote!{ None } };
+        try_intos.push(quote!{
+            impl crate::packet::#bound_ident::#other_stage_ident::#try_into_ident for #packets_ident {
+                fn #try_into_fn_ident(self) -> Option<crate::packet::#bound_ident::#other_stage_ident::#try_into_ret_ident> { #result }
+            }
+        });
+    }
+
     (quote!{
         #[derive(Debug, Clone)]
-        pub enum #ident { #( #fields )* }
-        impl PrefixedPacketEncode for #ident { fn encode_prefixed(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { match (self) { #(#encode)* } } }
-        impl PrefixedPacketDecode for #ident { fn decode_prefixed(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+        pub enum #packets_ident { #( #fields )* }
+        impl PrefixedPacketEncode for #packets_ident { fn encode_prefixed(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { match (self) { #(#encode)* } } }
+        impl PrefixedPacketDecode for #packets_ident { fn decode_prefixed(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
             let packetid = buf.read_decode::<VarInt>()?.as_i32() as u8;
             match (packetid) {
                 #(#decode)*
                 packetid => Err(DecodeError::UnknownPacketPrefix(packetid))
             }
         } }
+        #(#try_intos)*
     }).into()
 }

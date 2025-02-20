@@ -1,6 +1,11 @@
 use super::*;
 
 
+pub trait TryIntoC2SHandshakePackets {
+    fn try_into_c2s_handshake(self) -> Option<C2SHandshakePackets>;
+}
+
+
 #[packet( "minecraft:c2s/handshake/intention" )]
 pub struct IntentionC2SHandshakePacket {
     pub protocol_version : VarInt,

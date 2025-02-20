@@ -1,6 +1,11 @@
 use super::*;
 
 
+pub trait TryIntoC2SLoginPackets {
+    fn try_into_c2s_login(self) -> Option<C2SLoginPackets>;
+}
+
+
 #[packet( "minecraft:c2s/login/hello" )]
 pub struct HelloC2SLoginPacket {
     /// According to the client.

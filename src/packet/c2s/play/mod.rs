@@ -3,6 +3,12 @@ use config::{ ClientInfo, ResourcePackStatus };
 use s2c::play::{ Hand, PlayerAbilityFlags };
 use voxidian_protocol_macros::packet;
 
+
+pub trait TryIntoC2SPlayPackets {
+    fn try_into_c2s_play(self) -> Option<C2SPlayPackets>;
+}
+
+
 #[packet("minecraft:c2s/play/accept_teleportation")]
 pub struct AcceptTeleportationC2SPlayPacket {
     pub teleport_id: VarInt,

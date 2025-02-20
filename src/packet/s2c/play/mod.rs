@@ -2,6 +2,12 @@ use super::*;
 use crate::packet::s2c::config::{ReportDetail, ServerLink};
 //use config::{ ReportDetail, ServerLink };
 
+
+pub trait TryIntoS2CPlayPackets {
+    fn try_into_s2c_play(self) -> Option<S2CPlayPackets>;
+}
+
+
 #[packet("minecraft:s2c/play/bundle_delimiter")]
 pub struct BundleDelimiterS2CPlayPacket;
 

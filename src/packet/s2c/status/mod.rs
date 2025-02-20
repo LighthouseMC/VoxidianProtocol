@@ -1,6 +1,11 @@
 use super::*;
 
 
+pub trait TryIntoS2CStatusPackets {
+    fn try_into_s2c_status(self) -> Option<S2CStatusPackets>;
+}
+
+
 #[derive(Ser, Deser, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct StatusResponse {
     pub version : StatusResponseVersion,

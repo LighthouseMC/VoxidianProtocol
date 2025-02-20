@@ -2,6 +2,11 @@ use super::*;
 use s2c::config::KnownPack;
 
 
+pub trait TryIntoC2SConfigPackets {
+    fn try_into_c2s_config(self) -> Option<C2SConfigPackets>;
+}
+
+
 #[packet( "minecraft:c2s/config/client_information" )]
 pub struct ClientInformationC2SConfigPacket {
     pub info : ClientInfo

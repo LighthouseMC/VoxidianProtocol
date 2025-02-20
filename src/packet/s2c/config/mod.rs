@@ -1,6 +1,11 @@
 use super::*;
 
 
+pub trait TryIntoS2CConfigPackets {
+    fn try_into_s2c_config(self) -> Option<S2CConfigPackets>;
+}
+
+
 #[packet( "minecraft:s2c/config/cookie_request" )]
 pub struct CookieRequestS2CConfigPacket {
     pub key : Identifier
