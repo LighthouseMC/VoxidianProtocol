@@ -166,7 +166,7 @@ pub struct MovePlayerPosC2SPlayPacket {
 }
 packet_flags!(pub struct PositionFlags<u8> {
     pub on_ground: 0b01,
-    pub against_wall: 010
+    pub against_wall: 0b10
 });
 
 #[packet("minecraft:c2s/play/move_player_pos_rot")]

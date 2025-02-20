@@ -29,13 +29,13 @@ impl<T: RegValue + PacketEncode + PacketDecode> PacketDecode for IdSet<T> {
         let amount = buf.read_decode::<VarInt>()?;
         if amount.as_i32() == 0 {
             let tag = Identifier::decode(buf)?;
-            return Ok(IdSet::Tag(tag));
+            Ok(IdSet::Tag(tag))
         } else {
             let mut ids = Vec::with_capacity(amount.as_i32() as usize);
             for _ in 0..amount.as_i32() {
                 ids.push(RegEntry::decode(buf)?);
             }
-            return Ok(IdSet::Ids(ids));
+            Ok(IdSet::Ids(ids))
         }
 
     }

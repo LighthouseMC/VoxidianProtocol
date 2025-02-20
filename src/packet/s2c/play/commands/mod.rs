@@ -26,12 +26,12 @@ impl PacketEncode for CommandNode {
         if let CommandNodeKind::Literal { .. } = self.kind { flags |= 0b00000001; }
         if let CommandNodeKind::Argument { suggestions, .. } = &self.kind {
             flags |= 0b00000010;
-            if let Some(_) = suggestions {
+            if suggestions.is_some() {
                 flags |= 0b00010000;
             }
         }
         if (self.is_executable) { flags |= 0b00000100; }
-        if let Some(_) = self.redirect_index { flags |= 0b00001000; }
+        if self.redirect_index.is_some() { flags |= 0b00001000; }
         buf.write_u8(flags);
 
         buf.encode_write(&self.child_indices)?;
@@ -187,8 +187,8 @@ impl PacketEncode for CommandNodeParser {
             Self::Float { min, max } => {
                 buf.encode_write(VarInt::from(1))?;
                 let mut flags = 0b00000000;
-                if let Some(_) = min { flags |= 0b00000001; }
-                if let Some(_) = max { flags |= 0b00000010; }
+                if min.is_some() { flags |= 0b00000001; }
+                if max.is_some() { flags |= 0b00000010; }
                 buf.write_u8(flags);
                 if let Some(min) = min { buf.encode_write(min)?; }
                 if let Some(max) = max { buf.encode_write(max)?; }
@@ -197,8 +197,8 @@ impl PacketEncode for CommandNodeParser {
             Self::Double { min, max } => {
                 buf.encode_write(VarInt::from(2))?;
                 let mut flags = 0b00000000;
-                if let Some(_) = min { flags |= 0b00000001; }
-                if let Some(_) = max { flags |= 0b00000010; }
+                if min.is_some() { flags |= 0b00000001; }
+                if max.is_some() { flags |= 0b00000010; }
                 buf.write_u8(flags);
                 if let Some(min) = min { buf.encode_write(min)?; }
                 if let Some(max) = max { buf.encode_write(max)?; }
@@ -207,8 +207,8 @@ impl PacketEncode for CommandNodeParser {
             Self::Integer { min, max } => {
                 buf.encode_write(VarInt::from(3))?;
                 let mut flags = 0b00000000;
-                if let Some(_) = min { flags |= 0b00000001; }
-                if let Some(_) = max { flags |= 0b00000010; }
+                if min.is_some() { flags |= 0b00000001; }
+                if max.is_some() { flags |= 0b00000010; }
                 buf.write_u8(flags);
                 if let Some(min) = min { buf.encode_write(min)?; }
                 if let Some(max) = max { buf.encode_write(max)?; }
@@ -217,8 +217,8 @@ impl PacketEncode for CommandNodeParser {
             Self::Long { min, max } => {
                 buf.encode_write(VarInt::from(4))?;
                 let mut flags = 0b00000000;
-                if let Some(_) = min { flags |= 0b00000001; }
-                if let Some(_) = max { flags |= 0b00000010; }
+                if min.is_some() { flags |= 0b00000001; }
+                if max.is_some() { flags |= 0b00000010; }
                 buf.write_u8(flags);
                 if let Some(min) = min { buf.encode_write(min)?; }
                 if let Some(max) = max { buf.encode_write(max)?; }

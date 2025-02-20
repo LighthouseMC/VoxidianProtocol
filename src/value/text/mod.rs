@@ -100,11 +100,11 @@ mod tests {
     #[test]
     fn nbt_serialise_colour() {
         assert_eq!(
-            TextColour::Red.to_nbt(),
+            TextColour::Red.as_nbt(),
             NbtElement::String("red".to_string())
         );
         assert_eq!(
-            TextColour::RGB(255, 127, 0).to_nbt(),
+            TextColour::RGB(255, 127, 0).as_nbt(),
             NbtElement::String("#ff7f00".to_string())
         );
     }

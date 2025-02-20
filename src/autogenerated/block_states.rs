@@ -2,10 +2,10 @@ use std::{collections::HashMap, sync::LazyLock};
 
 use crate::value::{BlockState, BlockStateWithMetadata, Identifier};
 
-pub static BLOCK_STATE_JSON: &'static str = include_str!("../../generated/block_states.json");
+pub static BLOCK_STATE_JSON: &str = include_str!("../../generated/block_states.json");
 
 pub static BLOCK_STATES: LazyLock<Vec<BlockStateWithMetadata>> = LazyLock::new(|| {
-    serde_json::from_str(&BLOCK_STATE_JSON).unwrap()
+    serde_json::from_str(BLOCK_STATE_JSON).unwrap()
 });
 
 
@@ -56,6 +56,7 @@ impl BlockState {
 
     /// Tries to force a BlockState to be valid by removing invalid properties and adding default properties that aren't present.
     /// If the block state does not have a valid ID, this method will return Err(()).
+    #[allow(clippy::result_unit_err)]
     pub fn make_valid(&mut self) -> Result<(), ()> {
         let Some(default) = BLOCK_STATE_DEFAULTS.get(&self.id).cloned() else {
             return Err(());

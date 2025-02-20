@@ -28,7 +28,7 @@ pub struct TextStyle {
 impl TextStyle {
     pub fn to_nbt(&self) -> NbtCompound {
         let mut nbt = NbtCompound::new();
-        if let Some(colour        ) = &self.colour        { nbt.insert("color"         , colour.to_nbt()                                            ); }
+        if let Some(colour        ) = &self.colour        { nbt.insert("color"         , colour.as_nbt()                                            ); }
         if let Some(font          ) = &self.font          { nbt.insert("font"          , NbtElement::String ( font.to_string()                     )); }
         if let Some(bold          ) =  self.bold          { nbt.insert("bold"          , NbtElement::Byte   ( if (bold          ) { 1 } else { 0 } )); }
         if let Some(italic        ) =  self.italic        { nbt.insert("italic"        , NbtElement::Byte   ( if (italic        ) { 1 } else { 0 } )); }

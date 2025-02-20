@@ -38,7 +38,7 @@ impl MojAuth {
     pub async fn start<U : AsRef<str>, S : AsRef<str>>(block_proxies : Option<SocketAddr>, username : U, server_id : S, secret_cipher_key : &[u8], public_key : &PublicKey) -> Result<MojAuth, MojAuthError> {
         let mut sha = Sha1::new();
         sha.update(server_id.as_ref().as_ascii().unwrap().as_bytes());
-        sha.update(&secret_cipher_key);
+        sha.update(secret_cipher_key);
         sha.update(&public_key.der_bytes());
         let sha = BigInt::from_signed_bytes_be(&sha.finish()).to_str_radix(16);
         let mut url = format!("https://sessionserver.mojang.com/session/minecraft/hasJoined?username={}&serverId={}", username.as_ref(), sha);
@@ -53,7 +53,7 @@ impl MojAuth {
         match (response.status().as_u16()) {
             200 => {
                 let body = response.text().await.map_err(|_| MojAuthError::InvalidData)?;
-                Ok(serde_json::from_str::<MojAuth>(&body).expect(&format!("Body was {}", body)))
+                Ok(serde_json::from_str::<MojAuth>(&body).unwrap_or_else(|_| panic!("Body was {}", body)))
             },
             204 => Err(MojAuthError::Unverified),
             _   => Err(MojAuthError::InvalidData)
@@ -63,7 +63,7 @@ impl MojAuth {
     pub fn start_non_blocking<U : AsRef<str>, S : AsRef<str>>(block_proxies : Option<SocketAddr>, username : U, server_id : S, secret_cipher_key : &[u8], public_key : &PublicKey) -> MojAuthHandle {
         let mut sha = Sha1::new();
         sha.update(server_id.as_ref().as_ascii().unwrap().as_bytes());
-        sha.update(&secret_cipher_key);
+        sha.update(secret_cipher_key);
         sha.update(&public_key.der_bytes());
         let sha = BigInt::from_signed_bytes_be(&sha.finish()).to_str_radix(16);
         let mut url = format!("https://sessionserver.mojang.com/session/minecraft/hasJoined?username={}&serverId={}", username.as_ref(), sha);
@@ -81,7 +81,7 @@ impl MojAuth {
                 match (response.status().as_u16()) {
                     200 => {
                         let body = response.text().map_err(|_| MojAuthError::InvalidData)?;
-                        Ok(serde_json::from_str::<MojAuth>(&body).expect(&format!("Body was {}", body)))
+                        Ok(serde_json::from_str::<MojAuth>(&body).unwrap_or_else(|_| panic!("Body was {}", body)))
                     },
                     204 => Err(MojAuthError::Unverified),
                     _   => Err(MojAuthError::InvalidData)
@@ -98,7 +98,7 @@ impl MojAuth {
         let name = name.into();
         Self {
             uuid  : Uuid::new_v3(&Self::NAMESPACE_LIGHTHOUSE, name.as_bytes()),
-            name  : name,
+            name,
             props : Vec::new(), // TODO: Offline skin
         }
     }
@@ -126,7 +126,7 @@ impl MojAuthHandle {
     }
 
     pub fn is_finished(&self) -> bool {
-        matches!(self.already_done, Some(_)) || self.handle.as_ref().unwrap().is_finished()
+        self.already_done.is_some() || self.handle.as_ref().unwrap().is_finished()
     }
 
     pub fn wait_to_finish(self) -> Result<MojAuth, MojAuthError> {

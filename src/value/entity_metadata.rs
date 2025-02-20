@@ -12,6 +12,12 @@ pub struct EntityMetadata {
     inner: HashMap<u8, MetadataEntry>,
 }
 
+impl Default for EntityMetadata {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl EntityMetadata {
     pub fn new() -> EntityMetadata {
         EntityMetadata {

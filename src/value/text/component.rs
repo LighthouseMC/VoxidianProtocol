@@ -163,8 +163,10 @@ impl fmt::Display for TextComponent { fn fmt(&self, f : &mut fmt::Formatter<'_>)
 
 impl PacketEncode for TextComponent {
     fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
-        let mut nbt = Nbt::default();
-        nbt.root = self.to_nbt();
+        let nbt = Nbt {
+            root: self.to_nbt(),
+            ..Default::default()
+        };
         buf.encode_write(nbt)?;
         Ok(())
     }

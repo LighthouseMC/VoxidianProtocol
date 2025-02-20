@@ -19,7 +19,7 @@ impl NbtCompound {
     }
 
     pub fn extend(&mut self, other : NbtCompound) {
-        self.0.extend(other.0.into_iter());
+        self.0.extend(other.0);
     }
 
     pub fn entries(&self) -> impl Iterator<Item = (&String, &NbtElement)> {

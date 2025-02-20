@@ -14,9 +14,9 @@ impl fmt::Debug for VarLong { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt:
 } }
 
 impl From<i64> for VarLong { fn from(value : i64) -> Self { Self(value) } }
-impl Into<i64> for VarLong { fn into(self) -> i64 { self.0 } }
+impl From<VarLong> for i64 { fn from(val: VarLong) -> Self { val.0 } }
 impl From<usize> for VarLong { fn from(value : usize) -> Self { Self(value as i64) } }
-impl Into<usize> for VarLong { fn into(self) -> usize { self.0 as usize } }
+impl From<VarLong> for usize { fn from(val: VarLong) -> Self { val.0 as usize } }
 
 impl PacketEncode for VarLong { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
     buf.write_u8s(&self.as_bytes());

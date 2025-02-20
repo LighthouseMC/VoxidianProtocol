@@ -10,6 +10,12 @@ pub struct PacketBuf {
 }
 
 /// Constructors
+impl Default for PacketBuf {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PacketBuf {
     pub fn new() -> Self {
         PacketBuf {
@@ -80,12 +86,14 @@ impl PacketBuf {
     }
 
     pub fn as_slice(&self) -> &[u8] {
-        &self.inner.as_slice().get(self.read_idx..).unwrap_or(&[])
+        self.inner.as_slice().get(self.read_idx..).unwrap_or(&[])
     }
 }
 
 impl Read for PacketBuf {
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+
+        #[allow(clippy::needless_range_loop)]
         for idx in 0..buf.len() {
             buf[idx] = self
                 .read_u8()
@@ -194,7 +202,7 @@ impl IntoIterator for PacketBuf {
 /// Iterator
 impl PacketBuf {
     pub fn iter(&self) -> impl Iterator<Item = u8> {
-        (&self).into_iter().map(|byte| *byte)
+        self.into_iter().copied()
     }
 }
 

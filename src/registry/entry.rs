@@ -32,6 +32,7 @@ impl<T> RegEntry<T> {
     }
 }
 impl<T> Clone for RegEntry<T> {
+    #[allow(clippy::non_canonical_clone_impl)] 
     fn clone(&self) -> Self { Self {
         id  : self.id,
         _ph : PhantomData

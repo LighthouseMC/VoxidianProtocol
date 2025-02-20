@@ -71,7 +71,7 @@ impl NbtElement { pub(super) fn encode_packet(&self, buf : &mut PacketBuf) { mat
     Self::List (values) => {
         buf.write_u8(values.first().map_or(NbtElement::TAG_END, |e| e.tag()));
         let _ = buf.encode_write(values.len() as i32);
-        for e in values { let _ = e.encode_packet(buf); }
+        for e in values { e.encode_packet(buf); }
     },
     Self::Compound (values) => { values.encode_packet(buf); },
     Self::IArray(values) => {

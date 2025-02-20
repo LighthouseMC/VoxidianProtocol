@@ -39,7 +39,7 @@ pub(crate) fn packet_impl(attr : TokenStream, item : TokenStream) -> TokenStream
                             let ident_str = ident.to_string();
                             let mut new_attrs = Vec::new();
                             let mut redacted  = false;
-                            for attr in attrs { if let Meta::Path(path) = &attr.meta && let Some(ident) = path.get_ident() && (ident.to_string() == "redacted") {
+                            for attr in attrs { if let Meta::Path(path) = &attr.meta && let Some(ident) = path.get_ident() && (ident == "redacted") {
                                 redacted = true;
                             } else {
                                 new_attrs.push(attr.clone());
@@ -71,7 +71,7 @@ pub(crate) fn packet_impl(attr : TokenStream, item : TokenStream) -> TokenStream
                         let i = Index::from(i);
                         let mut new_attrs = Vec::new();
                         let mut redacted  = false;
-                        for attr in attrs { if let Meta::Path(path) = &attr.meta && let Some(ident) = path.get_ident() && (ident.to_string() == "redacted") {
+                        for attr in attrs { if let Meta::Path(path) = &attr.meta && let Some(ident) = path.get_ident() && (ident == "redacted") {
                             redacted = true;
                         } else {
                             new_attrs.push(attr.clone());

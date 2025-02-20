@@ -26,6 +26,7 @@ impl PublicKey {
         self.0.public_key_to_der().unwrap()
     }
 
+    #[allow(clippy::result_unit_err)]
     pub fn from_der_bytes(key : &[u8]) -> Result<Self, ()> {
         Ok(Self(PKey::public_key_from_der(key).map_err(|_| ())?))
     }
@@ -41,6 +42,7 @@ impl PartialEq for PublicKey { fn eq(&self, other : &Self) -> bool {
 pub struct PrivateKey(PKey<Private>);
 impl PrivateKey {
 
+    #[allow(clippy::result_unit_err)]
     pub fn decrypt(&self, cipherdata : &[u8]) -> Result<Vec<u8>, ()> {
         let mut de  = Decrypter::new(&self.0).unwrap();
         de.set_rsa_padding(Padding::PKCS1).unwrap();
@@ -71,7 +73,7 @@ impl SecretCipher {
 
     pub const NONE : Self = Self(None);
 
-    pub fn is_no_cipher(&self) -> bool { matches!(self.0, None) } // `self.de` is guaranteed to have the same `is_some` as `self.en`.
+    pub fn is_no_cipher(&self) -> bool { self.0.is_none() } // `self.de` is guaranteed to have the same `is_some` as `self.en`.
 
     pub fn from_key_bytes(key_iv : &[u8]) -> Self { Self(Some(SecretCipherInner {
         key : key_iv.to_vec(),

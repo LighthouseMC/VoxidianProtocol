@@ -16,7 +16,7 @@ impl DataArray {
         }
 
         let entries_per_long = 64 / self.bits_per_entry;
-        let needed_longs = (self.input_data.len() + entries_per_long - 1) / entries_per_long;
+        let needed_longs = self.input_data.len().div_ceil(entries_per_long);
 
         let mut output_data = vec![0; needed_longs];
 
@@ -124,7 +124,7 @@ impl<T, const E: usize> PaletteFormat<T, E> {
                     input_data     : Vec::new()
                 }
             },
-            PaletteFormat::Indirect { mappings : _, data } => {
+            PaletteFormat::Indirect { mappings : _, data: _ } => {
                 assert!(bits_per_entry >= 1);
                 /*let input_data = data.iter().map(|entry| *entry as u64).collect();
                 DataArray {

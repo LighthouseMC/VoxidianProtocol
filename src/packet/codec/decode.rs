@@ -59,7 +59,7 @@ impl PacketDecode for Uuid { fn decode(buf : &mut PacketBuf) -> Result<Self, Dec
 
 impl PacketDecode for String { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
     let len = buf.read_decode::<VarInt>()?.as_i32() as usize;
-    Ok(String::from_utf8(buf.read_u8s(len)?).map_err(|_| DecodeError::InvalidData("String data is not valid UTF8".to_string()))?)
+    String::from_utf8(buf.read_u8s(len)?).map_err(|_| DecodeError::InvalidData("String data is not valid UTF8".to_string()))
 } }
 
 impl<T : PacketDecode> PacketDecode for Option<T> { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
@@ -68,9 +68,9 @@ impl<T : PacketDecode> PacketDecode for Option<T> { fn decode(buf : &mut PacketB
 } }
 
 impl<T : PacketDecode, const LEN : usize> PacketDecode for [T; LEN] { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
-    let mut out : Self = unsafe{ MaybeUninit::uninit().assume_init() };
-    for i in 0..LEN { out[i] = buf.read_decode::<T>()?; }
-    Ok(out)
+    let mut out: [MaybeUninit<T>; LEN] = unsafe{ MaybeUninit::uninit().assume_init() };
+    for item in &mut out { *item = MaybeUninit::new(buf.read_decode::<T>()?); }
+    Ok(unsafe { std::mem::transmute_copy(&out) })
 } }
 
 

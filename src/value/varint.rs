@@ -18,9 +18,9 @@ impl fmt::Debug for VarInt { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::
 } }
 
 impl From<i32> for VarInt { fn from(value : i32) -> Self { Self(value) } }
-impl Into<i32> for VarInt { fn into(self) -> i32 { self.0 } }
+impl From<VarInt> for i32 { fn from(val: VarInt) -> Self { val.0 } }
 impl From<usize> for VarInt { fn from(value : usize) -> Self { Self(value as i32) } }
-impl Into<usize> for VarInt { fn into(self) -> usize { self.0 as usize } }
+impl From<VarInt> for usize { fn from(val: VarInt) -> Self { val.0 as usize } }
 
 impl PacketEncode for VarInt { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
     buf.write_u8s(&self.as_bytes());
