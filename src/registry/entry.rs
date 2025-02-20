@@ -4,7 +4,7 @@ use std::{ fmt, any };
 
 
 pub struct RegEntry<T> {
-    id  : usize,
+    id  : u32,
     _ph : PhantomData<T>
 }
 impl<T> RegEntry<T> {
@@ -19,12 +19,12 @@ impl<T> RegEntry<T> {
     /// This can also lead to invalid references to the packet registry.
     /// While misusing this function won't lead to any memory safety errors, it can lead to
     /// undesired behavior very easily.
-    pub const unsafe fn new_unchecked(id : usize) -> Self { Self {
+    pub const unsafe fn new_unchecked(id : u32) -> Self { Self {
         id, _ph : PhantomData
     } }
 
     /// Obtains the raw numeric ID this RegEntry would link to.
-    pub fn id(&self) -> usize { self.id }
+    pub fn id(&self) -> u32 { self.id }
 
     /// Looks up this RegEntry in a provided registry.
     pub fn lookup<'r>(&self, registry : &'r Registry<T>) -> Option<&'r T> {
@@ -55,5 +55,5 @@ impl<T> PacketEncode for RegEntry<T> { fn encode(&self, buf : &mut crate::packet
     buf.encode_write(VarInt::from(self.id as i32))
 } }
 impl<T> PacketDecode for RegEntry<T> { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
-    Ok(unsafe{ Self::new_unchecked(buf.read_decode::<VarInt>()?.as_i32() as usize) })
+    Ok(unsafe{ Self::new_unchecked(buf.read_decode::<VarInt>()?.as_i32() as u32) })
 } }

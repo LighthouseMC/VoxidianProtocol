@@ -476,6 +476,7 @@ pub struct LoginS2CPlayPacket {
     pub enforce_chat_reports: bool,
 }
 #[packet_part(u8)]
+#[derive(Copy)]
 pub enum Gamemode {
     None = (-1isize) as usize,
     Survival = 0,

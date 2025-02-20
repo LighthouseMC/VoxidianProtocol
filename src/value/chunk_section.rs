@@ -149,12 +149,12 @@ impl<T, const E: usize> PacketEncode for PaletteFormat<T, E> {
     fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
         match self {
             PaletteFormat::SingleValued { entry } => {
-                VarInt::from(entry.id()).encode(buf)?;
+                VarInt::from(entry.id() as i32).encode(buf)?;
             },
             PaletteFormat::Indirect { mappings, data : _ } => {
                 VarInt::from(mappings.len()).encode(buf)?;
                 for entry in mappings {
-                    VarInt::from(entry.id()).encode(buf)?;
+                    VarInt::from(entry.id() as i32).encode(buf)?;
                 }
             },
             PaletteFormat::Direct { data : _ } => { },
