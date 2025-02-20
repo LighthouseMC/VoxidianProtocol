@@ -16,6 +16,12 @@ pub struct Nbt {
     pub name : String,
     pub root : NbtCompound
 }
+impl Nbt {
+    pub fn new() -> Self { Self {
+        name : String::new(),
+        root : NbtCompound::new()
+    } }
+}
 impl fmt::Debug for Nbt { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "Nbt({:?} -> Compound({:?}))", self.name, self.root)
 } }
