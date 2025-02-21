@@ -83,6 +83,31 @@ impl PacketDecode for SlotData {
     }
 }
 
+impl PartialEq for SlotData {
+    fn eq(&self, other : &Self) -> bool {
+        let self_empty  = (self  .id.id() == 0) || (self  .count.as_i32() == 0);
+        let other_empty = (other .id.id() == 0) || (other .count.as_i32() == 0);
+        match ((self_empty, other_empty)) {
+            (true, true) => true,
+            (false, false) => {
+                if (self.id != other.id) { return false; }
+                if (self.count != other.count) { return false; }
+                if (self.components.len() != other.components.len()) { return false; }
+                if (self.removed_components.len() != other.removed_components.len()) { return false; }
+                for component in &self.components {
+                    if (! other.components.contains(component)) { return false; }
+                }
+                for component in &self.removed_components {
+                    if (! other.removed_components.contains(component)) { return false; }
+                }
+                true
+            },
+            _ => false
+        }
+    }
+}
+impl Eq for SlotData {}
+
 pub trait ComponentData: PacketEncode + PacketDecode {
     const ID: u32;
 }

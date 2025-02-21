@@ -38,6 +38,7 @@ pub(crate) fn component_impl(attr: TokenStream, item: TokenStream) -> TokenStrea
 
     (quote! {
         #[packet_part]
+        #[derive(PartialEq)]
         #item
 
         impl crate::value::ComponentData for #structure_name {
@@ -68,7 +69,7 @@ pub(crate) fn component_enum_impl() -> TokenStream {
     );
 
     (quote! {
-        #[derive(Debug, Clone)]
+        #[derive(Debug, Clone, PartialEq)]
         pub enum DataComponents {
             #( #formatted_names(#formatted_names) ),*
         }

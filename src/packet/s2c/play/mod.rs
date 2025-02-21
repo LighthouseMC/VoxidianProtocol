@@ -239,7 +239,7 @@ pub struct ContainerSetDataS2CPlayPacket {
 pub struct ContainerSetSlotS2CPlayPacket {
     pub window_id: VarInt,
     pub state_id: VarInt,
-    pub slot: u16,
+    pub slot: i16,
     pub slot_data: SlotData,
 }
 

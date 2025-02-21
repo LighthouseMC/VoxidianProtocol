@@ -4,7 +4,7 @@ use std::marker::PhantomData;
 use std::ops::{ Deref, DerefMut };
 
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct LengthPrefixVec<Idx : From<usize> + Into<usize>, T> {
     inner : Vec<T>,
     _ph   : PhantomData<Idx>
@@ -59,5 +59,11 @@ impl<Idx : From<usize> + Into<usize> + PacketDecode, T : PacketDecode> PacketDec
             inner : items,
             _ph   : PhantomData
         })
+    }
+}
+
+impl<Idx : From<usize> + Into<usize>, T : PartialEq> PartialEq for LengthPrefixVec<Idx, T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.inner == other.inner
     }
 }
