@@ -152,9 +152,7 @@ pub enum InteractAction {
 #[packet("minecraft:c2s/play/jigsaw_generate")]
 pub struct JigsawGenerateC2SPlayPacket(TODO);
 #[packet("minecraft:c2s/play/keep_alive")]
-pub struct KeepAliveC2SPlayPacket {
-    pub keep_alive_id: i64
-}
+pub struct KeepAliveC2SPlayPacket(pub u64);
 #[packet("minecraft:c2s/play/lock_difficulty")]
 pub struct LockDifficultyC2SPlayPacket(TODO);
 #[packet("minecraft:c2s/play/move_player_pos")]
