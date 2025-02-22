@@ -15,20 +15,20 @@ impl Item {
 
 
 #[derive(Debug)]
-pub struct ItemDoesntExistError;
+pub struct InvalidItemError;
 
-impl fmt::Display for ItemDoesntExistError {
+impl fmt::Display for InvalidItemError {
     fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "item doesn't exist")
+        write!(f, "invalid item")
     }
 }
 
-impl Error for ItemDoesntExistError { }
+impl Error for InvalidItemError { }
 
 
 impl FromStr for RegEntry<Item> {
-    type Err = ItemDoesntExistError;
+    type Err = InvalidItemError;
     fn from_str(s : &str) -> Result<Self, Self::Err> {
-        Item::vanilla_registry().get_entry(&Identifier::from(s)).ok_or(ItemDoesntExistError)
+        Item::vanilla_registry().get_entry(&Identifier::from(s)).ok_or(InvalidItemError)
     }
 }
