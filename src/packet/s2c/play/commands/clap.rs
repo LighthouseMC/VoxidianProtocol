@@ -1,5 +1,7 @@
 use super::{ CommandsS2CPlayPacket, CommandNode, CommandNodeKind, CommandNodeParser, StringCommandNode };
-use crate::value::VarInt;
+use crate::value::{ VarInt, Identifier };
+use crate::value::Item;
+use crate::registry::RegEntry;
 use core::any::TypeId;
 use core::{ mem, fmt };
 use clap::{ CommandFactory, Command };
@@ -111,11 +113,10 @@ impl FromClap {
 
             if (anytype == TypeId::of::<u64>()) {
                 if (! infinite_count) {
-                    for _ in num_args.min_values()..=num_args.max_values() {
-                        let node = self.add_argument(&old_parents, &name, true, CommandNodeParser::Long { min : Some(0), max : None });
-                        parents.push(node);
-                        old_parents.push(node);
-                    }
+                    // TODO: Repeat
+                    let node = self.add_argument(&old_parents, &name, true, CommandNodeParser::Long { min : Some(0), max : None });
+                    parents.push(node);
+                    old_parents.push(node);
                 } else {
                     let node = self.add_argument_recursive(&old_parents, &name, true, CommandNodeParser::Long { min : Some(0), max : None });
                     parents.push(node);
@@ -125,13 +126,25 @@ impl FromClap {
 
             else if (anytype == TypeId::of::<String>()) {
                 if (! infinite_count) {
-                    for _ in num_args.min_values()..=num_args.max_values() {
-                        let node = self.add_argument(&old_parents, &name, true, CommandNodeParser::String { behaviour : StringCommandNode::QuotablePhrase });
-                        parents.push(node);
-                        old_parents.push(node);
-                    }
+                    // TODO: Repeat
+                    let node = self.add_argument(&old_parents, &name, true, CommandNodeParser::String { behaviour : StringCommandNode::QuotablePhrase });
+                    parents.push(node);
+                    old_parents.push(node);
                 } else {
                     let node = self.add_argument(&old_parents, &name, true, CommandNodeParser::String { behaviour : StringCommandNode::GreedyPhrase });
+                    parents.push(node);
+                    old_parents.push(node);
+                }
+            }
+
+            else if (anytype == TypeId::of::<RegEntry<Item>>()) {
+                if (! infinite_count) {
+                    // TODO: Repeat
+                    let node = self.add_argument(&old_parents, &name, true, CommandNodeParser::ResourceKey { registry : Identifier::vanilla_const("item") });
+                    parents.push(node);
+                    old_parents.push(node);
+                } else {
+                    let node = self.add_argument_recursive(&old_parents, &name, true, CommandNodeParser::ResourceKey { registry : Identifier::vanilla_const("item") });
                     parents.push(node);
                     old_parents.push(node);
                 }
