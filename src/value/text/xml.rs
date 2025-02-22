@@ -4,27 +4,31 @@ use super::*;
 impl Text {
 
     #[doc(cfg(feature = "text_xml"))]
-    pub fn from_xml<S : AsRef<str>>(xml : S) -> Self {
+    pub fn from_xml<S : AsRef<str>>(xml : S, allow_interaction : bool, allow_newline : bool) -> Self {
         let reader = XmlReader::new(xml.as_ref());
         let mut components = Vec::new();
         Self::from_xml_inner(&mut reader.into_iter(), &mut components,
-            None, None, None, None, None, None, None, None, None
+            None,
+            allow_interaction, allow_newline,
+            None, None, None, None, None, None, None, None
         );
         Text::from(components)
     }
 
     fn from_xml_inner(
-        reader        : &mut XmlReader,
-        components    : &mut Vec<TextComponent>,
-        current_tag   : Option<&str>,
-        colour        : Option<TextColour>,
-        bold          : Option<bool>,
-        italic        : Option<bool>,
-        underline     : Option<bool>,
-        strikethrough : Option<bool>,
-        obfuscate     : Option<bool>,
-        insertion     : Option<&str>,
-        font          : Option<Identifier>
+        reader            : &mut XmlReader,
+        components        : &mut Vec<TextComponent>,
+        current_tag       : Option<&str>,
+        allow_interaction : bool,
+        allow_newline     : bool,
+        colour            : Option<TextColour>,
+        bold              : Option<bool>,
+        italic            : Option<bool>,
+        underline         : Option<bool>,
+        strikethrough     : Option<bool>,
+        obfuscate         : Option<bool>,
+        insertion         : Option<&str>,
+        font              : Option<Identifier>
     ) {
         let mut current_content = String::new();
 
@@ -123,13 +127,13 @@ impl Text {
                         continue;
                     }
                     // TODO: lang_or, translate_or, translation_or, translatable_or
-                    else if let Some(value) = name.strip_prefix("insert:") {
+                    else if (allow_interaction) && let Some(value) = name.strip_prefix("insert:") {
                         insertion = Some(value);
-                    } else if let Some(value) = name.strip_prefix("insertion:") {
+                    } else if (allow_interaction) && let Some(value) = name.strip_prefix("insertion:") {
                         insertion = Some(value);
                     } else if let Some(value) = name.strip_prefix("font:") {
                         font = Some(Identifier::from(value));
-                    } else if (name == "newline" || name == "nl") {
+                    } else if (allow_newline && (name == "newline" || name == "nl")) {
                         push_content!(of_literal, "\n");
                         continue;
                     } else {
@@ -137,6 +141,7 @@ impl Text {
                     }
                     Self::from_xml_inner(reader, components,
                         Some(name.split(":").next().unwrap()),
+                        allow_interaction, allow_newline,
                         colour,
                         bold,
                         italic,

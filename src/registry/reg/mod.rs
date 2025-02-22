@@ -44,6 +44,10 @@ impl<T> Registry<T> {
         self.map.get_index(entry.id() as usize).map(|x| x.1)
     }
 
+    pub fn lookup_ident(&self, entry: &RegEntry<T>) -> Option<&Identifier> {
+        self.map.get_index(entry.id() as usize).map(|x| x.0)
+    }
+
     pub fn clear(&mut self) {
         self.map.clear();
     }
