@@ -655,8 +655,8 @@ impl PacketDecode for PlayerInfoUpdateS2CPlayPacket {
 #[derive(Debug, Clone)]
 pub enum PlayerActionEntry {
     AddPlayer {
-        name: String,
-        properties: LengthPrefixVec<VarInt, ProfileProperty>,
+        name  : String,
+        props : LengthPrefixVec<VarInt, ProfileProperty>,
     },
     UpdateGameMode(Gamemode),
     Listed(bool),
@@ -683,9 +683,9 @@ impl PlayerActionEntry {
 impl PacketEncode for PlayerActionEntry {
     fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
         match self {
-            PlayerActionEntry::AddPlayer { name, properties } => {
+            PlayerActionEntry::AddPlayer { name, props } => {
                 buf.encode_write(name)?;
-                buf.encode_write(properties)?;
+                buf.encode_write(props)?;
             }
             PlayerActionEntry::UpdateGameMode(gamemode) => {
                 buf.encode_write(gamemode)?;

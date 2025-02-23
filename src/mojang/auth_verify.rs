@@ -10,7 +10,7 @@ use reqwest;
 use num_bigint::BigInt;
 
 
-#[derive(Deser, Debug)]
+#[derive(Deser, Debug, Clone)]
 pub struct MojAuth {
     #[serde(rename = "id", deserialize_with = "parse_uuid")]
     pub uuid  : Uuid,
@@ -22,7 +22,7 @@ fn parse_uuid<'l, D : Deserer<'l>>(deser : D) -> Result<Uuid, D::Error> {
     let uuid = String::deserialize(deser)?;
     Uuid::parse_str(&uuid).map_err(|_| serde::de::Error::custom("Not a valid Uuid"))
 }
-#[derive(Deser, Debug)]
+#[derive(Deser, Debug, Clone)]
 pub struct MojAuthProperty {
     pub name  : String,
     pub value : String,

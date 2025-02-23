@@ -7,6 +7,7 @@ use crate::value::DecodeError;
 use crate::value::VarInt;
 use crate::value::Uuid;
 use crate::packet::TODO;
+use crate::mojang::auth_verify::MojAuthProperty;
 use super::{AttributeType, Block, Either, IdSet, RegEntry, SlotData};
 use voxidian_protocol_macros::{component, component_enum, packet_part};
 
@@ -340,10 +341,19 @@ pub struct Profile {
 }
 #[packet_part]
 #[derive(PartialEq)]
-pub struct ProfileProperty{
-    pub name      : String,
-    pub value     : String,
-    pub signature : Option<String>
+pub struct ProfileProperty {
+    pub name  : String,
+    pub value : String,
+    pub sig   : Option<String>
+}
+impl From<MojAuthProperty> for ProfileProperty {
+    fn from(from : MojAuthProperty) -> Self {
+        Self {
+            name  : from.name,
+            value : from.value,
+            sig   : Some(from.sig)
+        }
+    }
 }
 
 #[component("minecraft:note_block_sound")]
