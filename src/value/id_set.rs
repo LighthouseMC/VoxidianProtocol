@@ -43,7 +43,7 @@ impl<T: RegValue + PacketEncode + PacketDecode> PacketDecode for IdSet<T> {
 
 impl<T: RegValue + PacketEncode + PacketDecode> PartialEq for IdSet<T> {
     fn eq(&self, other : &Self) -> bool {
-        match ((self, other)) {
+        match (self, other) {
             (IdSet::Tag(id0), IdSet::Tag(id1)) => id0 == id1,
             (IdSet::Ids(ids0), IdSet::Ids(ids1)) => {
                 if (ids0.len() != ids1.len()) { return false; }

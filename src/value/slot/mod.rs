@@ -87,7 +87,7 @@ impl PartialEq for SlotData {
     fn eq(&self, other : &Self) -> bool {
         let self_empty  = (self  .id.id() == 0) || (self  .count.as_i32() == 0);
         let other_empty = (other .id.id() == 0) || (other .count.as_i32() == 0);
-        match ((self_empty, other_empty)) {
+        match (self_empty, other_empty) {
             (true, true) => true,
             (false, false) => {
                 if (self.id != other.id) { return false; }
