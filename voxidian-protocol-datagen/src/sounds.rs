@@ -30,7 +30,7 @@ pub fn make_sounds_tokens(item_entries: Vec<(String, u32)>) -> TokenStream {
     for entry in item_entries {
         let name = entry.0.replace("minecraft:", "");
         stream.extend(quote::quote! {
-            registry.insert(Identifier::vanilla_const(#name), Sound::Inline(SoundEvent { name: Identifier::vanilla_const(#name), fixed_range: None }));
+            registry.insert(Identifier::vanilla_const(#name), SoundEvent { name: Identifier::vanilla_const(#name), fixed_range: None });
         });
     }
     quote::quote! {
@@ -39,7 +39,7 @@ pub fn make_sounds_tokens(item_entries: Vec<(String, u32)>) -> TokenStream {
         impl SoundEvent {
             #[allow(dead_code)]
             #[allow(redundant_semicolons)]
-            pub fn vanilla_registry() -> Registry<Sound> {
+            pub fn vanilla_registry() -> Registry<SoundEvent> {
                 let mut registry = Registry::new();
                 #stream
                 registry
