@@ -135,18 +135,46 @@ pub struct EntityTagQueryC2SPlayPacket(TODO);
 pub struct InteractC2SPlayPacket {
     pub entity_id: VarInt,
     pub action: InteractAction,
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-    pub hand: Hand,
     pub sneaking: bool
 }
 
-#[packet_part(VarInt)]
+#[derive(Debug, Clone)]
 pub enum InteractAction {
-    Interact = 0,
-    Attack = 1,
-    InteractAt = 2
+    Interact(Hand),
+    Attack,
+    InteractAt(f32, f32, f32, Hand)
+}
+
+impl PacketEncode for InteractAction {
+    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+        match self {
+            InteractAction::Interact(hand) => {
+                buf.encode_write(VarInt::new(0))?;
+                buf.encode_write(hand)
+            },
+            InteractAction::Attack => {
+                buf.encode_write(VarInt::new(0))
+            },
+            InteractAction::InteractAt(x, y, z, hand) => {
+                buf.encode_write(VarInt::new(0))?;
+                buf.encode_write(x)?;
+                buf.encode_write(y)?;
+                buf.encode_write(z)?;
+                buf.encode_write(hand)
+            },
+        }
+    }
+}
+
+impl PacketDecode for InteractAction {
+    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+        match buf.read_decode::<VarInt>()?.as_i32() {
+            0 => Ok(InteractAction::Interact(buf.read_decode()?)),
+            1 => Ok(InteractAction::Attack),
+            2 => Ok(InteractAction::InteractAt(buf.read_decode()?, buf.read_decode()?, buf.read_decode()?, buf.read_decode()?)),
+            _ => Err(DecodeError::InvalidData("must be a varint of 0, 1, or 2".to_string()))
+        }
+    }
 }
 
 #[packet("minecraft:c2s/play/jigsaw_generate")]
