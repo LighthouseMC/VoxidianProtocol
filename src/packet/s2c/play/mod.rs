@@ -946,9 +946,14 @@ pub struct SetEntityMotionS2CPlayPacket {
     pub vel_z: u16,
 }
 
-#[packet("minecraft:s2c/play/set_equipment")]
+#[derive(Debug, Clone)]
 pub struct SetEquipmentS2CPlayPacket {
     pub entity_id: VarInt,
+    pub parts: Vec<EntityEquipmentPart>
+}
+
+#[packet_part]
+pub struct EntityEquipmentPart {
     pub slot: EquipmentSlot,
     pub item: SlotData
 }
@@ -962,6 +967,35 @@ pub enum EquipmentSlot {
     Chestplate = 4,
     Helmet = 5,
     Body = 6
+}
+
+impl PacketMeta for SetEquipmentS2CPlayPacket {
+    const PREFIX : u8 = 0x60;
+    const BOUND  : Bound = Bound::S2C;
+    const STAGE  : Stage = Stage::Play;
+}
+
+impl PacketEncode for SetEquipmentS2CPlayPacket {
+    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+        buf.encode_write(self.entity_id)?;
+        let mut count = 0;
+        for part in &self.parts {
+            count += 1;
+            let mut idx = part.slot.clone() as u8;
+            if count != self.parts.len() {
+                idx |= 0b10000000;
+            }
+            buf.encode_write(idx)?;
+            buf.encode_write(part.item.clone())?;
+        }
+        Ok(())
+    }
+}
+
+impl PacketDecode for SetEquipmentS2CPlayPacket {
+    fn decode(_buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+        todo!()
+    }
 }
 
 #[packet("minecraft:s2c/play/set_experience")]
