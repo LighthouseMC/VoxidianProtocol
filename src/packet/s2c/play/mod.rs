@@ -947,7 +947,21 @@ pub struct SetEntityMotionS2CPlayPacket {
 }
 
 #[packet("minecraft:s2c/play/set_equipment")]
-pub struct SetEquipmentS2CPlayPacket(TODO);
+pub struct SetEquipmentS2CPlayPacket {
+    entity_id: VarInt,
+    slot: EquipmentSlot,
+    item: SlotData
+}
+
+#[packet_part(u8)]
+pub enum EquipmentSlot {
+    Mainhand = 0,
+    Offhand = 1,
+    Boots = 2,
+    Leggings = 3,
+    Chestplate = 4,
+    Helmet = 5
+}
 
 #[packet("minecraft:s2c/play/set_experience")]
 pub struct SetExperienceS2CPlayPacket {
