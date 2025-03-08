@@ -1,7 +1,7 @@
 use super::*;
 
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum RegOr<T : RegValue, U> {
     Id(RegEntry<T>),
     Or(U)

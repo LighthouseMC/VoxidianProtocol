@@ -1,4 +1,4 @@
-use crate::value::PacketEnumOrdinal;
+use crate::value::{EntityType, PacketEnumOrdinal, RegOr, SoundEvent};
 use crate::value::{Identifier, LengthPrefixVec, Nbt, PacketEncode, NbtText};
 use crate::value::PacketDecode;
 use crate::value::PacketBuf;
@@ -228,7 +228,27 @@ pub struct Enchantable {
 }
 
 #[component("minecraft:equippable")]
-pub struct Equippable(TODO);
+pub struct Equippable {
+    pub slot: EquippableSlot,
+    pub equip_sound: RegOr<SoundEvent, SoundEvent>,
+    pub model: Option<Identifier>,
+    pub camera_overlay: Option<Identifier>,
+    pub allowed_entities: Option<IdSet<EntityType>>,
+    pub dispensable: bool,
+    pub swappable: bool,
+    pub damage_on_hurt: bool,
+}
+
+#[packet_part(VarInt)]
+pub enum EquippableSlot {
+    MainHand = 0,
+    Feet = 1,
+    Legs = 2,
+    Chest = 3,
+    Head = 4,
+    Offhand = 5,
+    Body = 6
+}
 
 #[component("minecraft:repairable")]
 pub struct Repairable(TODO);
