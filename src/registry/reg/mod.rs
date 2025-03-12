@@ -1,4 +1,6 @@
 mod frozen;
+use std::collections::HashSet;
+
 pub use frozen::*;
 use indexmap::IndexMap;
 
@@ -10,13 +12,15 @@ use super::*;
 /// Represents a registry.
 pub struct Registry<T> {
     map: IndexMap<Identifier, T>,
+    tags: IndexMap<Identifier, HashSet<RegEntry<T>>>
 }
 
 impl<T> Registry<T> {
 
     pub fn new() -> Self {
         Self {
-            map: IndexMap::new()
+            map: IndexMap::new(),
+            tags: IndexMap::new(),
         }
     }
 
@@ -64,6 +68,24 @@ impl<T> Registry<T> {
         self.map.keys().zip(self.map.values())
     }
 
+    pub fn insert_tag(&mut self, tag: &Identifier, entry: &Identifier) {
+        let entry = self.get_entry(entry);
+        let tag_container = match self.tags.get_mut(&tag) {
+            Some(container) => container,
+            None => {
+                self.tags.insert(tag.clone(), HashSet::new());
+                self.tags.get_mut(&tag).unwrap()
+            }
+        };
+        if let Some(entry) = entry {
+            tag_container.insert(entry);
+        }
+        
+    }
+
+    pub fn get_tags(&self, tag: &Identifier) -> Option<&HashSet<RegEntry<T>>> {
+        self.tags.get(&tag)
+    }
 }
 
 impl<T : RegValue> Registry<T> {
@@ -105,5 +127,18 @@ mod tests {
 
         let rg = rg.freeze();
         assert_eq!(rg.get(&Identifier::new("test", "b")), Some(&20));
+    }
+
+    #[test]
+    pub fn tags() {
+        let mut rg = Registry::new();
+        rg.insert(Identifier::new("test", "a"), 1);
+        rg.insert(Identifier::new("test", "b"), 2);
+        rg.insert(Identifier::new("test", "c"), 3);
+
+        rg.insert_tag(&Identifier::new("test", "1_to_2"), &Identifier::new("test", "a"));
+        rg.insert_tag(&Identifier::new("test", "1_to_2"), &Identifier::new("test", "b"));
+
+        assert_eq!(rg.get_tags(&Identifier::new("test", "1_to_2")).unwrap().len(), 2);
     }
 }

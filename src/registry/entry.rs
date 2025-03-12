@@ -1,4 +1,5 @@
 use crate::packet::*;
+use std::hash::Hash;
 use std::marker::PhantomData;
 use std::{ fmt, any };
 
@@ -37,6 +38,11 @@ impl<T> Clone for RegEntry<T> {
         id  : self.id,
         _ph : PhantomData
     } }
+}
+impl<T> Hash for RegEntry<T> {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.id.hash(state);
+    }
 }
 impl<T> Copy for RegEntry<T> { }
 impl<T> PartialEq for RegEntry<T> {
