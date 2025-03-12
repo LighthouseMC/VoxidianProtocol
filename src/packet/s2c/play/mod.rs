@@ -1322,7 +1322,10 @@ packet_flags! { pub struct EffectFlags<u8> {
 pub struct UpdateRecipesS2CPlayPacket(TODO);
 
 #[packet("minecraft:s2c/play/update_tags")]
-pub struct UpdateTagsS2CPlayPacket(TODO);
+pub struct UpdateTagsS2CPlayPacket {
+    registry: Identifier,
+    tag_info: TagInformation
+}
 
 #[packet("minecraft:s2c/play/projectile_power")]
 pub struct ProjectilePowerS2CPlayPacket {

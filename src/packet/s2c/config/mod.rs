@@ -85,7 +85,10 @@ pub struct UpdateEnabledFeaturesS2CConfigPacket {
 
 
 #[packet( "minecraft:s2c/config/update_tags" )]
-pub struct UpdateTagsS2CConfigPacket(TODO);
+pub struct UpdateTagsS2CConfigPacket {
+    registry: Identifier,
+    tag_info: TagInformation
+}
 
 
 #[packet( "minecraft:s2c/config/select_known_packs" )]
