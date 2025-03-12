@@ -1,10 +1,40 @@
 use std::{collections::HashMap, sync::LazyLock};
 
-use crate::value::{BlockState, BlockStateWithMetadata, Identifier};
+use serde::{Deserialize, Serialize};
+
+use crate::value::{BlockState, Identifier};
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct ReportBlockState {
+    pub id: Identifier,
+    pub properties: Vec<(String, String)>,
+
+    #[serde(default = "return_false")]
+    pub default: bool
+}
+
+fn return_false() -> bool {
+    false
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct ReportBlockStateWithMetadata {
+    pub block_state: ReportBlockState,
+    pub protocol_id: i32
+}
+
+impl From<ReportBlockState> for BlockState {
+    fn from(value: ReportBlockState) -> Self {
+        BlockState {
+            id: value.id, 
+            properties: value.properties
+        }
+    }
+}
 
 pub static BLOCK_STATE_JSON: &str = include_str!("../../generated/block_states.json");
 
-pub static BLOCK_STATES: LazyLock<Vec<BlockStateWithMetadata>> = LazyLock::new(|| {
+pub static BLOCK_STATES: LazyLock<Vec<ReportBlockStateWithMetadata>> = LazyLock::new(|| {
     serde_json::from_str(BLOCK_STATE_JSON).unwrap()
 });
 
@@ -14,7 +44,7 @@ pub static ID_TO_BLOCK_STATE: LazyLock<HashMap<i32, BlockState>> = LazyLock::new
     let mut map = HashMap::new();
 
     for state in BLOCK_STATES.iter() {
-        let state2 = state.block_state.clone().sorted();
+        let state2 = BlockState::from(state.block_state.clone()).sorted();
         map.insert(state.protocol_id, state2);
     }
 
@@ -25,7 +55,7 @@ pub static BLOCK_STATE_TO_ID: LazyLock<HashMap<BlockState, i32>> = LazyLock::new
     let mut map = HashMap::new();
 
     for state in BLOCK_STATES.iter() {
-        map.insert(state.block_state.clone().sorted(), state.protocol_id);
+        map.insert(BlockState::from(state.block_state.clone()).sorted(), state.protocol_id);
     }
 
     map
@@ -35,9 +65,8 @@ pub static BLOCK_STATE_DEFAULTS: LazyLock<HashMap<Identifier, BlockState>> = Laz
     let mut map = HashMap::new();
 
     for state in BLOCK_STATES.iter() {
-        if !map.contains_key(&state.block_state.id)
-            && !state.block_state.properties.contains(&(String::from("waterlogged"), String::from("true"))) {
-            let cloned_state = state.block_state.clone();
+        if state.block_state.default {
+            let cloned_state = BlockState::from(state.block_state.clone());
             map.insert(state.block_state.id.clone(), cloned_state);
         }
     }
@@ -47,7 +76,7 @@ pub static BLOCK_STATE_DEFAULTS: LazyLock<HashMap<Identifier, BlockState>> = Laz
 
 impl BlockState {
     pub fn all_block_states() -> Vec<BlockState> {
-        BLOCK_STATES.iter().map(|state| state.block_state.clone()).collect()
+        BLOCK_STATES.iter().map(|state| BlockState::from(state.block_state.clone())).collect()
     }
 
     pub fn default_for(block_id: &Identifier) -> Option<BlockState> {
