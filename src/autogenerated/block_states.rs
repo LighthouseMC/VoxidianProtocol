@@ -6,11 +6,21 @@ use crate::value::{BlockState, Identifier};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct ReportBlockState {
+    #[serde(default = "air_id")]
     pub id: Identifier,
+    #[serde(default = "no_props")]
     pub properties: BTreeMap<String, String>,
 
     #[serde(default = "return_false")]
     pub default: bool
+}
+
+fn air_id() -> Identifier {
+    Identifier::vanilla_const("air")
+}
+
+fn no_props() -> BTreeMap<String, String> {
+    BTreeMap::new()
 }
 
 fn return_false() -> bool {

@@ -450,7 +450,7 @@ pub struct LevelParticlesS2CPlayPacket {
     pub spread_z: f32,
     pub max_speed: f32,
     pub count: u32,
-    pub particle: Particle,
+    pub particle: ParticleInstance,
 }
 
 #[packet("minecraft:s2c/play/light_update")]

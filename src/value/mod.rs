@@ -80,6 +80,8 @@ mod id_set;
 pub use id_set::*;
 mod entity_metadata;
 pub use entity_metadata::*;
+mod particle_data;
+pub use particle_data::*;
 
 pub use uuid::{Uuid, uuid};
 

@@ -17,9 +17,12 @@ impl Particle {
 }
 
 
-impl PacketEncode for Particle { fn encode(&self, _buf : &mut PacketBuf) -> Result<(), EncodeError> {
-    todo!("PacketEncode for Particle")
-} }
+impl PacketEncode for Particle { 
+    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+        buf.encode_write(&self.id)?;
+        Ok(())
+    } 
+}
 impl PacketDecode for Particle { fn decode(_buf : &mut PacketBuf) -> Result<Self, DecodeError> {
     todo!("PacketDecode for Particle")
 } }
