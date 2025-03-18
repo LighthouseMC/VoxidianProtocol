@@ -1195,6 +1195,21 @@ pub enum SoundCategory {
     Ambient = 8,
     Voice = 9,
 }
+impl SoundCategory {
+    pub fn from_index(index : usize) -> Option<Self> { match (index) {
+        0 => Some(Self::Master  ),
+        1 => Some(Self::Music   ),
+        2 => Some(Self::Records ),
+        3 => Some(Self::Weather ),
+        4 => Some(Self::Blocks  ),
+        5 => Some(Self::Hostile ),
+        6 => Some(Self::Neutral ),
+        7 => Some(Self::Player  ),
+        8 => Some(Self::Ambient ),
+        9 => Some(Self::Voice   ),
+        _ => None
+    } }
+}
 
 #[packet("minecraft:s2c/play/sound")]
 pub struct SoundS2CPlayPacket {
