@@ -96,7 +96,8 @@ impl FromClap {
         // TODO: is_subcommand_negates_reqs_set
         // TODO: is_mutlicall_set
 
-        let mut parents = vec![ root_parent ];
+        let mut parents            = vec![ root_parent ];
+        let mut parents_each_after = vec![ root_parent ];
         for positional in command.get_positionals() {
             let mut old_parents = parents.clone();
             if (positional.is_required_set()) {
@@ -113,10 +114,12 @@ impl FromClap {
                     // TODO: Repeat
                     let node = self.add_argument(&old_parents, &name, true, CommandNodeParser::Long { min : Some(0), max : None });
                     parents.push(node);
+                    parents_each_after.push(node);
                     old_parents.push(node);
                 } else {
                     let node = self.add_argument_recursive(&old_parents, &name, true, CommandNodeParser::Long { min : Some(0), max : None });
                     parents.push(node);
+                    parents_each_after.push(node);
                     old_parents.push(node);
                 }
             }
@@ -126,10 +129,12 @@ impl FromClap {
                     // TODO: Repeat
                     let node = self.add_argument(&old_parents, &name, true, CommandNodeParser::String { behaviour : StringCommandNode::QuotablePhrase });
                     parents.push(node);
+                    parents_each_after.push(node);
                     old_parents.push(node);
                 } else {
                     let node = self.add_argument(&old_parents, &name, true, CommandNodeParser::String { behaviour : StringCommandNode::GreedyPhrase });
                     parents.push(node);
+                    parents_each_after.push(node);
                     old_parents.push(node);
                 }
             }
@@ -139,10 +144,12 @@ impl FromClap {
                     // TODO: Repeat
                     let node = self.add_argument(&old_parents, &name, true, CommandNodeParser::ResourceKey { registry : Identifier::vanilla_const("item") });
                     parents.push(node);
+                    parents_each_after.push(node);
                     old_parents.push(node);
                 } else {
                     let node = self.add_argument_recursive(&old_parents, &name, true, CommandNodeParser::ResourceKey { registry : Identifier::vanilla_const("item") });
                     parents.push(node);
+                    parents_each_after.push(node);
                     old_parents.push(node);
                 }
             }
@@ -161,8 +168,10 @@ impl FromClap {
             }
         }
         if (command.has_subcommands() && ! command.is_disable_help_subcommand_set()) {
-            let help_root = self.add_literal(&[root_parent], "help", true);
-            self.add_help_command(help_root, command);
+            for parent in parents_each_after {
+                let help_root = self.add_literal(&[parent], "help", true);
+                self.add_help_command(help_root, command);
+            }
         }
     }
 
