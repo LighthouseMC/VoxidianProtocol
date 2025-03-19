@@ -80,17 +80,14 @@ impl FromClap {
 
     fn add_command(&mut self, root_parent : usize, command : &Command) {
 
-        // TODO: get_visible_aliases
         // TODO: short_flag_aliases
         // TODO: long_flag_aliases
-        // TODO: get_subcommands
         // TODO: get_groups
         // TODO: get_arguments
         // TODO: get_positionals
         // TODO: get_opts
         // TODO: get_arg_conflicts_with
         // TODO: is_disable_help_flag_set
-        // TODO: is_disable_help_subcommand_set
         // TODO: is_allow_missing_positional_set
         // TODO: is_subcommand_required_set
         // TODO: is_allow_external_subcommands_set
@@ -158,6 +155,29 @@ impl FromClap {
         for subcommand in command.get_subcommands() {
             let subcommand_node = self.add_literal(&parents, subcommand.get_name(), true);
             self.add_command(subcommand_node, subcommand);
+            for alias in subcommand.get_all_aliases() {
+                let subcommand_node = self.add_literal(&parents, alias, true);
+                self.add_command(subcommand_node, subcommand);
+            }
+        }
+        if (command.has_subcommands() && ! command.is_disable_help_subcommand_set()) {
+            let help_root = self.add_literal(&[root_parent], "help", true);
+            self.add_help_command(help_root, command);
+        }
+    }
+
+
+    fn add_help_command(&mut self, parent : usize, command : &Command) {
+        for subcommand in command.get_subcommands() {
+            let subcommand_node = self.add_literal(&[parent], subcommand.get_name(), true);
+            self.add_help_command(subcommand_node, subcommand);
+            for alias in subcommand.get_all_aliases() {
+                let subcommand_node = self.add_literal(&[parent], alias, true);
+                self.add_help_command(subcommand_node, subcommand);
+            }
+        }
+        if (command.has_subcommands() && ! command.is_disable_help_subcommand_set()) {
+            self.add_literal(&[parent], "help", true);
         }
     }
 
