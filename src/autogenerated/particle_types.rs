@@ -251,6 +251,13 @@ impl ParticleType {
             );
         registry
             .insert(
+                Identifier::vanilla_const("tinted_leaves"),
+                ParticleType {
+                    id: Identifier::vanilla_const("tinted_leaves"),
+                },
+            );
+        registry
+            .insert(
                 Identifier::vanilla_const("sculk_soul"),
                 ParticleType {
                     id: Identifier::vanilla_const("sculk_soul"),
@@ -786,6 +793,13 @@ impl ParticleType {
                 Identifier::vanilla_const("block_crumble"),
                 ParticleType {
                     id: Identifier::vanilla_const("block_crumble"),
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("firefly"),
+                ParticleType {
+                    id: Identifier::vanilla_const("firefly"),
                 },
             );
         registry

@@ -1848,6 +1848,22 @@ impl SoundEvent {
             );
         registry
             .insert(
+                Identifier::vanilla_const("block.cactus_flower.break"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.cactus_flower.break"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("block.cactus_flower.place"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.cactus_flower.place"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
                 Identifier::vanilla_const("block.cake.add_candle"),
                 SoundEvent {
                     name: Identifier::vanilla_const("block.cake.add_candle"),
@@ -3302,6 +3318,14 @@ impl SoundEvent {
             );
         registry
             .insert(
+                Identifier::vanilla_const("block.deadbush.idle"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.deadbush.idle"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
                 Identifier::vanilla_const("block.decorated_pot.break"),
                 SoundEvent {
                     name: Identifier::vanilla_const("block.decorated_pot.break"),
@@ -4309,6 +4333,14 @@ impl SoundEvent {
                 Identifier::vanilla_const("item.firecharge.use"),
                 SoundEvent {
                     name: Identifier::vanilla_const("item.firecharge.use"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("block.firefly_bush.idle"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.firefly_bush.idle"),
                     fixed_range: None,
                 },
             );
@@ -6268,6 +6300,46 @@ impl SoundEvent {
             );
         registry
             .insert(
+                Identifier::vanilla_const("block.iron.break"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.iron.break"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("block.iron.step"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.iron.step"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("block.iron.place"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.iron.place"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("block.iron.hit"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.iron.hit"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("block.iron.fall"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.iron.fall"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
                 Identifier::vanilla_const("block.iron_door.close"),
                 SoundEvent {
                     name: Identifier::vanilla_const("block.iron_door.close"),
@@ -6519,6 +6591,46 @@ impl SoundEvent {
                 Identifier::vanilla_const("block.lava.pop"),
                 SoundEvent {
                     name: Identifier::vanilla_const("block.lava.pop"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("block.leaf_litter.break"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.leaf_litter.break"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("block.leaf_litter.step"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.leaf_litter.step"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("block.leaf_litter.place"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.leaf_litter.place"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("block.leaf_litter.hit"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.leaf_litter.hit"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("block.leaf_litter.fall"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.leaf_litter.fall"),
                     fixed_range: None,
                 },
             );
@@ -9868,6 +9980,22 @@ impl SoundEvent {
             );
         registry
             .insert(
+                Identifier::vanilla_const("block.sand.idle"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.sand.idle"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("block.sand.wind"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("block.sand.wind"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
                 Identifier::vanilla_const("block.scaffolding.break"),
                 SoundEvent {
                     name: Identifier::vanilla_const("block.scaffolding.break"),
@@ -12902,6 +13030,22 @@ impl SoundEvent {
             );
         registry
             .insert(
+                Identifier::vanilla_const("entity.wolf.shake"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf.shake"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf.step"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf.step"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
                 Identifier::vanilla_const("entity.wolf.ambient"),
                 SoundEvent {
                     name: Identifier::vanilla_const("entity.wolf.ambient"),
@@ -12926,14 +13070,6 @@ impl SoundEvent {
             );
         registry
             .insert(
-                Identifier::vanilla_const("entity.wolf.howl"),
-                SoundEvent {
-                    name: Identifier::vanilla_const("entity.wolf.howl"),
-                    fixed_range: None,
-                },
-            );
-        registry
-            .insert(
                 Identifier::vanilla_const("entity.wolf.hurt"),
                 SoundEvent {
                     name: Identifier::vanilla_const("entity.wolf.hurt"),
@@ -12950,25 +13086,297 @@ impl SoundEvent {
             );
         registry
             .insert(
-                Identifier::vanilla_const("entity.wolf.shake"),
-                SoundEvent {
-                    name: Identifier::vanilla_const("entity.wolf.shake"),
-                    fixed_range: None,
-                },
-            );
-        registry
-            .insert(
-                Identifier::vanilla_const("entity.wolf.step"),
-                SoundEvent {
-                    name: Identifier::vanilla_const("entity.wolf.step"),
-                    fixed_range: None,
-                },
-            );
-        registry
-            .insert(
                 Identifier::vanilla_const("entity.wolf.whine"),
                 SoundEvent {
                     name: Identifier::vanilla_const("entity.wolf.whine"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_puglin.ambient"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_puglin.ambient"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_puglin.death"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_puglin.death"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_puglin.growl"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_puglin.growl"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_puglin.hurt"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_puglin.hurt"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_puglin.pant"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_puglin.pant"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_puglin.whine"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_puglin.whine"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_sad.ambient"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_sad.ambient"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_sad.death"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_sad.death"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_sad.growl"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_sad.growl"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_sad.hurt"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_sad.hurt"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_sad.pant"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_sad.pant"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_sad.whine"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_sad.whine"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_angry.ambient"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_angry.ambient"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_angry.death"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_angry.death"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_angry.growl"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_angry.growl"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_angry.hurt"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_angry.hurt"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_angry.pant"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_angry.pant"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_angry.whine"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_angry.whine"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_grumpy.ambient"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_grumpy.ambient"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_grumpy.death"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_grumpy.death"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_grumpy.growl"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_grumpy.growl"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_grumpy.hurt"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_grumpy.hurt"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_grumpy.pant"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_grumpy.pant"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_grumpy.whine"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_grumpy.whine"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_big.ambient"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_big.ambient"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_big.death"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_big.death"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_big.growl"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_big.growl"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_big.hurt"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_big.hurt"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_big.pant"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_big.pant"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_big.whine"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_big.whine"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_cute.ambient"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_cute.ambient"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_cute.death"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_cute.death"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_cute.growl"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_cute.growl"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_cute.hurt"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_cute.hurt"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_cute.pant"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_cute.pant"),
+                    fixed_range: None,
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("entity.wolf_cute.whine"),
+                SoundEvent {
+                    name: Identifier::vanilla_const("entity.wolf_cute.whine"),
                     fixed_range: None,
                 },
             );

@@ -1434,6 +1434,13 @@ impl Item {
             );
         registry
             .insert(
+                Identifier::vanilla_const("bush"),
+                Item {
+                    id: Identifier::vanilla_const("bush"),
+                },
+            );
+        registry
+            .insert(
                 Identifier::vanilla_const("azalea"),
                 Item {
                     id: Identifier::vanilla_const("azalea"),
@@ -1451,6 +1458,27 @@ impl Item {
                 Identifier::vanilla_const("dead_bush"),
                 Item {
                     id: Identifier::vanilla_const("dead_bush"),
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("firefly_bush"),
+                Item {
+                    id: Identifier::vanilla_const("firefly_bush"),
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("short_dry_grass"),
+                Item {
+                    id: Identifier::vanilla_const("short_dry_grass"),
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("tall_dry_grass"),
+                Item {
+                    id: Identifier::vanilla_const("tall_dry_grass"),
                 },
             );
         registry
@@ -1787,6 +1815,20 @@ impl Item {
                 Identifier::vanilla_const("pink_petals"),
                 Item {
                     id: Identifier::vanilla_const("pink_petals"),
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("wildflowers"),
+                Item {
+                    id: Identifier::vanilla_const("wildflowers"),
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("leaf_litter"),
+                Item {
+                    id: Identifier::vanilla_const("leaf_litter"),
                 },
             );
         registry
@@ -2263,6 +2305,13 @@ impl Item {
                 Identifier::vanilla_const("cactus"),
                 Item {
                     id: Identifier::vanilla_const("cactus"),
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("cactus_flower"),
+                Item {
+                    id: Identifier::vanilla_const("cactus_flower"),
                 },
             );
         registry
@@ -5781,6 +5830,20 @@ impl Item {
             );
         registry
             .insert(
+                Identifier::vanilla_const("test_block"),
+                Item {
+                    id: Identifier::vanilla_const("test_block"),
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("test_instance_block"),
+                Item {
+                    id: Identifier::vanilla_const("test_instance_block"),
+                },
+            );
+        registry
+            .insert(
                 Identifier::vanilla_const("turtle_helmet"),
                 Item {
                     id: Identifier::vanilla_const("turtle_helmet"),
@@ -6729,6 +6792,20 @@ impl Item {
                 Identifier::vanilla_const("egg"),
                 Item {
                     id: Identifier::vanilla_const("egg"),
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("blue_egg"),
+                Item {
+                    id: Identifier::vanilla_const("blue_egg"),
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("brown_egg"),
+                Item {
+                    id: Identifier::vanilla_const("brown_egg"),
                 },
             );
         registry

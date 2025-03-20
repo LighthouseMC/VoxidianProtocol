@@ -699,9 +699,16 @@ impl EntityType {
             );
         registry
             .insert(
-                Identifier::vanilla_const("potion"),
+                Identifier::vanilla_const("splash_potion"),
                 EntityType {
-                    id: Identifier::vanilla_const("potion"),
+                    id: Identifier::vanilla_const("splash_potion"),
+                },
+            );
+        registry
+            .insert(
+                Identifier::vanilla_const("lingering_potion"),
+                EntityType {
+                    id: Identifier::vanilla_const("lingering_potion"),
                 },
             );
         registry
