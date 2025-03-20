@@ -48,8 +48,6 @@ mod recipe;
 pub use recipe::*;
 mod biome;
 pub use biome::*;
-mod wolf_variant;
-pub use wolf_variant::*;
 mod painting_variant;
 pub use painting_variant::*;
 mod banner_pattern;
@@ -82,6 +80,8 @@ mod entity_metadata;
 pub use entity_metadata::*;
 mod particle_data;
 pub use particle_data::*;
+mod variants;
+pub use variants::*;
 
 pub use uuid::{Uuid, uuid};
 
