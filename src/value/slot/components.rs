@@ -11,49 +11,48 @@ use crate::mojang::auth_verify::MojAuthProperty;
 use super::{AttributeType, Block, Either, IdSet, RegEntry, SlotData};
 use voxidian_protocol_macros::{component, component_enum, packet_part};
 
-
 #[component("minecraft:custom_data")]
-pub struct CustomData {
+pub struct CustomDataComp {
     pub data : Nbt
 }
 
 #[component("minecraft:max_stack_size")]
-pub struct MaxStackSize {
+pub struct MaxStackSizeComp {
     pub amount : VarInt
 }
 
 #[component("minecraft:max_damage")]
-pub struct MaxDamage {
+pub struct MaxDamageComp {
     pub amount : VarInt
 }
 
 #[component("minecraft:unbreakable")]
-pub struct Unbreakable {
+pub struct UnbreakableComp {
     pub show_tooltip : bool
 }
 
 #[component("minecraft:custom_name")]
-pub struct CustomName {
+pub struct CustomNameComp {
     pub name : NbtText
 }
 
 #[component("minecraft:item_name")]
-pub struct ItemName {
+pub struct ItemNameComp {
     pub name : NbtText
 }
 
 #[component("minecraft:item_model")]
-pub struct ItemModel {
+pub struct ItemModelComp {
     pub asset : Identifier
 }
 
 #[component("minecraft:lore")]
-pub struct Lore {
+pub struct LoreComp {
     pub lines : LengthPrefixVec<VarInt, NbtText>
 }
 
 #[component("minecraft:rarity")]
-pub struct Rarity {
+pub struct RarityComp {
     pub rarity : RarityLevel
 }
 #[packet_part(VarInt)]
@@ -65,18 +64,18 @@ pub enum RarityLevel {
 }
 
 #[component("minecraft:enchantments")]
-pub struct Enchantments {
+pub struct EnchantmentsComp {
     // TODO: enchantment registry data
     pub show_in_tooltip: bool
 }
 
 #[component("minecraft:can_place_on")]
-pub struct CanPlaceOn {
+pub struct CanPlaceOnComp {
     pub predicates: LengthPrefixVec<VarInt, BlockPredicate>,
     pub show_in_tooltip: bool
 }
 #[component("minecraft:can_break")]
-pub struct CanBreak {
+pub struct CanBreakComp {
     pub predicates: LengthPrefixVec<VarInt, BlockPredicate>,
     pub show_in_tooltip: bool
 }
@@ -97,7 +96,7 @@ pub struct BlockPredicateProperty {
 }
 
 #[component("minecraft:attribute_modifiers")]
-pub struct AttributeModifiers {
+pub struct AttributeModifiersComp {
     pub modifiers: LengthPrefixVec<VarInt, AttributeModifier>,
     pub show_in_tooltip: bool
 }
@@ -133,42 +132,36 @@ pub enum AttributeSlot {
 }
 
 #[component("minecraft:custom_model_data")]
-pub struct CustomModelData {
+pub struct CustomModelDataComp {
     // TODO: probably outdated
     pub data: VarInt
 }
 
-#[component("minecraft:hide_additional_tooltip")]
-pub struct HideAdditionalTooltip {}
-
-#[component("minecraft:hide_tooltip")]
-pub struct HideTooltip {}
-
 #[component("minecraft:repair_cost")]
-pub struct RepairCost {
+pub struct RepairCostComp {
     pub cost: VarInt
 }
 
 #[component("minecraft:creative_slot_lock")]
-pub struct CreativeSlotLock {}
+pub struct CreativeSlotLockComp {}
 
 #[component("minecraft:enchantment_glint_override")]
-pub struct EnchantmentGlintOverride {
+pub struct EnchantmentGlintOverrideComp {
     pub has_glint : bool
 }
 
 #[component("minecraft:intangible_projectile")]
-pub struct IntangibleProjectile {}
+pub struct IntangibleProjectileComp {}
 
 #[component("minecraft:food")]
-pub struct Food {
+pub struct FoodComp {
     pub food: VarInt,
     pub saturation: f32,
     pub can_always_eat: bool,
 }
 
 #[component("minecraft:consumable")]
-pub struct Consumable {
+pub struct ConsumableComp {
     pub consume_seconds: f32,
     pub animation: EatingAnimation,
     pub consume_sound: Identifier,
@@ -192,23 +185,23 @@ pub enum EatingAnimation {
 }
 
 #[component("minecraft:use_remainder")]
-pub struct UseRemainder {
+pub struct UseRemainderComp {
     pub remainder: SlotData
 }
 
 #[component("minecraft:use_cooldown")]
-pub struct UseCooldown {
+pub struct UseCooldownComp {
     pub seconds: f32,
     pub cooldown_group: Identifier
 }
 
 #[component("minecraft:damage_resistant")]
-pub struct DamageResistant {
+pub struct DamageResistantComp {
     pub damage_type_tag: String
 }
 
 #[component("minecraft:tool")]
-pub struct Tool {
+pub struct ToolComp {
     pub rules: LengthPrefixVec<VarInt, ToolRule>,
     pub default_mining_speed: f32,
     pub damage_per_block: i32
@@ -223,12 +216,12 @@ pub struct ToolRule {
 }
 
 #[component("minecraft:enchantable")]
-pub struct Enchantable {
+pub struct EnchantableComp {
     pub how_expensive: VarInt
 }
 
 #[component("minecraft:equippable")]
-pub struct Equippable {
+pub struct EquippableComp {
     pub slot: EquippableSlot,
     pub equip_sound: RegOr<SoundEvent, SoundEvent>,
     pub model: Option<Identifier>,
@@ -251,58 +244,58 @@ pub enum EquippableSlot {
 }
 
 #[component("minecraft:repairable")]
-pub struct Repairable(TODO);
+pub struct RepairableComp(TODO);
 
 #[component("minecraft:glider")]
-pub struct Glider {}
+pub struct GliderComp {}
 
 #[component("minecraft:tooltip_style")]
-pub struct TooltipStyle {
+pub struct TooltipStyleComp {
     pub style: Identifier
 }
 
 #[component("minecraft:death_protection")]
-pub struct DeathProtection(TODO);
+pub struct DeathProtectionComp(TODO);
 
 #[component("minecraft:stored_enchantments")]
-pub struct StoredEnchantments(TODO);
+pub struct StoredEnchantmentsComp(TODO);
 
 #[component("minecraft:dyed_color")]
-pub struct DyedColor {
+pub struct DyedColorComp {
     pub colour : i32,
     pub show_in_tooltip : bool
 }
 
 #[component("minecraft:map_id")]
-pub struct MapId {
+pub struct MapIdComp {
     pub id: VarInt
 }
 
 #[component("minecraft:map_decorations")]
-pub struct MapDecorations {
+pub struct MapDecorationsComp {
     pub decorations: Nbt
 }
 
 #[component("minecraft:map_post_processing")]
-pub struct MapPostProcessing(TODO);
+pub struct MapPostProcessingComp(TODO);
 
 #[component("minecraft:charged_projectiles")]
-pub struct ChargedProjectiles(TODO);
+pub struct ChargedProjectilesComp(TODO);
 
 #[component("minecraft:bundle_contents")]
-pub struct BundleContents(TODO);
+pub struct BundleContentsComp(TODO);
 
 #[component("minecraft:potion_contents")]
-pub struct PotionContents(TODO);
+pub struct PotionContentsComp(TODO);
 
 #[component("minecraft:suspicious_stew_effects")]
-pub struct SuspiciousStewEffects(TODO);
+pub struct SuspiciousStewEffectsComp(TODO);
 
 #[component("minecraft:writable_book_content")]
-pub struct WritableBookContent(TODO);
+pub struct WritableBookContentComp(TODO);
 
 #[component("minecraft:written_book_content")]
-pub struct WrittenBookContent {
+pub struct WrittenBookContentComp {
     pub title          : String,
     pub filtered_title : Option<String>,
     pub author         : String,
@@ -318,43 +311,43 @@ pub struct BookPage {
 }
 
 #[component("minecraft:trim")]
-pub struct Trim(TODO);
+pub struct TrimComp(TODO);
 
 #[component("minecraft:debug_stick_state")]
-pub struct DebugStickState(TODO);
+pub struct DebugStickStateComp(TODO);
 
 #[component("minecraft:entity_data")]
-pub struct EntityData(TODO);
+pub struct EntityDataComp(TODO);
 
 #[component("minecraft:bucket_entity_data")]
-pub struct BucketEntityData(TODO);
+pub struct BucketEntityDataComp(TODO);
 
 #[component("minecraft:block_entity_data")]
-pub struct BlockEntityData(TODO);
+pub struct BlockEntityDataComp(TODO);
 
 #[component("minecraft:instrument")]
-pub struct Instrument(TODO);
+pub struct InstrumentComp(TODO);
 
 #[component("minecraft:ominous_bottle_amplifier")]
-pub struct OminousBottleAmplifier(TODO);
+pub struct OminousBottleAmplifierComp(TODO);
 
 #[component("minecraft:jukebox_playable")]
-pub struct JukeboxPlayable(TODO);
+pub struct JukeboxPlayableComp(TODO);
 
 #[component("minecraft:recipes")]
-pub struct Recipes(TODO);
+pub struct RecipesComp(TODO);
 
 #[component("minecraft:lodestone_tracker")]
-pub struct LodestoneTracker(TODO);
+pub struct LodestoneTrackerComp(TODO);
 
 #[component("minecraft:firework_explosion")]
-pub struct FireworkExplosion(TODO);
+pub struct FireworkExplosionComp(TODO);
 
 #[component("minecraft:fireworks")]
-pub struct Fireworks(TODO);
+pub struct FireworksComp(TODO);
 
 #[component("minecraft:profile")]
-pub struct Profile {
+pub struct ProfileComp {
     pub name       : Option<String>,
     pub uuid       : Option<Uuid>,
     pub properties : LengthPrefixVec<VarInt, ProfileProperty>
@@ -377,43 +370,135 @@ impl From<MojAuthProperty> for ProfileProperty {
 }
 
 #[component("minecraft:note_block_sound")]
-pub struct NoteBlockSound(TODO);
+pub struct NoteBlockSoundComp(TODO);
 
 #[component("minecraft:banner_patterns")]
-pub struct BannerPatterns(TODO);
+pub struct BannerPatternsComp(TODO);
 
 #[component("minecraft:base_color")]
-pub struct BaseColor(TODO);
+pub struct BaseColorComp(TODO);
 
 #[component("minecraft:pot_decorations")]
-pub struct PotDecorations(TODO);
+pub struct PotDecorationsComp(TODO);
 
 #[component("minecraft:container")]
-pub struct Container {
+pub struct ContainerComp {
     pub contents: LengthPrefixVec<VarInt, SlotData>
 }
 
 #[component("minecraft:block_state")]
-pub struct BlockState {
+pub struct BlockStateComp {
     pub state: LengthPrefixVec<VarInt, (String, String)>
 }
 
 #[component("minecraft:lock")]
-pub struct Lock(TODO);
+pub struct LockComp(TODO);
 
 #[component("minecraft:bees")]
-pub struct Bees(TODO);
+pub struct BeesComp(TODO);
 
 #[component("minecraft:container_loot")]
-pub struct ContainerLoot(TODO);
+pub struct ContainerLootComp(TODO);
 
 #[component("minecraft:map_color")]
-pub struct MapColor(TODO);
+pub struct MapColorComp(TODO);
 
 #[component("minecraft:damage")]
-pub struct Damage {
+pub struct DamageComp {
     pub damage: VarInt
 }
 
+#[component("minecraft:blocks_attacks")]
+pub struct BlocksAttacksComp(TODO);
+
+#[component("minecraft:cat/variant")]
+pub struct CatVariantComp(TODO);
+
+#[component("minecraft:horse/variant")]
+pub struct HorseVariantComp(TODO);
+
+#[component("minecraft:break_sound")]
+pub struct BreakSoundComp(TODO);
+
+#[component("minecraft:fox/variant")]
+pub struct FoxVariantComp(TODO);
+
+#[component("minecraft:rabbit/variant")]
+pub struct RabbitVariantComp(TODO);
+
+#[component("minecraft:wolf/sound_variant")]
+pub struct WolfSoundVariantComp(TODO);
+
+#[component("minecraft:weapon")]
+pub struct WeaponComp(TODO);
+
+#[component("minecraft:cow/variant")]
+pub struct CowVariantComp(TODO);
+
+#[component("minecraft:provides_banner_patterns")]
+pub struct ProvidesBannerPatternsComp(TODO);
+
+#[component("minecraft:axolotl/variant")]
+pub struct AxolotlVariantComp(TODO);
+
+#[component("minecraft:salmon/size")]
+pub struct SalmonSizeComp(TODO);
+
+#[component("minecraft:parrot/variant")]
+pub struct ParrotVariantComp(TODO);
+
+#[component("minecraft:tropical_fish/base_color")]
+pub struct TropicalFishBaseColorComp(TODO);
+
+#[component("minecraft:potion_duration_scale")]
+pub struct PotionDurationScaleComp(TODO);
+
+#[component("minecraft:tropical_fish/pattern")]
+pub struct TropicalFishPatternComp(TODO);
+
+#[component("minecraft:pig/variant")]
+pub struct PigVariantComp(TODO);
+
+#[component("minecraft:tooltip_display")]
+pub struct TooltipDisplayComp(TODO);
+
+#[component("minecraft:chicken/variant")]
+pub struct ChickenVariantComp(TODO);
+
+#[component("minecraft:villager/variant")]
+pub struct VillagerVariantComp(TODO);
+
+#[component("minecraft:llama/variant")]
+pub struct LlamaVariantComp(TODO);
+
+#[component("minecraft:frog/variant")]
+pub struct FrogVariantComp(TODO);
+
+#[component("minecraft:tropical_fish/pattern_color")]
+pub struct TropicalFishPatternColorComp(TODO);
+
+#[component("minecraft:painting/variant")]
+pub struct PaintingVariantComp(TODO);
+
+#[component("minecraft:wolf/variant")]
+pub struct WolfVariantComp(TODO);
+
+#[component("minecraft:provides_trim_material")]
+pub struct ProvidesTrimMaterialComp(TODO);
+
+#[component("minecraft:shulker/color")]
+pub struct ShulkerColorComp(TODO);
+
+#[component("minecraft:wolf/collar")]
+pub struct WolfCollarComp(TODO);
+
+#[component("minecraft:mooshroom/variant")]
+pub struct MooshroomVariantComp(TODO);
+
+#[component("minecraft:cat/collar")]
+pub struct CatCollarComp(TODO);
+
+#[component("minecraft:sheep/color")]
+pub struct SheepColorComp(TODO);
 
 component_enum!();

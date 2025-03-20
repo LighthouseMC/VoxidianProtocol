@@ -28,15 +28,6 @@ pub struct AddEntityS2CPlayPacket {
     pub vel_z: i16,
 }
 
-#[packet("minecraft:s2c/play/add_experience_orb")]
-pub struct AddExperienceOrbS2CPlayPacket {
-    pub id: VarInt,
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
-    pub count: i16,
-}
-
 #[packet("minecraft:s2c/play/animate")]
 pub struct AnimateS2CPlayPacket {
     pub id: VarInt,
@@ -618,7 +609,7 @@ pub struct PlayerInfoUpdateS2CPlayPacket {
 }
 
 impl PacketMeta for PlayerInfoUpdateS2CPlayPacket {
-    const PREFIX: u8 = 0x40;
+    const PREFIX: u8 = 63;
     const BOUND: Bound = Bound::S2C;
     const STAGE: Stage = Stage::Play;
 }
@@ -970,7 +961,7 @@ pub enum EquipmentSlot {
 }
 
 impl PacketMeta for SetEquipmentS2CPlayPacket {
-    const PREFIX : u8 = 0x60;
+    const PREFIX : u8 = 95;
     const BOUND  : Bound = Bound::S2C;
     const STAGE  : Stage = Stage::Play;
 }
@@ -1342,5 +1333,8 @@ pub struct CustomReportDetailsS2CPlayPacket {
 pub struct ServerLinksS2CPlayPacket {
     pub links: LengthPrefixVec<VarInt, ServerLink>,
 }
+
+#[packet("minecraft:s2c/play/test_instance_block_status")]
+pub struct TestInstanceBlockStatusS2CPlayPacket(TODO);
 
 packet_full_decode! { S2C Play }

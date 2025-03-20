@@ -505,5 +505,9 @@ pub struct UseItemC2SPlayPacket {
     pub pitch: f32
 }
 
+#[packet("minecraft:c2s/play/test_instance_block_action")]
+pub struct TestInstanceBlockActionC2SPlayPacket(TODO);
+#[packet("minecraft:c2s/play/set_test_block")]
+pub struct SetTestBlockC2SPlayPacket(TODO);
 
 packet_full_decode!{ C2S Play }

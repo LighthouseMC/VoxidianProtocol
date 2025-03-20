@@ -52,7 +52,7 @@ pub(crate) fn component_enum_impl() -> TokenStream {
         COMPONENTS_DATA.inner.keys()
             .map(|key|
                 Ident::new(
-                    &key.replace("minecraft:", "").to_title_case().replace(" ", ""),
+                    &format!("{}Comp", &key.replace("minecraft:", "").to_title_case().replace(" ", "")),
                     Span::call_site().into()
                 )
             )
