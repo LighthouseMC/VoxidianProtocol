@@ -394,7 +394,7 @@ pub struct LevelChunkWithLightS2CPlayPacket {
     pub chunk_x: i32,
     pub chunk_z: i32,
 
-    pub heightmaps: Nbt,
+    pub heightmaps: LengthPrefixVec<VarInt, (VarInt, LengthPrefixVec<VarInt, u64>)>,
     pub data: ChunkSectionData,
 
     pub block_entities: LengthPrefixVec<VarInt, ChunkBlockEntity>,

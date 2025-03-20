@@ -48,7 +48,7 @@ mod test {
 impl PacketEncode for DataArray {
     fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
         let compressed = self.to_bit_stream();
-        VarInt::from(compressed.len()).encode(buf)?;
+        // VarInt::from(compressed.len()).encode(buf)?;
         for long in &compressed {
             buf.encode_write(*long)?;
         }
