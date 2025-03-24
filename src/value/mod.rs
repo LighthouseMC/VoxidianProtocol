@@ -82,6 +82,8 @@ mod particle_data;
 pub use particle_data::*;
 mod variants;
 pub use variants::*;
+mod raw_data_array;
+pub use raw_data_array::*;
 
 pub use uuid::{Uuid, uuid};
 
