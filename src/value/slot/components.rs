@@ -240,7 +240,8 @@ pub enum EquippableSlot {
     Chest = 3,
     Head = 4,
     Offhand = 5,
-    Body = 6
+    Body = 6,
+    Saddle = 7
 }
 
 #[component("minecraft:repairable")]

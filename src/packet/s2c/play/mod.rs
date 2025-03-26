@@ -957,7 +957,8 @@ pub enum EquipmentSlot {
     Leggings = 3,
     Chestplate = 4,
     Helmet = 5,
-    Body = 6
+    Body = 6,
+    Saddle = 7
 }
 
 impl PacketMeta for SetEquipmentS2CPlayPacket {
