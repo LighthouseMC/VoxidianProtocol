@@ -1,4 +1,4 @@
-use crate::value::{EntityType, PacketEnumOrdinal, RegOr, SoundEvent};
+use crate::value::{DamageType, EntityType, PacketEnumOrdinal, RegOr, SoundEvent};
 use crate::value::{Identifier, LengthPrefixVec, Nbt, PacketEncode, NbtText};
 use crate::value::PacketDecode;
 use crate::value::PacketBuf;
@@ -411,7 +411,32 @@ pub struct DamageComp {
 }
 
 #[component("minecraft:blocks_attacks")]
-pub struct BlocksAttacksComp(TODO);
+pub struct BlocksAttacksComp {
+    pub block_delay_seconds: f32,
+    pub disable_cooldown_scale: f32,
+    pub damage_reductions: LengthPrefixVec<VarInt, DamageReduction>,
+    pub item_damage: ItemDamageFunction,
+    pub bypassed_by: LengthPrefixVec<VarInt, RegEntry<DamageType>>,
+    pub block_sound: Option<RegOr<SoundEvent, SoundEvent>>,
+    pub disable_sound: Option<RegOr<SoundEvent, SoundEvent>>
+}
+
+#[packet_part]
+#[derive(PartialEq)]
+pub struct DamageReduction {
+    pub horizontal_blocking_angle: f32,
+    pub damage_type: Identifier,
+    pub base: f32,
+    pub factor: f32,
+}
+
+#[packet_part]
+#[derive(PartialEq)]
+pub struct ItemDamageFunction {
+    pub thresold: f32,
+    pub base: f32,
+    pub factor: f32
+}
 
 #[component("minecraft:cat/variant")]
 pub struct CatVariantComp(TODO);
