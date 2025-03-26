@@ -230,6 +230,7 @@ pub struct EquippableComp {
     pub dispensable: bool,
     pub swappable: bool,
     pub damage_on_hurt: bool,
+    pub equip_on_interact: bool
 }
 
 #[packet_part(VarInt)]
