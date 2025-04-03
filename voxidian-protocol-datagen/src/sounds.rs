@@ -1,6 +1,4 @@
-use proc_macro2::{Span, TokenStream};
-use quote::quote;
-use voxidian_protocol::value::Identifier;
+use proc_macro2::TokenStream;
 
 use crate::{format_token_stream, reports::get_reports_json};
 
@@ -15,11 +13,10 @@ pub fn make_sounds() {
 pub(crate) fn make_sounds_to_json() -> Vec<(String, u32)> {
     let mut registries = get_reports_json();
     let items = registries.map.get_mut("minecraft:sound_event").unwrap();
-    let mut vc = items.entries
+    let mut vc = items
+        .entries
         .iter()
-        .map(|(name, entry)| {
-            (name.clone(), entry.protocol_id)
-        })
+        .map(|(name, entry)| (name.clone(), entry.protocol_id))
         .collect::<Vec<_>>();
     vc.sort_by_key(|x| x.1);
     vc
