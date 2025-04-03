@@ -53,4 +53,11 @@ impl Nbt {
             root : NbtCompound::decode_packet(buf)?,
         })
     }
+    
+    pub fn write_named(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+        buf.write_u8(NbtElement::TAG_COMPOUND);
+        NbtElement::String(self.name.clone()).encode_packet(buf);
+        self.root.encode_packet(buf);
+        Ok(())
+    }
 }
