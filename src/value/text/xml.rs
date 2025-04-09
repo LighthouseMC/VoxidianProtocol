@@ -131,7 +131,7 @@ impl Text {
                         insertion = Some(value);
                     } else if (allow_interaction) && let Some(value) = name.strip_prefix("insertion:") {
                         insertion = Some(value);
-                    } else if let Some(value) = name.strip_prefix("font:") {
+                    } else if let Some(value) = name.strip_prefix("font:") { // TODO: Stringified
                         font = Some(Identifier::from(value));
                     } else if (allow_newline && (name == "newline" || name == "nl")) {
                         push_content!(of_literal, "\n");
