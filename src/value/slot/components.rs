@@ -1,7 +1,7 @@
 use crate::value::{EntityType, PacketEnumOrdinal, RegOr, SoundEvent};
 use crate::value::{Identifier, LengthPrefixVec, Nbt, PacketEncode, NbtText};
 use crate::value::PacketDecode;
-use crate::value::PacketBuf;
+use crate::value::{ PacketReader, PacketWriter };
 use crate::value::EncodeError;
 use crate::value::DecodeError;
 use crate::value::VarInt;

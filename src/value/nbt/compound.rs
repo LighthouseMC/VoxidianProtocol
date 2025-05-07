@@ -30,7 +30,7 @@ impl NbtCompound {
 impl fmt::Debug for NbtCompound { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "{:?}", self.0)
 } }
-impl NbtCompound { pub(super) fn encode_packet(&self, buf : &mut PacketBuf) {
+impl NbtCompound { pub(super) fn encode_packet(&self, buf : &mut PacketWriter) {
     for (key, value) in &self.0 {
         buf.write_u8(value.tag());
         NbtElement::String(key.clone()).encode_packet(buf);
@@ -38,7 +38,7 @@ impl NbtCompound { pub(super) fn encode_packet(&self, buf : &mut PacketBuf) {
     }
     buf.write_u8(NbtElement::TAG_END);
 } }
-impl NbtCompound { pub(super) fn decode_packet(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl NbtCompound { pub(super) fn decode_packet<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let mut compound = Self::new();
     while (buf.remaining() > 0) {
         let tag = buf.read_u8()?;

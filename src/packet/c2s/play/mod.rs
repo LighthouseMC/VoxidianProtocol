@@ -146,7 +146,7 @@ pub enum InteractAction {
 }
 
 impl PacketEncode for InteractAction {
-    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
         match self {
             InteractAction::Interact(hand) => {
                 buf.encode_write(VarInt::new(0))?;
@@ -166,8 +166,8 @@ impl PacketEncode for InteractAction {
     }
 }
 
-impl PacketDecode for InteractAction {
-    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for InteractAction {
+    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         match buf.read_decode::<VarInt>()?.as_i32() {
             0 => Ok(InteractAction::Interact(buf.read_decode()?)),
             1 => Ok(InteractAction::Attack),

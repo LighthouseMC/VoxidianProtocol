@@ -18,14 +18,14 @@ impl From<Option<VarInt>> for OptionVarInt { fn from(value : Option<VarInt>) -> 
     None        => Self::None
 } } }
 
-impl PacketEncode for OptionVarInt { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+impl PacketEncode for OptionVarInt { fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
     VarInt::from(match (self) {
         Self::Some(value) => { value.as_i32() + 1 },
         Self::None        => { 0 }
     }).encode(buf)
 } }
 
-impl PacketDecode for OptionVarInt { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for OptionVarInt { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let value_plus_1 = VarInt::decode(buf)?.as_i32();
     Ok(if (value_plus_1 == 0) {
         Self::None

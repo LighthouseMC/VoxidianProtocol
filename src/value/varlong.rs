@@ -18,12 +18,12 @@ impl From<VarLong> for i64 { fn from(val: VarLong) -> Self { val.0 } }
 impl From<usize> for VarLong { fn from(value : usize) -> Self { Self(value as i64) } }
 impl From<VarLong> for usize { fn from(val: VarLong) -> Self { val.0 as usize } }
 
-impl PacketEncode for VarLong { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+impl PacketEncode for VarLong { fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
     buf.write_u8s(&self.as_bytes());
     Ok(())
 } }
 
-impl PacketDecode for VarLong { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for VarLong { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let ((out, consumed)) = Self::decode_iter(&mut buf.iter())?;
     buf.skip(consumed);
     Ok(out)

@@ -1,6 +1,4 @@
-use proc_macro2::{Span, TokenStream};
-use quote::quote;
-use voxidian_protocol::value::Identifier;
+use proc_macro2::TokenStream;
 
 use crate::{format_token_stream, reports::get_reports_json};
 

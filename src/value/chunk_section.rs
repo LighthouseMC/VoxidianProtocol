@@ -46,7 +46,7 @@ mod test {
 }
 
 impl PacketEncode for DataArray {
-    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         let compressed = self.to_bit_stream();
         VarInt::from(compressed.len()).encode(buf)?;
         for long in &compressed {
@@ -62,19 +62,18 @@ pub struct ChunkSectionData {
 }
 
 impl PacketEncode for ChunkSectionData {
-    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
-        let mut subbuf = PacketBuf::new();
+    fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
+        let mut subbuf = PacketWriter::new();
         for element in &self.sections {
             element.encode(&mut subbuf)?;
         }
-        let vector = subbuf.iter().collect::<Vec<u8>>();
-        LengthPrefixVec::<VarInt, _>::from(vector).encode(buf)?;
+        LengthPrefixVec::<VarInt, _>::from(subbuf.into_inner()).encode(buf)?;
         Ok(())
     }
 }
 
-impl PacketDecode for ChunkSectionData {
-    fn decode(_buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for ChunkSectionData {
+    fn decode(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         unimplemented!()
     }
 }
@@ -93,7 +92,7 @@ pub struct PalettedContainer<T, const E: usize> {
 }
 
 impl<T, const E: usize> PacketEncode for PalettedContainer<T, E> {
-    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         self.bits_per_entry.encode(buf)?;
         self.format.encode(buf)?;
         self.format.to_data_array(self.bits_per_entry).encode(buf)?;
@@ -101,8 +100,8 @@ impl<T, const E: usize> PacketEncode for PalettedContainer<T, E> {
     }
 }
 
-impl<T, const E: usize> PacketDecode for PalettedContainer<T, E> {
-    fn decode(_buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l, T, const E: usize> PacketDecode<'l> for PalettedContainer<T, E> {
+    fn decode(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         unimplemented!()
     }
 }
@@ -146,7 +145,7 @@ impl<T, const E: usize> PaletteFormat<T, E> {
 }
 
 impl<T, const E: usize> PacketEncode for PaletteFormat<T, E> {
-    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         match self {
             PaletteFormat::SingleValued { entry } => {
                 VarInt::from(entry.id() as i32).encode(buf)?;
@@ -163,8 +162,8 @@ impl<T, const E: usize> PacketEncode for PaletteFormat<T, E> {
     }
 }
 
-impl<T, const E: usize> PacketDecode for PaletteFormat<T, E> {
-    fn decode(_buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l, T, const E: usize> PacketDecode<'l> for PaletteFormat<T, E> {
+    fn decode(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         unimplemented!()
     }
 }

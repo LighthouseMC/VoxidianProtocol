@@ -1,6 +1,5 @@
+use super::*;
 use std::collections::HashMap;
-
-use crate::packet::{PacketDecode, PacketEncode, RegEntry, TODO};
 
 use super::{
     BlockState, Identifier, Nbt, OptionVarInt, PaintingVariant, SlotData, TextComponent, VarInt,
@@ -31,7 +30,7 @@ impl EntityMetadata {
 }
 
 impl PacketEncode for EntityMetadata {
-    fn encode(&self, buf: &mut crate::packet::PacketBuf) -> Result<(), crate::packet::EncodeError> {
+    fn encode(&self, buf: &mut PacketWriter) -> Result<(), crate::packet::EncodeError> {
         for (entry, value) in self.inner.iter() {
             buf.write_u8(*entry);
             buf.encode_write(value)?;
@@ -51,7 +50,7 @@ macro_rules! create_metadata_entries {
         }
 
         impl PacketEncode for MetadataEntry {
-            fn encode(&self, buf: &mut crate::packet::PacketBuf) -> Result<(), crate::packet::EncodeError> {
+            fn encode(&self, buf: &mut PacketWriter) -> Result<(), crate::packet::EncodeError> {
                 match self {
                     $(
                         MetadataEntry::$name( value ) => {
@@ -67,14 +66,14 @@ macro_rules! create_metadata_entries {
     };
 }
 
-impl PacketDecode for MetadataEntry {
-    fn decode(_buf: &mut crate::packet::PacketBuf) -> Result<Self, crate::packet::DecodeError> {
+impl<'l> PacketDecode<'l> for MetadataEntry {
+    fn decode(_buf: &mut PacketReader<'l>) -> Result<Self, crate::packet::DecodeError> {
         todo!()
     }
 }
 
-impl PacketDecode for EntityMetadata {
-    fn decode(_buf: &mut crate::packet::PacketBuf) -> Result<Self, crate::packet::DecodeError> {
+impl<'l> PacketDecode<'l> for EntityMetadata {
+    fn decode(_buf: &mut PacketReader<'l>) -> Result<Self, crate::packet::DecodeError> {
         todo!()
     }
 }

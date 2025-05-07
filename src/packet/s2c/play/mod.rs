@@ -624,7 +624,7 @@ impl PacketMeta for PlayerInfoUpdateS2CPlayPacket {
 }
 
 impl PacketEncode for PlayerInfoUpdateS2CPlayPacket {
-    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
         let mut value = 0u8;
 
         if let Some(first) = self.actions.first() {
@@ -646,8 +646,8 @@ impl PacketEncode for PlayerInfoUpdateS2CPlayPacket {
     }
 }
 
-impl PacketDecode for PlayerInfoUpdateS2CPlayPacket {
-    fn decode(_buf: &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for PlayerInfoUpdateS2CPlayPacket {
+    fn decode(_buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         todo!();
     }
 }
@@ -681,7 +681,7 @@ impl PlayerActionEntry {
 }
 
 impl PacketEncode for PlayerActionEntry {
-    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
         match self {
             PlayerActionEntry::AddPlayer { name, props } => {
                 buf.encode_write(name)?;
@@ -976,7 +976,7 @@ impl PacketMeta for SetEquipmentS2CPlayPacket {
 }
 
 impl PacketEncode for SetEquipmentS2CPlayPacket {
-    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
         buf.encode_write(self.entity_id)?;
         let mut count = 0;
         for part in &self.parts {
@@ -992,8 +992,8 @@ impl PacketEncode for SetEquipmentS2CPlayPacket {
     }
 }
 
-impl PacketDecode for SetEquipmentS2CPlayPacket {
-    fn decode(_buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for SetEquipmentS2CPlayPacket {
+    fn decode(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         todo!()
     }
 }

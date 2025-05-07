@@ -112,8 +112,8 @@ pub(crate) fn packet_impl(attr : TokenStream, item : TokenStream) -> TokenStream
                     const BOUND  : Bound = Bound::#bound_ident;
                     const STAGE  : Stage = Stage::#stage_ident;
                 }
-                impl PacketEncode for #ident { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> { #encode Ok(()) } }
-                impl PacketDecode for #ident { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> { Ok(Self #decode) } }
+                impl PacketEncode for #ident { fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> { #encode Ok(()) } }
+                impl<'l> PacketDecode<'l> for #ident { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> { Ok(Self #decode) } }
             }).into()
 
 

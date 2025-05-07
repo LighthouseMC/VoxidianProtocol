@@ -15,13 +15,13 @@ impl fmt::Debug for Vec3d { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::R
 } }
 
 
-impl PacketEncode for Vec3d { fn encode(&self, buf : &mut super::PacketBuf) -> Result<(), super::EncodeError> {
+impl PacketEncode for Vec3d { fn encode(&self, buf : &mut PacketWriter) -> Result<(), super::EncodeError> {
     buf.encode_write(self.x)?;
     buf.encode_write(self.y)?;
     buf.encode_write(self.z)?;
     Ok(())
 } }
-impl PacketDecode for Vec3d { fn decode(buf : &mut super::PacketBuf) -> Result<Self, super::DecodeError> {
+impl<'l> PacketDecode<'l> for Vec3d { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, super::DecodeError> {
     Ok(Self {
         x : buf.read_decode::<f64>()?,
         y : buf.read_decode::<f64>()?,

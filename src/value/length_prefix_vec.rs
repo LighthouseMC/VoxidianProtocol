@@ -40,7 +40,7 @@ impl<Idx : From<usize> + Into<usize>, T> DerefMut for LengthPrefixVec<Idx, T> {
 }
 
 impl<Idx : From<usize> + Into<usize> + PacketEncode, T : PacketEncode> PacketEncode for LengthPrefixVec<Idx, T> {
-    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         buf.encode_write(Idx::from(self.inner.len()))?;
         for item in &self.inner {
             buf.encode_write(item)?;
@@ -48,8 +48,8 @@ impl<Idx : From<usize> + Into<usize> + PacketEncode, T : PacketEncode> PacketEnc
         Ok(())
     }
 }
-impl<Idx : From<usize> + Into<usize> + PacketDecode, T : PacketDecode> PacketDecode for LengthPrefixVec<Idx, T> {
-    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l, Idx : From<usize> + Into<usize> + PacketDecode<'l>, T : PacketDecode<'l>> PacketDecode<'l> for LengthPrefixVec<Idx, T> {
+    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let len = buf.read_decode::<Idx>()?.into();
         let mut items = Vec::new();
         for _ in 0..len {

@@ -8,7 +8,7 @@ pub enum Sound {
 }
 
 impl PacketEncode for Sound {
-    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         match (self) {
             Sound::Registry(entry) => {
                 buf.encode_write(VarInt::from((entry.id() as i32) + 1))?;
@@ -21,8 +21,8 @@ impl PacketEncode for Sound {
         Ok(())
     }
 }
-impl PacketDecode for Sound {
-    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for Sound {
+    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let id = buf.read_decode::<VarInt>()?.as_i32() as u32;
         if (id == 0) {
             Ok(Self::Inline(buf.read_decode::<SoundEvent>()?))

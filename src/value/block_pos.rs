@@ -15,7 +15,7 @@ impl fmt::Debug for BlockPos { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt
 } }
 
 
-impl PacketEncode for BlockPos { fn encode(&self, buf : &mut super::PacketBuf) -> Result<(), super::EncodeError> {
+impl PacketEncode for BlockPos { fn encode(&self, buf : &mut PacketWriter) -> Result<(), super::EncodeError> {
     buf.encode_write(
         (((self.x as i64) & 0x3ffffff) << 38)
         | (((self.z as i64) & 0x3fffff) << 12)
@@ -23,7 +23,7 @@ impl PacketEncode for BlockPos { fn encode(&self, buf : &mut super::PacketBuf) -
     )?;
     Ok(())
 } }
-impl PacketDecode for BlockPos { fn decode(buf : &mut super::PacketBuf) -> Result<Self, super::DecodeError> {
+impl<'l> PacketDecode<'l> for BlockPos { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, super::DecodeError> {
     let long = buf.read_decode::<u64>()?;
     Ok(Self {
         x : (long >> 38) as i32,

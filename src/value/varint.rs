@@ -22,12 +22,12 @@ impl From<VarInt> for i32 { fn from(val: VarInt) -> Self { val.0 } }
 impl From<usize> for VarInt { fn from(value : usize) -> Self { Self(value as i32) } }
 impl From<VarInt> for usize { fn from(val: VarInt) -> Self { val.0 as usize } }
 
-impl PacketEncode for VarInt { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+impl PacketEncode for VarInt { fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
     buf.write_u8s(&self.as_bytes());
     Ok(())
 } }
 
-impl PacketDecode for VarInt { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for VarInt { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let ((out, consumed)) = Self::decode_iter(&mut buf.iter())?;
     buf.skip(consumed);
     Ok(out)
@@ -80,6 +80,19 @@ impl VarInt {
 #[cfg(test)]
 mod tests {
     use crate::value::VarInt;
+
+    #[test]
+    fn varint_decode_iter() {
+        let data = [
+            16, 0, 129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1, 1, 0,
+        ];
+        //          ^Packet length
+        let Ok((len, consumed)) = VarInt::decode_iter(&mut data.into_iter()) else {
+            panic!("decode_iter was not a success");
+        };
+        assert_eq!(len.as_i32(), 16);
+        assert_eq!(consumed, 1);
+    }
 
     #[test]
     pub fn test_negative_varints() {

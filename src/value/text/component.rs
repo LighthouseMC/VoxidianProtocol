@@ -162,7 +162,7 @@ impl fmt::Display for TextComponent { fn fmt(&self, f : &mut fmt::Formatter<'_>)
 } }
 
 impl PacketEncode for TextComponent {
-    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
         let nbt = Nbt {
             root: self.to_nbt(),
             ..Default::default()
@@ -172,8 +172,8 @@ impl PacketEncode for TextComponent {
     }
 }
 
-impl PacketDecode for TextComponent {
-    fn decode(_buf: &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for TextComponent {
+    fn decode(_buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         todo!()
     }
 }

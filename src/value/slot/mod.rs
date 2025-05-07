@@ -25,7 +25,7 @@ impl SlotData {
 
 impl PacketEncode for SlotData {
 
-    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
         buf.encode_write(self.count)?;
         if (self.count.as_i32() <= 0) {
             return Ok(());
@@ -48,8 +48,8 @@ impl PacketEncode for SlotData {
     }
 }
 
-impl PacketDecode for SlotData {
-    fn decode(buf: &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for SlotData {
+    fn decode(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let item_count = buf.read_decode::<VarInt>()?;
         if item_count.as_i32() == 0 {
             return Ok(SlotData {
@@ -108,6 +108,6 @@ impl PartialEq for SlotData {
 }
 impl Eq for SlotData {}
 
-pub trait ComponentData: PacketEncode + PacketDecode {
+pub trait ComponentData : PacketEncode + PacketDecode<'static> {
     const ID: u32;
 }

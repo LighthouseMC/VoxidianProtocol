@@ -35,15 +35,15 @@ impl<T> DerefMut for ConsumeAllVec<T> {
 }
 
 impl<T : PacketEncode> PacketEncode for ConsumeAllVec<T> {
-    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         for item in &self.inner {
             buf.encode_write(item)?;
         }
         Ok(())
     }
 }
-impl<T : PacketDecode> PacketDecode for ConsumeAllVec<T> {
-    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l, T : PacketDecode<'l>> PacketDecode<'l> for ConsumeAllVec<T> {
+    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let mut items = Vec::new();
         loop { match (buf.read_decode::<T>()) {
             Ok(item) => { items.push(item); },

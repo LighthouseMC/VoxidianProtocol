@@ -41,7 +41,7 @@ impl<Idx : From<usize> + Into<usize>, K : Eq + Hash, V> DerefMut for LengthPrefi
 }
 
 impl<Idx : From<usize> + Into<usize> + PacketEncode, K : Eq + Hash + PacketEncode, V : PacketEncode> PacketEncode for LengthPrefixHashMap<Idx, K, V> {
-    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         buf.encode_write(Idx::from(self.inner.len()))?;
         for (key, value) in &self.inner {
             buf.encode_write(key)?;
@@ -50,8 +50,8 @@ impl<Idx : From<usize> + Into<usize> + PacketEncode, K : Eq + Hash + PacketEncod
         Ok(())
     }
 }
-impl<Idx : From<usize> + Into<usize> + PacketDecode, K : Eq + Hash + PacketDecode, V : PacketDecode> PacketDecode for LengthPrefixHashMap<Idx, K, V> {
-    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l, Idx : From<usize> + Into<usize> + PacketDecode<'l>, K : Eq + Hash + PacketDecode<'l>, V : PacketDecode<'l>> PacketDecode<'l> for LengthPrefixHashMap<Idx, K, V> {
+    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let len = buf.read_decode::<Idx>()?.into();
         let mut items = HashMap::new();
         for _ in 0..len {

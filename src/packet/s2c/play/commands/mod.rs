@@ -20,7 +20,7 @@ pub struct CommandNode {
     pub redirect_index : Option<VarInt>
 }
 impl PacketEncode for CommandNode {
-    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
 
         let mut flags = 0b00000000;
         if let CommandNodeKind::Literal { .. } = self.kind { flags |= 0b00000001; }
@@ -53,8 +53,8 @@ impl PacketEncode for CommandNode {
         Ok(())
     }
 }
-impl PacketDecode for CommandNode {
-    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for CommandNode {
+    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
 
         let flags = buf.read_u8()?;
 
@@ -181,7 +181,7 @@ pub enum CommandNodeParser {
     Uuid
 }
 impl PacketEncode for CommandNodeParser {
-    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         match (self) {
             Self::Bool => buf.encode_write(VarInt::from(0)),
             Self::Float { min, max } => {
@@ -309,8 +309,8 @@ impl PacketEncode for CommandNodeParser {
         }
     }
 }
-impl PacketDecode for CommandNodeParser {
-    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for CommandNodeParser {
+    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         match (buf.read_decode::<VarInt>()?.as_i32()) {
             0 => Ok(Self::Bool),
             1 => {

@@ -1,13 +1,13 @@
-use super::{DecodeError, EncodeError, Identifier, PacketBuf, PacketDecode, PacketEncode, RegEntry, RegValue, VarInt};
+use super::*;
 
 #[derive(Clone, Debug)]
-pub enum IdSet<T: RegValue + PacketEncode + PacketDecode> {
+pub enum IdSet<T: RegValue + PacketEncode + PacketDecode<'static>> {
     Tag(Identifier),
     Ids(Vec<RegEntry<T>>)
 }
 
-impl<T: RegValue + PacketEncode + PacketDecode> PacketEncode for IdSet<T> {
-    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+impl<T: RegValue + PacketEncode + PacketDecode<'static>> PacketEncode for IdSet<T> {
+    fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
         match self {
             IdSet::Tag(tag) => {
                 buf.encode_write::<VarInt>(VarInt::from(0))?;
@@ -24,8 +24,8 @@ impl<T: RegValue + PacketEncode + PacketDecode> PacketEncode for IdSet<T> {
     }
 }
 
-impl<T: RegValue + PacketEncode + PacketDecode> PacketDecode for IdSet<T> {
-    fn decode(buf: &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l, T: RegValue + PacketEncode + PacketDecode<'static>> PacketDecode<'l> for IdSet<T> {
+    fn decode(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let amount = buf.read_decode::<VarInt>()?;
         if amount.as_i32() == 0 {
             let tag = Identifier::decode(buf)?;
@@ -41,7 +41,7 @@ impl<T: RegValue + PacketEncode + PacketDecode> PacketDecode for IdSet<T> {
     }
 }
 
-impl<T: RegValue + PacketEncode + PacketDecode> PartialEq for IdSet<T> {
+impl<T: RegValue + PacketEncode + PacketDecode<'static>> PartialEq for IdSet<T> {
     fn eq(&self, other : &Self) -> bool {
         match (self, other) {
             (IdSet::Tag(id0), IdSet::Tag(id1)) => id0 == id1,

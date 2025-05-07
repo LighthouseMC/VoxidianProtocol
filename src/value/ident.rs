@@ -54,10 +54,10 @@ impl<'l> Deser<'l> for Identifier {
 }
 
 
-impl PacketEncode for Identifier { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+impl PacketEncode for Identifier { fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
     buf.encode_write(self.to_string())
 } }
-impl PacketDecode for Identifier { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for Identifier { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     Ok(Self::from(buf.read_decode::<String>()?))
 } }
 

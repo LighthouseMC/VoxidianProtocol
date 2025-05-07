@@ -47,12 +47,12 @@ impl NbtElement {
         NbtElement::LArray   (_) => Self::TAG_LARRAY,
     } }
 }
-impl PacketEncode for NbtElement { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+impl PacketEncode for NbtElement { fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
     buf.write_u8(self.tag());
     self.encode_packet(buf);
     Ok(())
 } }
-impl NbtElement { pub(super) fn encode_packet(&self, buf : &mut PacketBuf) { match (self) {
+impl NbtElement { pub(super) fn encode_packet(&self, buf : &mut PacketWriter) { match (self) {
     Self::Byte   (value) => { buf.write_u8(*value as u8); },
     Self::Short  (value) => { let _ = buf.encode_write(value); },
     Self::Int    (value) => { let _ = buf.encode_write(value); },
@@ -83,13 +83,13 @@ impl NbtElement { pub(super) fn encode_packet(&self, buf : &mut PacketBuf) { mat
         for long in values { let _ = buf.encode_write(*long); }
     }
 } } }
-impl PacketDecode for NbtElement { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for NbtElement { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let tag = buf.read_u8()?;
     Self::decode_packet(buf, tag)
 } }
 impl NbtElement {
 
-    pub(super) fn decode_packet(buf : &mut PacketBuf, tag : u8) -> Result<Self, DecodeError> { match (tag) {
+    pub(super) fn decode_packet<'l>(buf : &mut PacketReader<'l>, tag : u8) -> Result<Self, DecodeError> { match (tag) {
         Self::TAG_BYTE   => Ok(Self::Byte   (buf.read_u8()? as i8)),
         Self::TAG_SHORT  => Ok(Self::Short  (buf.read_decode()?)),
         Self::TAG_INT    => Ok(Self::Int    (buf.read_decode()?)),
@@ -126,7 +126,7 @@ impl NbtElement {
         tag => Err(DecodeError::InvalidData(format!("Unknown nbt tag `{}`", tag)))
     } }
 
-    pub(super) fn decode_string(buf : &mut PacketBuf) -> Result<String, DecodeError> {
+    pub(super) fn decode_string<'l>(buf : &mut PacketReader<'l>) -> Result<String, DecodeError> {
         let     len   = buf.read_decode::<u16>()? as usize;
         let mut bytes = Vec::with_capacity(len);
         for _ in 0..len { bytes.push(buf.read_u8()?); }

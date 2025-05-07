@@ -1,6 +1,4 @@
-use crate::packet::{EncodeError, PacketBuf, PacketDecode, PacketEncode, RegEntry};
-
-use super::{BlockPos, BlockState, Colour, ParticleType, SlotData, VarInt};
+use super::*;
 
 #[derive(Debug, Clone)]
 pub struct ParticleInstance {
@@ -9,14 +7,14 @@ pub struct ParticleInstance {
 }
 
 impl PacketEncode for ParticleInstance {
-    fn encode(&self, buf: &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
         buf.encode_write(&self.base)?;
         buf.encode_write(&self.data)
     }
 }
 
-impl PacketDecode for ParticleInstance {
-    fn decode(_buf: &mut PacketBuf) -> Result<Self, crate::packet::DecodeError> {
+impl<'l> PacketDecode<'l> for ParticleInstance {
+    fn decode(_buf: &mut PacketReader<'l>) -> Result<Self, crate::packet::DecodeError> {
         todo!()
     }
 }
@@ -53,7 +51,7 @@ pub enum ParticleData {
 }
 
 impl PacketEncode for ParticleData {
-    fn encode(&self, buf: &mut crate::packet::PacketBuf) -> Result<(), crate::packet::EncodeError> {
+    fn encode(&self, buf: &mut PacketWriter) -> Result<(), crate::packet::EncodeError> {
         match self {
             ParticleData::None => {}
             ParticleData::Block(reg_entry) => {
@@ -103,7 +101,7 @@ pub enum VibrationPositionSource {
 }
 
 impl PacketEncode for VibrationPositionSource {
-    fn encode(&self, buf: &mut crate::packet::PacketBuf) -> Result<(), crate::packet::EncodeError> {
+    fn encode(&self, buf: &mut PacketWriter) -> Result<(), crate::packet::EncodeError> {
         match self {
             VibrationPositionSource::BlockPosition(block_pos) => {
                 buf.write_u8(0);

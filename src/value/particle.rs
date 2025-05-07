@@ -17,12 +17,12 @@ impl Particle {
 }
 
 
-impl PacketEncode for Particle { 
-    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+impl PacketEncode for Particle {
+    fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         buf.encode_write(&self.id)?;
         Ok(())
-    } 
+    }
 }
-impl PacketDecode for Particle { fn decode(_buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for Particle { fn decode(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     todo!("PacketDecode for Particle")
 } }

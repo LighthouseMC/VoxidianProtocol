@@ -1,7 +1,9 @@
 mod codec;
 pub use codec::*;
-mod buffer;
-pub use buffer::*;
+mod writer;
+pub use writer::*;
+mod reader;
+pub use reader::*;
 mod meta;
 pub use meta::*;
 pub mod processing;
@@ -23,10 +25,10 @@ pub(crate) use uuid::Uuid;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TODO(());
-impl PacketEncode for TODO { #[track_caller] fn encode(&self, _ : &mut PacketBuf) -> Result<(), EncodeError> {
+impl PacketEncode for TODO { #[track_caller] fn encode(&self, _ : &mut PacketWriter) -> Result<(), EncodeError> {
     todo!("Packet field TODO");
 } }
-impl PacketDecode for TODO { #[track_caller] fn decode(_ : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for TODO { #[track_caller] fn decode(_ : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     todo!("Packet field TODO");
 } }
 
@@ -41,7 +43,7 @@ pub(crate) macro packet_flags(
     $vis struct $ident { $(
         $fieldvis $fieldident : bool
     ),* }
-    impl PacketEncode for $ident { fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    impl PacketEncode for $ident { fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         <$type as PacketEncode>::encode(
             &($(
                 (if (self.$fieldident) { $bitmask } else { 0b00000000 })
@@ -50,7 +52,7 @@ pub(crate) macro packet_flags(
         )?;
         Ok(())
     } }
-    impl PacketDecode for $ident { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+    impl<'l> PacketDecode<'l> for $ident { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let bits = <$type as PacketDecode>::decode(buf)?;
         Ok(Self { $(
             $fieldident : (bits & $bitmask) != 0
@@ -61,7 +63,7 @@ pub(crate) macro packet_flags(
 #[cfg(test)]
 mod tests {
     use crate::packet::codec::{PacketEncode, PacketDecode};
-    use super::{packet_flags, PacketBuf};
+    use super::{packet_flags, PacketWriter, PacketReader};
 
 
     packet_flags! {
@@ -87,8 +89,9 @@ mod tests {
             b: false,
             c: true
         };
-        let mut buf = PacketBuf::new();
+        let mut buf = PacketWriter::new();
         flags.encode(&mut buf).unwrap();
+        let mut buf = PacketReader::from(buf);
         let new_flags = FlagsWithU8::decode(&mut buf).unwrap();
         assert_eq!(flags, new_flags);
     }
@@ -100,8 +103,9 @@ mod tests {
             b: false,
             c: true
         };
-        let mut buf = PacketBuf::new();
+        let mut buf = PacketWriter::new();
         flags.encode(&mut buf).unwrap();
+        let mut buf = PacketReader::from(buf);
         let new_flags = FlagsWithI32::decode(&mut buf).unwrap();
         assert_eq!(flags, new_flags);
     }

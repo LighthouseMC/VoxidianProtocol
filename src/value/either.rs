@@ -8,7 +8,7 @@ pub enum Either<A, B> {
 }
 
 impl<A : PacketEncode, B : PacketEncode> PacketEncode for Either<A, B> {
-    fn encode(&self, buf : &mut PacketBuf) -> Result<(), EncodeError> {
+    fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         match (self) {
             Self::True(value) => {
                 buf.write_u8(1);
@@ -21,8 +21,8 @@ impl<A : PacketEncode, B : PacketEncode> PacketEncode for Either<A, B> {
         }
     }
 }
-impl<A : PacketDecode, B : PacketDecode> PacketDecode for Either<A, B> {
-    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l, A : PacketDecode<'l>, B : PacketDecode<'l>> PacketDecode<'l> for Either<A, B> {
+    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let is_true = buf.read_u8()? != 0;
         Ok(if (is_true) {
             Self::True(buf.read_decode::<A>()?)

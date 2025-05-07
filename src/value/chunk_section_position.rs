@@ -13,7 +13,7 @@ impl ChunkSectionPosition {
 } }
 
 
-impl PacketEncode for ChunkSectionPosition { fn encode(&self, buf : &mut super::PacketBuf) -> Result<(), super::EncodeError> {
+impl PacketEncode for ChunkSectionPosition { fn encode(&self, buf : &mut PacketWriter) -> Result<(), super::EncodeError> {
     buf.encode_write(
         (((self.x as i64) & 0x3fffff) << 42)
         | (((self.z as i64) & 0x3ffff) << 20)
@@ -21,7 +21,7 @@ impl PacketEncode for ChunkSectionPosition { fn encode(&self, buf : &mut super::
     )?;
     Ok(())
 } }
-impl PacketDecode for ChunkSectionPosition { fn decode(buf : &mut super::PacketBuf) -> Result<Self, super::DecodeError> {
+impl<'l> PacketDecode<'l> for ChunkSectionPosition { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, super::DecodeError> {
     let long = buf.read_decode::<u64>()?;
     Ok(Self {
         x : (long >> 42) as i32,

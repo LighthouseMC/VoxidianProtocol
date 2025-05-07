@@ -81,13 +81,11 @@ impl SecretCipher {
         de  : Crypter::new(Cipher::aes_128_cfb8(), Mode::Decrypt, key_iv, Some(key_iv)).unwrap()
     })) }
 
-    pub fn encrypt(&mut self, plaindata : PacketBuf) -> PacketBuf {
+    pub fn encrypt(&mut self, plaindata : PacketWriter) -> PacketWriter {
         if let Some(SecretCipherInner { en, .. }) = &mut self.0 {
-            let mut cipherdata = vec![0; plaindata.remaining()];
+            let mut cipherdata = vec![0; plaindata.len()];
             en.update(plaindata.as_slice(), &mut cipherdata).unwrap();
-            let mut out = PacketBuf::new();
-            out.write_u8s(&cipherdata);
-            out
+            PacketWriter::from(cipherdata)
         } else {
             plaindata
         }
@@ -103,13 +101,11 @@ impl SecretCipher {
         }
     }
 
-    pub fn decrypt(&mut self, cipherdata : PacketBuf) -> Result<PacketBuf, DecodeError> {
+    pub fn decrypt<'l>(&mut self, cipherdata : PacketReader<'l>) -> Result<PacketReader<'l>, DecodeError> {
         if let Some(SecretCipherInner { de, .. }) = &mut self.0 {
             let mut plaindata = vec![0; cipherdata.remaining()];
             de.update(cipherdata.as_slice(), &mut plaindata).map_err(|_| DecodeError::InvalidData("Encrypted cipherdata is not valid".to_string()))?;
-            let mut out = PacketBuf::new();
-            out.write_u8s(&plaindata);
-            Ok(out)
+            Ok(PacketReader::from(plaindata))
         } else {
             Ok(cipherdata)
         }

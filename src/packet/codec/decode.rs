@@ -2,8 +2,8 @@ use super::*;
 use std::mem::MaybeUninit;
 
 
-pub trait PacketDecode : Sized {
-    fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError>;
+pub trait PacketDecode<'l> : Sized {
+    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError>;
 }
 
 
@@ -41,47 +41,65 @@ impl fmt::Display for DecodeError {
 
 
 macro packet_decode_num( $($types:ty),* $(,)? ) { $(
-    impl PacketDecode for $types { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+    impl<'l> PacketDecode<'l> for $types { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         Ok(<$types>::from_be_bytes(buf.read_u8s_const()?))
     } }
 )* }
 packet_decode_num!(u8, i8, u16, i16, u32, i32, u64, i64, f32, f64);
 
-impl PacketDecode for bool { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for bool { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     Ok(buf.read_u8()? != 0)
 } }
 
-impl PacketDecode for Uuid { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for Uuid { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let msb = buf.read_decode::<u64>()?;
     let lsb = buf.read_decode::<u64>()?;
     Ok(Self::from_u64_pair(msb, lsb))
 } }
 
-impl PacketDecode for String { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l> PacketDecode<'l> for String { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let len = buf.read_decode::<VarInt>()?.as_i32() as usize;
     String::from_utf8(buf.read_u8s(len)?).map_err(|_| DecodeError::InvalidData("String data is not valid UTF8".to_string()))
 } }
 
-impl<T : PacketDecode> PacketDecode for Option<T> { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l, T : PacketDecode<'l>> PacketDecode<'l> for Option<T> { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let is_some = buf.read_u8()? != 0;
     Ok(if (is_some) { Some(buf.read_decode::<T>()?) } else { None })
 } }
 
-impl<T : PacketDecode, const LEN : usize> PacketDecode for [T; LEN] { fn decode(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l, T : PacketDecode<'l>, const LEN : usize> PacketDecode<'l> for [T; LEN] { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let mut out: [MaybeUninit<T>; LEN] = unsafe{ MaybeUninit::uninit().assume_init() };
     for item in &mut out { *item = MaybeUninit::new(buf.read_decode::<T>()?); }
     Ok(unsafe { std::mem::transmute_copy(&out) })
 } }
 
-
-
-pub trait PrefixedPacketDecode : Sized {
-    /// This includes the packet ID and packet data, but **does not include the full packet length**.
-    fn decode_prefixed(buf : &mut PacketBuf) -> Result<Self, DecodeError>;
+impl<'l, A: PacketDecode<'l>, B: PacketDecode<'l>> PacketDecode<'l> for (A, B) {
+    fn decode(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+        Ok((A::decode(buf)?, B::decode(buf)?))
+    }
 }
 
-impl<T : PacketDecode + PacketMeta> PrefixedPacketDecode for T {
-    fn decode_prefixed(buf : &mut PacketBuf) -> Result<Self, DecodeError> {
+impl<'l, A: PacketDecode<'l>, B: PacketDecode<'l>, C: PacketDecode<'l>> PacketDecode<'l> for (A, B, C) {
+    fn decode(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+        Ok((A::decode(buf)?, B::decode(buf)?, C::decode(buf)?))
+    }
+}
+
+impl<'l, A: PacketDecode<'l>, B: PacketDecode<'l>, C: PacketDecode<'l>, D: PacketDecode<'l>> PacketDecode<'l> for (A, B, C, D) {
+    fn decode(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+        Ok((A::decode(buf)?, B::decode(buf)?, C::decode(buf)?, D::decode(buf)?))
+    }
+}
+
+
+
+pub trait PrefixedPacketDecode<'l> : Sized {
+    /// This includes the packet ID and packet data, but **does not include the full packet length**.
+    fn decode_prefixed(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError>;
+}
+
+impl<'l, T : PacketDecode<'l> + PacketMeta> PrefixedPacketDecode<'l> for T {
+    fn decode_prefixed(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let packet_id = buf.read_decode::<VarInt>()?.as_i32() as u8;
         if (packet_id != Self::PREFIX) {
             return Err(DecodeError::UnknownPacketPrefix(packet_id));
@@ -110,7 +128,7 @@ mod tests {
         //          |   |-----------------------------------------------------------------'
         //          |   ^Handshake packet
         //          ^Packet length
-        let Ok((mut packetbuf, consumed)) = PacketBuf::from_raw_queue(data.into_iter()) else { panic!("from_raw_queue was not a success") };
+        let Ok((mut packetbuf, consumed)) = PacketReader::from_raw_queue(data.into_iter()) else { panic!("from_raw_queue was not a success") };
         assert_eq!(packetbuf.as_slice(), [0, 129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1]);
         assert_eq!(consumed, 17);
 
