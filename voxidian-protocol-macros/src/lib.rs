@@ -61,7 +61,7 @@ pub fn component_enum(_input: TokenStream) -> TokenStream {
 
 #[proc_macro_attribute]
 pub fn packet(attr : TokenStream, item : TokenStream) -> TokenStream {
-    crate::packet::packet_impl(attr, item) 
+    crate::packet::packet_impl(attr, item)
 }
 
 #[proc_macro]

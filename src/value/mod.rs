@@ -87,5 +87,6 @@ pub use uuid::{Uuid, uuid};
 
 use crate::packet::*;
 use std::fmt;
+use std::borrow::Cow;
 
 pub(super) use serde::{Deserialize, Serialize};

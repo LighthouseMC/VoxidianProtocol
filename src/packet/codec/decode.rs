@@ -1,5 +1,6 @@
 use super::*;
 use std::mem::MaybeUninit;
+use std::borrow::Cow;
 
 
 pub trait PacketDecode<'l> : Sized {
@@ -16,7 +17,7 @@ pub enum DecodeError {
     /// The data in the buffer could not be parsed properly.
     ///
     /// Includes a message.
-    InvalidData(String),
+    InvalidData(Cow<'static, str>),
 
     /// The packet decoder did not consume the length specified in the previously received header.
     UnconsumedBuffer,
@@ -59,7 +60,7 @@ impl<'l> PacketDecode<'l> for Uuid { fn decode(buf : &mut PacketReader<'l>) -> R
 
 impl<'l> PacketDecode<'l> for String { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let len = buf.read_decode::<VarInt>()?.as_i32() as usize;
-    String::from_utf8(buf.read_u8s(len)?).map_err(|_| DecodeError::InvalidData("String data is not valid UTF8".to_string()))
+    String::from_utf8(buf.read_u8s(len)?).map_err(|_| DecodeError::InvalidData(Cow::Borrowed("String data is not valid UTF8")))
 } }
 
 impl<'l, T : PacketDecode<'l>> PacketDecode<'l> for Option<T> { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {

@@ -33,7 +33,7 @@ impl PacketEncode for Nbt { fn encode(&self, buf : &mut PacketWriter) -> Result<
 impl<'l> PacketDecode<'l> for Nbt { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let tag = buf.read_u8()?;
     if (tag != NbtElement::TAG_COMPOUND) {
-        return Err(DecodeError::InvalidData("Nbt root is not a compound".to_string()));
+        return Err(DecodeError::InvalidData(Cow::Borrowed("Nbt root is not a compound")));
     }
     Ok(Nbt {
         name : String::new(),
@@ -46,7 +46,7 @@ impl Nbt {
     pub fn read_named<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let tag = buf.read_u8()?;
         if (tag != NbtElement::TAG_COMPOUND) {
-            return Err(DecodeError::InvalidData("Nbt root is not a compound".to_string()));
+            return Err(DecodeError::InvalidData(Cow::Borrowed("Nbt root is not a compound")));
         }
         Ok(Nbt {
             name : NbtElement::decode_string(buf)?,

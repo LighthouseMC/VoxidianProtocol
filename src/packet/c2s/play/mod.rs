@@ -172,7 +172,7 @@ impl<'l> PacketDecode<'l> for InteractAction {
             0 => Ok(InteractAction::Interact(buf.read_decode()?)),
             1 => Ok(InteractAction::Attack),
             2 => Ok(InteractAction::InteractAt(buf.read_decode()?, buf.read_decode()?, buf.read_decode()?, buf.read_decode()?)),
-            _ => Err(DecodeError::InvalidData("must be a varint of 0, 1, or 2".to_string()))
+            _ => Err(DecodeError::InvalidData(Cow::Borrowed("must be a varint of 0, 1, or 2")))
         }
     }
 }

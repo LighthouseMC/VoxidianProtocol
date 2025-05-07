@@ -164,7 +164,7 @@ pub(crate) fn packet_part_impl(attr : TokenStream, item : TokenStream) -> TokenS
                 #[derive(Debug, Clone, PartialEq, Eq)]
                 enum #discriminant_ident { #discriminant_variants }
                 impl PacketEncode for #ident { fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> { match (self) { #encode } Ok(()) } }
-                impl<'l> PacketDecode<'l> for #ident { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> { #decode Err(DecodeError::InvalidData("Packet enum discriminant not in range".to_string())) } }
+                impl<'l> PacketDecode<'l> for #ident { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> { #decode Err(DecodeError::InvalidData(Cow::Borrowed("Packet enum discriminant not in range"))) } }
             }).into()
 
 

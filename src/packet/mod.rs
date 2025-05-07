@@ -17,6 +17,7 @@ pub(crate) use crate::value::*;
 pub(crate) use crate::registry::*;
 pub(crate) use voxidian_protocol_macros::{ packet, packet_part, packet_full_decode };
 pub(crate) use std::fmt;
+pub(crate) use std::borrow::Cow;
 pub(crate) use serde::{ Serialize as Ser, Deserialize as Deser, Serializer as Serer, Deserializer as Deserer };
 pub(crate) use serde_json::ser::to_string as to_json_string;
 pub(crate) use serde_json::de::from_str as from_json_str;

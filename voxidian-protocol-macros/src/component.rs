@@ -106,7 +106,7 @@ pub(crate) fn component_enum_impl() -> TokenStream {
                         let component = buf.read_decode::<#formatted_names>()?;
                         Ok(DataComponents::#formatted_names(component))
                     } ),*
-                    _ => Err(DecodeError::InvalidData("Invalid component type".to_string()))
+                    _ => Err(DecodeError::InvalidData(Cow::Borrowed("Invalid component type")))
                 }
             }
         }
@@ -141,7 +141,7 @@ pub(crate) fn component_enum_impl() -> TokenStream {
                 let id = buf.read_decode::<VarInt>()?;
                 match id.as_i32() {
                     #( #formatted_values => Ok(DataComponentTypes::#formatted_names), )*
-                    _ => Err(DecodeError::InvalidData("Invalid component type".to_string()))
+                    _ => Err(DecodeError::InvalidData(Cow::Borrowed("Invalid component type")))
                 }
             }
         }

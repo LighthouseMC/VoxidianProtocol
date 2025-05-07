@@ -123,14 +123,14 @@ impl NbtElement {
             for _ in 0..len { out.push(buf.read_decode()?); }
             Ok(Self::LArray(out))
         },
-        tag => Err(DecodeError::InvalidData(format!("Unknown nbt tag `{}`", tag)))
+        tag => Err(DecodeError::InvalidData(Cow::Owned(format!("Unknown nbt tag `{}`", tag))))
     } }
 
     pub(super) fn decode_string<'l>(buf : &mut PacketReader<'l>) -> Result<String, DecodeError> {
         let     len   = buf.read_decode::<u16>()? as usize;
         let mut bytes = Vec::with_capacity(len);
         for _ in 0..len { bytes.push(buf.read_u8()?); }
-        let string = cesu8::from_java_cesu8(&bytes).map_err(|_| DecodeError::InvalidData("String data is not valid CESU8".to_string()))?;
+        let string = cesu8::from_java_cesu8(&bytes).map_err(|_| DecodeError::InvalidData(Cow::Borrowed("String data is not valid CESU8")))?;
         Ok(string.to_string())
     }
 

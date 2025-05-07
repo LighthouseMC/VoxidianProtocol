@@ -53,7 +53,7 @@ impl VarInt {
             index += 1;
 
             if position >= 32 {
-                return Err(DecodeError::InvalidData("VarInt is too long".to_string()));
+                return Err(DecodeError::InvalidData(Cow::Borrowed("VarInt is too long")));
             }
         }
 

@@ -59,7 +59,7 @@ pub struct StatusResponsePlayerSample {
 pub struct StatusResponseS2CStatusPacket(String);
 impl StatusResponseS2CStatusPacket {
     pub fn to_response(&self) -> Result<StatusResponse, DecodeError> {
-        from_json_str(&self.0).map_err(|_| DecodeError::InvalidData("Status response is not valid JSON".to_string()) )
+        from_json_str(&self.0).map_err(|_| DecodeError::InvalidData(Cow::Borrowed("Status response is not valid JSON")) )
     }
 }
 

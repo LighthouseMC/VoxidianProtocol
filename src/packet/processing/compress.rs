@@ -1,6 +1,7 @@
 use super::*;
 
 use std::io::Write;
+use std::borrow::Cow;
 use flate2::Compression;
 use flate2::write::{ ZlibEncoder, ZlibDecoder };
 
@@ -62,8 +63,8 @@ impl CompressionMode {
             } else {
                 let smalltext = smalltext.read_u8s(smalltext.remaining())?;
                 let mut de = ZlibDecoder::new(Vec::new());
-                de.write_all(&smalltext).map_err(|_| DecodeError::InvalidData("Compressed smalltext is not valid ZLib data".to_string()))?;
-                Ok(PacketReader::from(de.finish().map_err(|_| DecodeError::InvalidData("Compressed smalltext is not valid ZLib data".to_string()))?))
+                de.write_all(&smalltext).map_err(|_| DecodeError::InvalidData(Cow::Borrowed("Compressed smalltext is not valid ZLib data")))?;
+                Ok(PacketReader::from(de.finish().map_err(|_| DecodeError::InvalidData(Cow::Borrowed("Compressed smalltext is not valid ZLib data")))?))
             }
         }
 

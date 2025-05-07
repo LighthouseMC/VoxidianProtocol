@@ -49,7 +49,7 @@ impl VarLong {
             index += 1;
 
             if position >= 64 {
-                return Err(DecodeError::InvalidData("VarLong is too long".to_string()));
+                return Err(DecodeError::InvalidData(Cow::Borrowed("VarLong is too long")));
             }
         }
 

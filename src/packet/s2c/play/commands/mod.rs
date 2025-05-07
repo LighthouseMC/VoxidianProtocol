@@ -70,7 +70,7 @@ impl<'l> PacketDecode<'l> for CommandNode {
                 parser      : buf.read_decode()?,
                 suggestions : if (flags & 0b00010000 != 0) { Some(buf.read_decode()?) } else { None }
             },
-            kind => { return Err(DecodeError::InvalidData(format!("{} is not a valid command node kind", kind))) }
+            kind => { return Err(DecodeError::InvalidData(Cow::Owned(format!("{} is not a valid command node kind", kind)))) }
         };
 
         Ok(Self {
@@ -397,7 +397,7 @@ impl<'l> PacketDecode<'l> for CommandNodeParser {
             47 => Ok(Self::TemplateRotation),
             48 => Ok(Self::Heightmap),
             49 => Ok(Self::Uuid),
-            id => Err(DecodeError::InvalidData(format!("Unknown command node parser type {}", id)))
+            id => Err(DecodeError::InvalidData(Cow::Owned(format!("Unknown command node parser type {}", id))))
         }
     }
 }
