@@ -21,8 +21,8 @@ impl PacketEncode for Sound {
         Ok(())
     }
 }
-impl<'l> PacketDecode<'l> for Sound {
-    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for Sound {
+    fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let id = buf.read_decode::<VarInt>()?.as_i32() as u32;
         if (id == 0) {
             Ok(Self::Inline(buf.read_decode::<SoundEvent>()?))

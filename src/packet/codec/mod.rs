@@ -7,4 +7,4 @@ pub use ordinal::*;
 
 use super::*;
 
-pub trait PacketEncodeDecode<'l> : Sized + PacketEncode + PacketDecode<'l> { }
+pub trait PacketEncodeDecode : Sized + PacketEncode + PacketDecode { }

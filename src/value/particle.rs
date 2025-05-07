@@ -23,6 +23,6 @@ impl PacketEncode for Particle {
         Ok(())
     }
 }
-impl<'l> PacketDecode<'l> for Particle { fn decode(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for Particle { fn decode<'l>(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     todo!("PacketDecode for Particle")
 } }

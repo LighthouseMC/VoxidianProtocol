@@ -646,8 +646,8 @@ impl PacketEncode for PlayerInfoUpdateS2CPlayPacket {
     }
 }
 
-impl<'l> PacketDecode<'l> for PlayerInfoUpdateS2CPlayPacket {
-    fn decode(_buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for PlayerInfoUpdateS2CPlayPacket {
+    fn decode<'l>(_buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         todo!();
     }
 }
@@ -992,8 +992,8 @@ impl PacketEncode for SetEquipmentS2CPlayPacket {
     }
 }
 
-impl<'l> PacketDecode<'l> for SetEquipmentS2CPlayPacket {
-    fn decode(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for SetEquipmentS2CPlayPacket {
+    fn decode<'l>(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         todo!()
     }
 }

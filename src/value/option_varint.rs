@@ -25,7 +25,7 @@ impl PacketEncode for OptionVarInt { fn encode(&self, buf : &mut PacketWriter) -
     }).encode(buf)
 } }
 
-impl<'l> PacketDecode<'l> for OptionVarInt { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for OptionVarInt { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let value_plus_1 = VarInt::decode(buf)?.as_i32();
     Ok(if (value_plus_1 == 0) {
         Self::None

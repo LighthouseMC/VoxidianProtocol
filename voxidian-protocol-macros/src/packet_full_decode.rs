@@ -65,7 +65,7 @@ pub(crate) fn packet_full_decode_impl(input : TokenStream) -> TokenStream {
         #[derive(Debug, Clone)]
         pub enum #packets_ident { #( #fields )* }
         impl PrefixedPacketEncode for #packets_ident { fn encode_prefixed(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> { match (self) { #(#encode)* } } }
-        impl<'l> PrefixedPacketDecode<'l> for #packets_ident { fn decode_prefixed(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+        impl PrefixedPacketDecode for #packets_ident { fn decode_prefixed<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
             let packetid = buf.read_decode::<VarInt>()?.as_i32() as u8;
             match (packetid) {
                 #(#decode)*

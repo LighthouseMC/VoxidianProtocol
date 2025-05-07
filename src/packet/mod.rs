@@ -29,7 +29,7 @@ pub struct TODO(());
 impl PacketEncode for TODO { #[track_caller] fn encode(&self, _ : &mut PacketWriter) -> Result<(), EncodeError> {
     todo!("Packet field TODO");
 } }
-impl<'l> PacketDecode<'l> for TODO { #[track_caller] fn decode(_ : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for TODO { #[track_caller] fn decode<'l>(_ : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     todo!("Packet field TODO");
 } }
 
@@ -53,7 +53,7 @@ pub(crate) macro packet_flags(
         )?;
         Ok(())
     } }
-    impl<'l> PacketDecode<'l> for $ident { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+    impl PacketDecode for $ident { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let bits = <$type as PacketDecode>::decode(buf)?;
         Ok(Self { $(
             $fieldident : (bits & $bitmask) != 0

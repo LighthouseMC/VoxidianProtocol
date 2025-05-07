@@ -42,8 +42,8 @@ impl<T : PacketEncode> PacketEncode for ConsumeAllVec<T> {
         Ok(())
     }
 }
-impl<'l, T : PacketDecode<'l>> PacketDecode<'l> for ConsumeAllVec<T> {
-    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl<T : PacketDecode> PacketDecode for ConsumeAllVec<T> {
+    fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let mut items = Vec::new();
         loop { match (buf.read_decode::<T>()) {
             Ok(item) => { items.push(item); },

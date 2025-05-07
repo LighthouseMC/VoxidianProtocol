@@ -13,8 +13,8 @@ impl PacketEncode for ParticleInstance {
     }
 }
 
-impl<'l> PacketDecode<'l> for ParticleInstance {
-    fn decode(_buf: &mut PacketReader<'l>) -> Result<Self, crate::packet::DecodeError> {
+impl PacketDecode for ParticleInstance {
+    fn decode<'l>(_buf: &mut PacketReader<'l>) -> Result<Self, crate::packet::DecodeError> {
         todo!()
     }
 }

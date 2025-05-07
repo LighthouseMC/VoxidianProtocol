@@ -9,6 +9,6 @@ impl JsonText {
 impl PacketEncode for JsonText { fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
     buf.encode_write(&self.0)
 } }
-impl<'l> PacketDecode<'l> for JsonText { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for JsonText { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     Ok(JsonText(buf.read_decode::<String>()?))
 } }

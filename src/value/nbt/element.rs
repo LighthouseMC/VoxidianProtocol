@@ -83,7 +83,7 @@ impl NbtElement { pub(super) fn encode_packet(&self, buf : &mut PacketWriter) { 
         for long in values { let _ = buf.encode_write(*long); }
     }
 } } }
-impl<'l> PacketDecode<'l> for NbtElement { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for NbtElement { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let tag = buf.read_u8()?;
     Self::decode_packet(buf, tag)
 } }

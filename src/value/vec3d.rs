@@ -21,7 +21,7 @@ impl PacketEncode for Vec3d { fn encode(&self, buf : &mut PacketWriter) -> Resul
     buf.encode_write(self.z)?;
     Ok(())
 } }
-impl<'l> PacketDecode<'l> for Vec3d { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, super::DecodeError> {
+impl PacketDecode for Vec3d { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, super::DecodeError> {
     Ok(Self {
         x : buf.read_decode::<f64>()?,
         y : buf.read_decode::<f64>()?,

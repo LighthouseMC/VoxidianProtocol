@@ -98,8 +98,8 @@ pub(crate) fn component_enum_impl() -> TokenStream {
             }
         }
 
-        impl<'l> PacketDecode<'l> for DataComponents {
-            fn decode(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+        impl PacketDecode for DataComponents {
+            fn decode<'l>(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
                 let id = buf.read_decode::<VarInt>()?;
                 match id.as_i32() {
                     #( #formatted_values => {
@@ -136,8 +136,8 @@ pub(crate) fn component_enum_impl() -> TokenStream {
             }
         }
 
-        impl<'l> PacketDecode<'l> for DataComponentTypes {
-            fn decode(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+        impl PacketDecode for DataComponentTypes {
+            fn decode<'l>(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
                 let id = buf.read_decode::<VarInt>()?;
                 match id.as_i32() {
                     #( #formatted_values => Ok(DataComponentTypes::#formatted_names), )*

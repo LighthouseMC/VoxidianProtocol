@@ -27,6 +27,6 @@ impl PacketEncode for Angle { fn encode(&self, buf : &mut PacketWriter) -> Resul
     buf.write_u8((self.frac * 256.0) as u8);
     Ok(())
 } }
-impl<'l> PacketDecode<'l> for Angle { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, super::DecodeError> {
+impl PacketDecode for Angle { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, super::DecodeError> {
     Ok(Self { frac : (buf.read_u8()? as f32) / 256.0 })
 } }

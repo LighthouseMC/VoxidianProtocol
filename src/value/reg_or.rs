@@ -18,7 +18,7 @@ impl<T : RegValue, U : PacketEncode> PacketEncode for RegOr<T, U> { fn encode(&s
     }
 } }
 
-impl<'l, T : RegValue, U : PacketDecode<'l>> PacketDecode<'l> for RegOr<T, U> { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl<T : RegValue, U : PacketDecode> PacketDecode for RegOr<T, U> { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let id_plus_one = buf.read_decode::<VarInt>()?.as_i32() as u32;
     Ok(if (id_plus_one == 0) {
         Self::Id(unsafe{ RegEntry::new_unchecked(id_plus_one - 1) })

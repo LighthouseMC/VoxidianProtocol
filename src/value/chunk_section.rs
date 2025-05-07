@@ -72,8 +72,8 @@ impl PacketEncode for ChunkSectionData {
     }
 }
 
-impl<'l> PacketDecode<'l> for ChunkSectionData {
-    fn decode(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for ChunkSectionData {
+    fn decode<'l>(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         unimplemented!()
     }
 }
@@ -100,8 +100,8 @@ impl<T, const E: usize> PacketEncode for PalettedContainer<T, E> {
     }
 }
 
-impl<'l, T, const E: usize> PacketDecode<'l> for PalettedContainer<T, E> {
-    fn decode(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl<T, const E: usize> PacketDecode for PalettedContainer<T, E> {
+    fn decode<'l>(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         unimplemented!()
     }
 }
@@ -162,8 +162,8 @@ impl<T, const E: usize> PacketEncode for PaletteFormat<T, E> {
     }
 }
 
-impl<'l, T, const E: usize> PacketDecode<'l> for PaletteFormat<T, E> {
-    fn decode(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl<T, const E: usize> PacketDecode for PaletteFormat<T, E> {
+    fn decode<'l>(_buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         unimplemented!()
     }
 }

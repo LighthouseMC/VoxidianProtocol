@@ -172,8 +172,8 @@ impl PacketEncode for TextComponent {
     }
 }
 
-impl<'l> PacketDecode<'l> for TextComponent {
-    fn decode(_buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for TextComponent {
+    fn decode<'l>(_buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         todo!()
     }
 }

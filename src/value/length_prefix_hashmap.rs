@@ -50,8 +50,8 @@ impl<Idx : From<usize> + Into<usize> + PacketEncode, K : Eq + Hash + PacketEncod
         Ok(())
     }
 }
-impl<'l, Idx : From<usize> + Into<usize> + PacketDecode<'l>, K : Eq + Hash + PacketDecode<'l>, V : PacketDecode<'l>> PacketDecode<'l> for LengthPrefixHashMap<Idx, K, V> {
-    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl<Idx : From<usize> + Into<usize> + PacketDecode, K : Eq + Hash + PacketDecode, V : PacketDecode> PacketDecode for LengthPrefixHashMap<Idx, K, V> {
+    fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let len = buf.read_decode::<Idx>()?.into();
         let mut items = HashMap::new();
         for _ in 0..len {

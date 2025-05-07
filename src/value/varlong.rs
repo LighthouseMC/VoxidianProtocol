@@ -23,10 +23,8 @@ impl PacketEncode for VarLong { fn encode(&self, buf : &mut PacketWriter) -> Res
     Ok(())
 } }
 
-impl<'l> PacketDecode<'l> for VarLong { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
-    let ((out, consumed)) = Self::decode_iter(&mut buf.iter())?;
-    buf.skip(consumed);
-    Ok(out)
+impl PacketDecode for VarLong { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+    Ok(Self::decode_iter(&mut buf.iter())?.0)
 } }
 impl VarLong {
     const SEGMENT_BITS: i64 = 0x7F;

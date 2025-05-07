@@ -23,7 +23,7 @@ impl PacketEncode for BlockPos { fn encode(&self, buf : &mut PacketWriter) -> Re
     )?;
     Ok(())
 } }
-impl<'l> PacketDecode<'l> for BlockPos { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, super::DecodeError> {
+impl PacketDecode for BlockPos { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, super::DecodeError> {
     let long = buf.read_decode::<u64>()?;
     Ok(Self {
         x : (long >> 38) as i32,

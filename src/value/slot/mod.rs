@@ -48,8 +48,8 @@ impl PacketEncode for SlotData {
     }
 }
 
-impl<'l> PacketDecode<'l> for SlotData {
-    fn decode(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for SlotData {
+    fn decode<'l>(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let item_count = buf.read_decode::<VarInt>()?;
         if item_count.as_i32() == 0 {
             return Ok(SlotData {
@@ -108,6 +108,6 @@ impl PartialEq for SlotData {
 }
 impl Eq for SlotData {}
 
-pub trait ComponentData : PacketEncode + PacketDecode<'static> {
+pub trait ComponentData : PacketEncode + PacketDecode {
     const ID: u32;
 }

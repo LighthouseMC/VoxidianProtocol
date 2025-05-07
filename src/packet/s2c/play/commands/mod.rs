@@ -53,8 +53,8 @@ impl PacketEncode for CommandNode {
         Ok(())
     }
 }
-impl<'l> PacketDecode<'l> for CommandNode {
-    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for CommandNode {
+    fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
 
         let flags = buf.read_u8()?;
 
@@ -309,8 +309,8 @@ impl PacketEncode for CommandNodeParser {
         }
     }
 }
-impl<'l> PacketDecode<'l> for CommandNodeParser {
-    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for CommandNodeParser {
+    fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         match (buf.read_decode::<VarInt>()?.as_i32()) {
             0 => Ok(Self::Bool),
             1 => {

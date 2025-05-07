@@ -166,8 +166,8 @@ impl PacketEncode for InteractAction {
     }
 }
 
-impl<'l> PacketDecode<'l> for InteractAction {
-    fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for InteractAction {
+    fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         match buf.read_decode::<VarInt>()?.as_i32() {
             0 => Ok(InteractAction::Interact(buf.read_decode()?)),
             1 => Ok(InteractAction::Attack),

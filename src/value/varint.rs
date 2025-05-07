@@ -27,10 +27,8 @@ impl PacketEncode for VarInt { fn encode(&self, buf : &mut PacketWriter) -> Resu
     Ok(())
 } }
 
-impl<'l> PacketDecode<'l> for VarInt { fn decode(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
-    let ((out, consumed)) = Self::decode_iter(&mut buf.iter())?;
-    buf.skip(consumed);
-    Ok(out)
+impl PacketDecode for VarInt { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+    Ok(Self::decode_iter(&mut buf.iter())?.0)
 } }
 impl VarInt {
     const SEGMENT_BITS: i32 = 0x7F;

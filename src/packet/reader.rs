@@ -186,7 +186,7 @@ impl<'l, 'k> PacketReader<'l> {
 
 /// Decode
 impl<'l> PacketReader<'l> {
-    pub fn read_decode<T: PacketDecode<'l>>(&mut self) -> Result<T, DecodeError> {
+    pub fn read_decode<T: PacketDecode>(&mut self) -> Result<T, DecodeError> {
         T::decode(self)
     }
 }

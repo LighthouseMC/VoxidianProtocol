@@ -66,14 +66,14 @@ macro_rules! create_metadata_entries {
     };
 }
 
-impl<'l> PacketDecode<'l> for MetadataEntry {
-    fn decode(_buf: &mut PacketReader<'l>) -> Result<Self, crate::packet::DecodeError> {
+impl PacketDecode for MetadataEntry {
+    fn decode<'l>(_buf: &mut PacketReader<'l>) -> Result<Self, crate::packet::DecodeError> {
         todo!()
     }
 }
 
-impl<'l> PacketDecode<'l> for EntityMetadata {
-    fn decode(_buf: &mut PacketReader<'l>) -> Result<Self, crate::packet::DecodeError> {
+impl PacketDecode for EntityMetadata {
+    fn decode<'l>(_buf: &mut PacketReader<'l>) -> Result<Self, crate::packet::DecodeError> {
         todo!()
     }
 }

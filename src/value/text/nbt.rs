@@ -12,8 +12,8 @@ impl PacketEncode for NbtText {
         self.0.encode(buf)
     }
 }
-impl<'l> PacketDecode<'l> for NbtText {
-    fn decode(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for NbtText {
+    fn decode<'l>(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         Ok(Self(NbtElement::decode(buf)?))
     }
 }
