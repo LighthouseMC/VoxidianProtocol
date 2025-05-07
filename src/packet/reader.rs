@@ -83,6 +83,8 @@ impl<'l> PacketReader<'l> {
         self.bytes.get(self.head..).unwrap_or(&[])
     }
 
+    pub fn head(&self) -> usize { self.head }
+
 }
 
 impl<'l> Read for PacketReader<'l> {
