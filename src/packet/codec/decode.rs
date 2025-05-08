@@ -63,6 +63,10 @@ impl PacketDecode for String { fn decode<'l>(buf : &mut PacketReader<'l>) -> Res
     String::from_utf8(buf.read_u8s(len)?).map_err(|_| DecodeError::InvalidData(Cow::Borrowed("String data is not valid UTF8")))
 } }
 
+impl<'k> PacketDecode for Cow<'k, str> { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+    <String as PacketDecode>::decode(buf).map(Cow::Owned)
+} }
+
 impl<T : PacketDecode> PacketDecode for Option<T> { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     let is_some = buf.read_u8()? != 0;
     Ok(if (is_some) { Some(buf.read_decode::<T>()?) } else { None })

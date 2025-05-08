@@ -5,7 +5,7 @@ pub struct WolfVariant {
     pub wild_texture  : Identifier,
     pub tame_texture  : Identifier,
     pub angry_texture : Identifier,
-    pub biomes        : Vec<Identifier>
+    pub biomes        : Cow<'static, [Identifier]>
 }
 impl RegValue for WolfVariant {
 

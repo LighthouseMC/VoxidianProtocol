@@ -96,18 +96,25 @@ pub struct SelectKnownPacksS2CConfigPacket {
     pub known_packs : LengthPrefixVec<VarInt, KnownPack>
 }
 impl Default for SelectKnownPacksS2CConfigPacket { fn default() -> Self { Self {
-    known_packs : vec![ KnownPack {
-        namespace : "minecraft".to_string(),
-        id        : "core".to_string(),
-        version   : MINECRAFT_VERSION.to_string()
-    } ].into()
+    known_packs : vec![
+        KnownPack {
+            namespace : Cow::Borrowed("minecraft"),
+            id        : Cow::Borrowed("core"),
+            version   : Cow::Borrowed(MINECRAFT_VERSION)
+        },
+        KnownPack {
+            namespace : Cow::Borrowed("minecraft"),
+            id        : Cow::Borrowed("vanilla"),
+            version   : Cow::Borrowed(MINECRAFT_VERSION)
+        }
+    ].into()
 } } }
 #[packet_part]
 #[derive(PartialEq)]
 pub struct KnownPack {
-    pub namespace : String,
-    pub id        : String,
-    pub version   : String
+    pub namespace : Cow<'static, str>,
+    pub id        : Cow<'static, str>,
+    pub version   : Cow<'static, str>
 }
 
 

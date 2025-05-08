@@ -56,6 +56,12 @@ impl PacketEncode for &str {
     }
 }
 
+impl<'l> PacketEncode for Cow<'l, str> {
+    fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
+        <&str as PacketEncode>::encode(&&**self, buf)
+    }
+}
+
 impl PacketEncode for String {
     fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
         self.as_str().encode(buf)
