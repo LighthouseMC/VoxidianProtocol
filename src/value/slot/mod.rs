@@ -7,7 +7,7 @@ use crate::value::*;
 #[derive(Debug, Clone)]
 pub struct SlotData {
     pub id                 : RegEntry<Item>,
-    pub count              : VarInt,
+    pub count              : Var32,
     pub components         : Vec<DataComponents>,
     pub removed_components : Vec<DataComponentTypes>
 }
@@ -16,7 +16,7 @@ impl SlotData {
 
     pub const EMPTY : Self = Self {
         id                 : unsafe{ RegEntry::new_unchecked(0) },
-        count              : VarInt::new(0),
+        count              : Var32::new(0),
         components         : Vec::new(),
         removed_components : Vec::new()
     };
@@ -33,8 +33,8 @@ impl PacketEncode for SlotData {
 
         buf.encode_write(self.id)?;
 
-        buf.encode_write(VarInt::from(self.components.len()))?;
-        buf.encode_write(VarInt::from(self.removed_components.len()))?;
+        buf.encode_write(Var32::from(self.components.len()))?;
+        buf.encode_write(Var32::from(self.removed_components.len()))?;
 
         for component in &self.components {
             buf.encode_write(component)?;
@@ -50,10 +50,10 @@ impl PacketEncode for SlotData {
 
 impl PacketDecode for SlotData {
     fn decode<'l>(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
-        let item_count = buf.read_decode::<VarInt>()?;
+        let item_count = buf.read_decode::<Var32>()?;
         if item_count.as_i32() == 0 {
             return Ok(SlotData {
-                count: VarInt::from(0),
+                count: Var32::from(0),
                 id: unsafe { RegEntry::new_unchecked(0) },
                 components: Vec::new(),
                 removed_components: Vec::new(),
@@ -61,8 +61,8 @@ impl PacketDecode for SlotData {
         }
 
         let item_id = buf.read_decode::<RegEntry<Item>>()?;
-        let components_len = buf.read_decode::<VarInt>()?;
-        let removed_components_len = buf.read_decode::<VarInt>()?;
+        let components_len = buf.read_decode::<Var32>()?;
+        let removed_components_len = buf.read_decode::<Var32>()?;
 
         let mut components = Vec::with_capacity(components_len.as_i32() as usize);
         for _ in 0..components_len.as_i32() {

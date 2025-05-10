@@ -3,12 +3,12 @@ use super::*;
 
 #[packet("minecraft:s2c/play/open_screen")]
 pub struct OpenScreenS2CPlayPacket {
-    pub window : VarInt,
+    pub window : Var32,
     pub kind   : ScreenWindowKind,
     pub title  : NbtText
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 #[derive(Copy, Eq)]
 pub enum ScreenWindowKind {
     Generic9x1   = 0,

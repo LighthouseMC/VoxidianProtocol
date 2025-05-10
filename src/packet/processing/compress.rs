@@ -16,7 +16,7 @@ pub enum CompressionMode {
 }
 impl CompressionMode {
 
-    pub fn threshold(&self) -> VarInt { VarInt::from(match (self) {
+    pub fn threshold(&self) -> Var32 { Var32::from(match (self) {
         CompressionMode::None               => -1,
         CompressionMode::ZLib { threshold } => *threshold as i32,
     }) }
@@ -41,7 +41,7 @@ impl CompressionMode {
                 (plaintext.len(), en.finish().unwrap())
             };
             let mut out = PacketWriter::new();
-            out.encode_write(VarInt::from(data_length))?;
+            out.encode_write(Var32::from(data_length))?;
             out.write_u8s(smalltext.as_slice());
             Ok(out)
         }
@@ -57,7 +57,7 @@ impl CompressionMode {
         Self::None => Ok(smalltext),
 
         Self::ZLib { .. } => {
-            let data_length = smalltext.read_decode::<VarInt>()?.as_i32();
+            let data_length = smalltext.read_decode::<Var32>()?.as_i32();
             if (data_length <= 0) {
                 Ok(smalltext)
             } else {

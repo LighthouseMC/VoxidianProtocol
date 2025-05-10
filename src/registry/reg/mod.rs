@@ -6,7 +6,7 @@ use indexmap::IndexMap;
 
 use crate::packet::s2c::config::RegistryDataS2CConfigPacket;
 use crate::registry::RegEntry;
-use crate::value::{Identifier, LengthPrefixVec, VarInt};
+use crate::value::{Identifier, LengthPrefixVec, Var32};
 use super::*;
 
 /// Represents a registry.
@@ -15,7 +15,7 @@ pub struct Registry<T> {
     tags: IndexMap<Identifier, HashSet<RegEntry<T>>>
 }
 
-pub type TagInformation = LengthPrefixVec<VarInt, (Identifier, LengthPrefixVec<VarInt, u32>)>;
+pub type TagInformation = LengthPrefixVec<Var32, (Identifier, LengthPrefixVec<Var32, u32>)>;
 
 impl<T> Registry<T> {
 
@@ -82,7 +82,7 @@ impl<T> Registry<T> {
         if let Some(entry) = entry {
             tag_container.insert(entry);
         }
-        
+
     }
 
     pub fn get_tags(&self, tag: &Identifier) -> Option<&HashSet<RegEntry<T>>> {

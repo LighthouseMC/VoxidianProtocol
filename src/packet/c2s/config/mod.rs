@@ -42,13 +42,13 @@ impl Default for ClientInfo { fn default() -> Self {
         server_listing : true
     }
 } }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum ClientChatMode {
     Enabled      = 0,
     CommandsOnly = 1,
     Hidden       = 2
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum ClientMainHand {
     Left  = 0,
     Right = 1
@@ -67,7 +67,7 @@ packet_flags!{ pub struct SkinLayers<u8> {
 #[packet( "minecraft:c2s/config/cookie_response" )]
 pub struct CookieResponseC2SConfigPacket {
     pub key     : Identifier,
-    pub payload : Option<LengthPrefixVec<VarInt, u8>>
+    pub payload : Option<LengthPrefixVec<Var32, u8>>
 }
 
 
@@ -95,7 +95,7 @@ pub struct ResourcePackC2SConfigPacket {
     pub uuid   : Uuid,
     pub status : ResourcePackStatus
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum ResourcePackStatus {
     SuccessfullyDownloaded,
     Declined,
@@ -110,7 +110,7 @@ pub enum ResourcePackStatus {
 
 #[packet( "minecraft:c2s/config/select_known_packs" )]
 pub struct SelectKnownPacksC2SConfigPacket {
-    pub known_packs : LengthPrefixVec<VarInt, KnownPack>
+    pub known_packs : LengthPrefixVec<Var32, KnownPack>
 }
 
 

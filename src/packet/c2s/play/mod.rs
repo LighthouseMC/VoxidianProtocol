@@ -11,7 +11,7 @@ pub trait TryIntoC2SPlayPackets {
 
 #[packet("minecraft:c2s/play/accept_teleportation")]
 pub struct AcceptTeleportationC2SPlayPacket {
-    pub teleport_id: VarInt,
+    pub teleport_id: Var32,
 }
 #[packet("minecraft:c2s/play/block_entity_tag_query")]
 pub struct BlockEntityTagQueryC2SPlayPacket(TODO);
@@ -21,7 +21,7 @@ pub struct BundleItemSelectedC2SPlayPacket(TODO);
 pub struct ChangeDifficultyC2SPlayPacket(TODO);
 #[packet("minecraft:c2s/play/chat_ack")]
 pub struct ChatAckC2SPlayPacket {
-    pub message_id: VarInt
+    pub message_id: Var32
 }
 #[packet("minecraft:c2s/play/chat_command")]
 pub struct ChatCommandC2SPlayPacket {
@@ -33,8 +33,8 @@ pub struct ChatCommandSignedC2SPlayPacket {
     pub command   : String,
     pub timestamp : u64,
     pub salt      : u64,
-    pub arg_sig   : LengthPrefixVec<VarInt, (String, [u8; 256])>,
-    pub count     : VarInt,
+    pub arg_sig   : LengthPrefixVec<Var32, (String, [u8; 256])>,
+    pub count     : Var32,
     pub ack       : (u8, u8, u8)
 }
 
@@ -44,7 +44,7 @@ pub struct ChatC2SPlayPacket {
     pub timestamp : u64,
     pub salt      : u64,
     pub sig       : Option<[u8; 256]>,
-    pub count     : VarInt,
+    pub count     : Var32,
     pub ack       : (u8, u8, u8)
 }
 
@@ -53,8 +53,8 @@ pub struct ChatSessionUpdateC2SPlayPacket {
     pub session_id: Uuid,
 
     pub expiry: u64,
-    pub key: LengthPrefixVec<VarInt, u8>,
-    pub sig: LengthPrefixVec<VarInt, u8>,
+    pub key: LengthPrefixVec<Var32, u8>,
+    pub sig: LengthPrefixVec<Var32, u8>,
 }
 
 #[packet("minecraft:c2s/play/chunk_batch_received")]
@@ -67,7 +67,7 @@ pub struct ClientCommandC2SPlayPacket {
     pub action: CommandAction
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum CommandAction {
     PerformRespawn = 0,
     RequestStats = 1
@@ -81,24 +81,24 @@ pub struct ClientInformationC2SPlayPacket {
 }
 #[packet("minecraft:c2s/play/command_suggestion")]
 pub struct CommandSuggestionC2SPlayPacket {
-    transaction_id: VarInt,
+    transaction_id: Var32,
     text: String
 }
 #[packet("minecraft:c2s/play/configuration_acknowledged")]
 pub struct ConfigurationAcknowledgedC2SPlayPacket;
 #[packet("minecraft:c2s/play/container_button_click")]
 pub struct ContainerButtonClickC2SPlayPacket {
-    pub window_id: VarInt,
-    pub button_id: VarInt
+    pub window_id: Var32,
+    pub button_id: Var32
 }
 #[packet("minecraft:c2s/play/container_click")]
 pub struct ContainerClickC2SPlayPacket {
-    pub window_id: VarInt,
-    pub state_id: VarInt,
+    pub window_id: Var32,
+    pub state_id: Var32,
     pub slot: i16,
     pub button: u8,
-    pub mode: VarInt,
-    pub changed_slots: LengthPrefixVec<VarInt, ChangedSlot>,
+    pub mode: Var32,
+    pub changed_slots: LengthPrefixVec<Var32, ChangedSlot>,
     pub cursor_item: SlotData
 }
 
@@ -110,12 +110,12 @@ pub struct ChangedSlot {
 
 #[packet("minecraft:c2s/play/container_close")]
 pub struct ContainerCloseC2SPlayPacket {
-    pub window_id: VarInt
+    pub window_id: Var32
 }
 #[packet("minecraft:c2s/play/container_slot_state_changed")]
 pub struct ContainerSlotStateChangedC2SPlayPacket {
-    pub slot_id: VarInt,
-    pub window_id: VarInt,
+    pub slot_id: Var32,
+    pub window_id: Var32,
     pub new_state: bool
 }
 #[packet("minecraft:c2s/play/cookie_response")]
@@ -133,7 +133,7 @@ pub struct EditBookC2SPlayPacket(TODO);
 pub struct EntityTagQueryC2SPlayPacket(TODO);
 #[packet("minecraft:c2s/play/interact")]
 pub struct InteractC2SPlayPacket {
-    pub entity_id: VarInt,
+    pub entity_id: Var32,
     pub action: InteractAction,
     pub sneaking: bool
 }
@@ -149,14 +149,14 @@ impl PacketEncode for InteractAction {
     fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
         match self {
             InteractAction::Interact(hand) => {
-                buf.encode_write(VarInt::new(0))?;
+                buf.encode_write(Var32::new(0))?;
                 buf.encode_write(hand)
             },
             InteractAction::Attack => {
-                buf.encode_write(VarInt::new(0))
+                buf.encode_write(Var32::new(0))
             },
             InteractAction::InteractAt(x, y, z, hand) => {
-                buf.encode_write(VarInt::new(0))?;
+                buf.encode_write(Var32::new(0))?;
                 buf.encode_write(x)?;
                 buf.encode_write(y)?;
                 buf.encode_write(z)?;
@@ -168,7 +168,7 @@ impl PacketEncode for InteractAction {
 
 impl PacketDecode for InteractAction {
     fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
-        match buf.read_decode::<VarInt>()?.as_i32() {
+        match buf.read_decode::<Var32>()?.as_i32() {
             0 => Ok(InteractAction::Interact(buf.read_decode()?)),
             1 => Ok(InteractAction::Attack),
             2 => Ok(InteractAction::InteractAt(buf.read_decode()?, buf.read_decode()?, buf.read_decode()?, buf.read_decode()?)),
@@ -234,7 +234,7 @@ pub struct PickItemFromBlockC2SPlayPacket {
 }
 #[packet("minecraft:c2s/play/pick_item_from_entity")]
 pub struct PickItemFromEntityC2SPlayPacket {
-    pub entity_id: VarInt,
+    pub entity_id: Var32,
     pub include_data: bool
 }
 #[packet("minecraft:c2s/play/ping_request")]
@@ -243,8 +243,8 @@ pub struct PingRequestC2SPlayPacket {
 }
 #[packet("minecraft:c2s/play/place_recipe")]
 pub struct PlaceRecipeC2SPlayPacket {
-    pub window_id: VarInt,
-    pub recipe_id: VarInt,
+    pub window_id: Var32,
+    pub recipe_id: Var32,
     pub make_all: bool
 }
 #[packet("minecraft:c2s/play/player_abilities")]
@@ -257,10 +257,10 @@ pub struct PlayerActionC2SPlayPacket {
     pub status: PlayerStatus,
     pub location: BlockPos,
     pub face: BlockFace,
-    pub sequence: VarInt
+    pub sequence: Var32
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum PlayerStatus {
     StartedDigging = 0,
     CancelledDigging,
@@ -283,12 +283,12 @@ pub enum BlockFace {
 
 #[packet("minecraft:c2s/play/player_command")]
 pub struct PlayerCommandC2SPlayPacket {
-    pub player_id: VarInt,
+    pub player_id: Var32,
     pub action_id: PlayerAction,
-    pub jump_boost: VarInt
+    pub jump_boost: Var32
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum PlayerAction {
     StartSneaking,
     StopSneaking,
@@ -326,7 +326,7 @@ pub struct RecipeBookChangeSettingsC2SPlayPacket {
     filter_active: bool
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum RecipeBookType {
     Crafting,
     Furnace,
@@ -350,19 +350,19 @@ pub struct SeenAdvancementsC2SPlayPacket {
     pub action: SeenAdvancementsAction,
     pub tab_id: Option<Identifier>
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum SeenAdvancementsAction {
     OpenedTab = 0,
     ClosedScreen
 }
 #[packet("minecraft:c2s/play/select_trade")]
 pub struct SelectTradeC2SPlayPacket {
-    pub selected_slot: VarInt
+    pub selected_slot: Var32
 }
 #[packet("minecraft:c2s/play/set_beacon")]
 pub struct SetBeaconC2SPlayPacket {
-    pub primary: Option<VarInt>,
-    pub secondary: Option<VarInt>
+    pub primary: Option<Var32>,
+    pub secondary: Option<Var32>
 }
 #[packet("minecraft:c2s/play/set_carried_item")]
 pub struct SetCarriedItemC2SPlayPacket {
@@ -376,7 +376,7 @@ pub struct SetCommandBlockC2SPlayPacket {
     pub flags: CommandBlockFlags
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum CommandBlockMode {
     Sequence = 0,
     Auto,
@@ -391,7 +391,7 @@ packet_flags!(pub struct CommandBlockFlags<u8> {
 
 #[packet("minecraft:c2s/play/set_command_minecart")]
 pub struct SetCommandMinecartC2SPlayPacket {
-    pub entity_id: VarInt,
+    pub entity_id: Var32,
     pub command: String,
     pub track_output: bool
 }
@@ -408,8 +408,8 @@ pub struct SetJigsawBlockC2SPlayPacket {
     pub pool: String,
     pub final_state: String,
     pub joint_type: String,
-    pub selection_priority: VarInt,
-    pub placement_priority: VarInt
+    pub selection_priority: Var32,
+    pub placement_priority: Var32
 }
 #[packet("minecraft:c2s/play/set_structure_block")]
 pub struct SetStructureBlockC2SPlayPacket {
@@ -427,11 +427,11 @@ pub struct SetStructureBlockC2SPlayPacket {
     pub rotation: StructureBlockRotationData,
     pub metadata: String,
     pub integrity: f32,
-    pub seed: VarInt,
+    pub seed: Var32,
     pub flags: StructureBlockFlags
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum StructureBlockAction {
     UpdateData = 0,
     SaveStructure,
@@ -439,7 +439,7 @@ pub enum StructureBlockAction {
     DetectSize
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum StructureBlockMode {
     Save = 0,
     Load,
@@ -447,14 +447,14 @@ pub enum StructureBlockMode {
     Data
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum StructureBlockMirroredData {
     None = 0,
     LeftRight = 1,
     FrontBack = 2
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum StructureBlockRotationData {
     None = 0,
     Clockwise90 = 1,
@@ -495,12 +495,12 @@ pub struct UseItemOnC2SPlayPacket {
     pub cursor_z: f32,
     pub inside_block: bool,
     pub world_border_hit: bool,
-    pub sequence: VarInt
+    pub sequence: Var32
 }
 #[packet("minecraft:c2s/play/use_item")]
 pub struct UseItemC2SPlayPacket {
     pub hand: Hand,
-    pub sequence: VarInt,
+    pub sequence: Var32,
     pub yaw: f32,
     pub pitch: f32
 }

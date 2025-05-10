@@ -16,9 +16,9 @@ pub struct LoginDisconnectS2CLoginPacket {
 pub struct HelloS2CLoginPacket {
     pub server_id    : String,
     #[redacted]
-    pub public_key   : LengthPrefixVec<VarInt, u8>,
+    pub public_key   : LengthPrefixVec<Var32, u8>,
     #[redacted]
-    pub verify_token : LengthPrefixVec<VarInt, u8>,
+    pub verify_token : LengthPrefixVec<Var32, u8>,
     pub should_auth  : bool
 }
 
@@ -27,7 +27,7 @@ pub struct HelloS2CLoginPacket {
 pub struct LoginFinishedS2CLoginPacket {
     pub uuid     : Uuid,
     pub username : String,
-    pub props    : LengthPrefixHashMap<VarInt, String, LoginSuccessProperty>
+    pub props    : LengthPrefixHashMap<Var32, String, LoginSuccessProperty>
 }
 #[packet_part]
 pub struct LoginSuccessProperty {
@@ -38,13 +38,13 @@ pub struct LoginSuccessProperty {
 
 #[packet( "minecraft:s2c/login/login_compression" )]
 pub struct LoginCompressionS2CLoginPacket {
-    pub threshold : VarInt
+    pub threshold : Var32
 }
 
 
 #[packet( "minecraft:s2c/login/custom_query" )]
 pub struct CustomQueryS2CLoginPacket {
-    pub msg_id  : VarInt,
+    pub msg_id  : Var32,
     pub channel : Identifier,
     pub data    : ConsumeAllVec<u8>
 }
@@ -65,7 +65,7 @@ mod tests {
 
     #[packet( "minecraft:s2c/status/status_response" )]
     pub struct StatusResponseS2CStatusPacket(
-        pub LengthPrefixVec<VarInt, u8>,
+        pub LengthPrefixVec<Var32, u8>,
         #[redacted]
         pub u8
     );

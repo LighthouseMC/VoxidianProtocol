@@ -2,9 +2,9 @@ use super::*;
 
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
-pub struct VarInt(i32);
+pub struct Var32(i32);
 
-impl VarInt {
+impl Var32 {
 
     pub const fn new(from : i32) -> Self {
         Self(from)
@@ -13,24 +13,26 @@ impl VarInt {
     pub fn as_i32(self) -> i32 { self.into() }
 
 }
-impl fmt::Debug for VarInt { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+impl fmt::Debug for Var32 { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "VarInt({})", self.0)
 } }
 
-impl From<i32> for VarInt { fn from(value : i32) -> Self { Self(value) } }
-impl From<VarInt> for i32 { fn from(val: VarInt) -> Self { val.0 } }
-impl From<usize> for VarInt { fn from(value : usize) -> Self { Self(value as i32) } }
-impl From<VarInt> for usize { fn from(val: VarInt) -> Self { val.0 as usize } }
+impl From<i32> for Var32 { fn from(value : i32) -> Self { Self(value) } }
+impl From<Var32> for i32 { fn from(val: Var32) -> Self { val.0 } }
+impl From<usize> for Var32 { fn from(value : usize) -> Self { Self(value as i32) } }
+impl From<Var32> for usize { fn from(val: Var32) -> Self { val.0 as usize } }
 
-impl PacketEncode for VarInt { fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
-    buf.write_u8s(&self.as_bytes());
+impl PacketEncode for Var32 { fn encode(&self, writer : &mut PacketWriter) -> Result<(), EncodeError> {
+    let mut buf = [0; 5];
+    let     n   = self.bytes_buf(&mut buf);
+    writer.write_u8s(&buf[0..n]);
     Ok(())
 } }
 
-impl PacketDecode for VarInt { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
+impl PacketDecode for Var32 { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
     Ok(Self::decode_iter(&mut buf.iter())?.0)
 } }
-impl VarInt {
+impl Var32 {
     const SEGMENT_BITS: i32 = 0x7F;
     const CONTINUE_BIT: i32 = 0x80;
 
@@ -55,21 +57,20 @@ impl VarInt {
             }
         }
 
-        Ok((VarInt::from(value), index + 1))
+        Ok((Var32::from(value), index + 1))
     }
 
 
-
-    pub fn as_bytes(&self) -> Vec<u8> {
-        let mut bytes = vec![];
+    pub fn bytes_buf(&self, buf : &mut [u8]) -> usize {
         let mut data = self.0;
+        let mut i    = 0;
         loop {
-            if (data & !(Self::SEGMENT_BITS)) == 0 {
-                bytes.push(data as u8);
-                return bytes;
+            if ((data & !(Self::SEGMENT_BITS)) == 0) {
+                buf[i] = data as u8;
+                return i + 1;
             }
-
-            bytes.push(((data & Self::SEGMENT_BITS) | Self::CONTINUE_BIT) as u8);
+            buf[i] = ((data & Self::SEGMENT_BITS) | Self::CONTINUE_BIT) as u8;
+            i += 1;
             data = ((data as u32) >> 7) as i32;
         }
     }
@@ -77,7 +78,7 @@ impl VarInt {
 
 #[cfg(test)]
 mod tests {
-    use crate::value::VarInt;
+    use crate::value::Var32;
 
     #[test]
     fn varint_decode_iter() {
@@ -85,7 +86,7 @@ mod tests {
             16, 0, 129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1, 1, 0,
         ];
         //          ^Packet length
-        let Ok((len, consumed)) = VarInt::decode_iter(&mut data.into_iter()) else {
+        let Ok((len, consumed)) = Var32::decode_iter(&mut data.into_iter()) else {
             panic!("decode_iter was not a success");
         };
         assert_eq!(len.as_i32(), 16);
@@ -94,9 +95,10 @@ mod tests {
 
     #[test]
     pub fn test_negative_varints() {
-        assert_eq!(VarInt::decode_iter(&mut [0x00].into_iter()).unwrap().0.as_i32(), 0);
-        assert_eq!(VarInt::decode_iter(&mut [0xff, 0xff, 0xff, 0xff, 0x0f].into_iter()).unwrap().0.as_i32(), -1);
-        let encoded = VarInt::from(-1).as_bytes();
-        assert_eq!(VarInt::decode_iter(&mut encoded.into_iter()).unwrap().0.as_i32(), -1);
+        assert_eq!(Var32::decode_iter(&mut [0x00].into_iter()).unwrap().0.as_i32(), 0);
+        assert_eq!(Var32::decode_iter(&mut [0xff, 0xff, 0xff, 0xff, 0x0f].into_iter()).unwrap().0.as_i32(), -1);
+        let mut buf = [0; 5];
+        let     n   = Var32::from(-1).bytes_buf(&mut buf);
+        assert_eq!(Var32::decode_iter(&mut buf[0..n].iter().map(|b| *b)).unwrap().0.as_i32(), -1);
     }
 }

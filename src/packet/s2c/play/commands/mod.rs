@@ -7,8 +7,8 @@ mod clap;
 
 #[packet("minecraft:s2c/play/commands")]
 pub struct CommandsS2CPlayPacket {
-    pub nodes      : LengthPrefixVec<VarInt, CommandNode>,
-    pub root_index : VarInt
+    pub nodes      : LengthPrefixVec<Var32, CommandNode>,
+    pub root_index : Var32
 }
 
 
@@ -16,8 +16,8 @@ pub struct CommandsS2CPlayPacket {
 pub struct CommandNode {
     pub kind           : CommandNodeKind,
     pub is_executable  : bool,
-    pub child_indices  : LengthPrefixVec<VarInt, VarInt>,
-    pub redirect_index : Option<VarInt>
+    pub child_indices  : LengthPrefixVec<Var32, Var32>,
+    pub redirect_index : Option<Var32>
 }
 impl PacketEncode for CommandNode {
     fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
@@ -183,9 +183,9 @@ pub enum CommandNodeParser {
 impl PacketEncode for CommandNodeParser {
     fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         match (self) {
-            Self::Bool => buf.encode_write(VarInt::from(0)),
+            Self::Bool => buf.encode_write(Var32::from(0)),
             Self::Float { min, max } => {
-                buf.encode_write(VarInt::from(1))?;
+                buf.encode_write(Var32::from(1))?;
                 let mut flags = 0b00000000;
                 if min.is_some() { flags |= 0b00000001; }
                 if max.is_some() { flags |= 0b00000010; }
@@ -195,7 +195,7 @@ impl PacketEncode for CommandNodeParser {
                 Ok(())
             },
             Self::Double { min, max } => {
-                buf.encode_write(VarInt::from(2))?;
+                buf.encode_write(Var32::from(2))?;
                 let mut flags = 0b00000000;
                 if min.is_some() { flags |= 0b00000001; }
                 if max.is_some() { flags |= 0b00000010; }
@@ -205,7 +205,7 @@ impl PacketEncode for CommandNodeParser {
                 Ok(())
             },
             Self::Integer { min, max } => {
-                buf.encode_write(VarInt::from(3))?;
+                buf.encode_write(Var32::from(3))?;
                 let mut flags = 0b00000000;
                 if min.is_some() { flags |= 0b00000001; }
                 if max.is_some() { flags |= 0b00000010; }
@@ -215,7 +215,7 @@ impl PacketEncode for CommandNodeParser {
                 Ok(())
             },
             Self::Long { min, max } => {
-                buf.encode_write(VarInt::from(4))?;
+                buf.encode_write(Var32::from(4))?;
                 let mut flags = 0b00000000;
                 if min.is_some() { flags |= 0b00000001; }
                 if max.is_some() { flags |= 0b00000010; }
@@ -225,93 +225,93 @@ impl PacketEncode for CommandNodeParser {
                 Ok(())
             },
             Self::String { behaviour } => {
-                buf.encode_write(VarInt::from(5))?;
+                buf.encode_write(Var32::from(5))?;
                 buf.encode_write(behaviour)?;
                 Ok(())
             },
             Self::Entity { single, players_only } => {
-                buf.encode_write(VarInt::from(6))?;
+                buf.encode_write(Var32::from(6))?;
                 let mut flags = 0b00000000;
                 if (*single       ) { flags |= 0b00000001; }
                 if (*players_only ) { flags |= 0b00000010; }
                 buf.write_u8(flags);
                 Ok(())
             },
-            Self::GameProfile => buf.encode_write(VarInt::from(7)),
-            Self::BlockPos => buf.encode_write(VarInt::from(8)),
-            Self::ColumnPos => buf.encode_write(VarInt::from(9)),
-            Self::Vec3 => buf.encode_write(VarInt::from(10)),
-            Self::Vec2 => buf.encode_write(VarInt::from(11)),
-            Self::BlockState => buf.encode_write(VarInt::from(12)),
-            Self::BlockPredicate => buf.encode_write(VarInt::from(13)),
-            Self::ItemStack => buf.encode_write(VarInt::from(14)),
-            Self::ItemPredicate => buf.encode_write(VarInt::from(15)),
-            Self::Colour => buf.encode_write(VarInt::from(16)),
-            Self::Component => buf.encode_write(VarInt::from(17)),
-            Self::Style => buf.encode_write(VarInt::from(18)),
-            Self::Message => buf.encode_write(VarInt::from(19)),
-            Self::Nbt => buf.encode_write(VarInt::from(20)),
-            Self::NbtTag => buf.encode_write(VarInt::from(21)),
-            Self::NbtPath => buf.encode_write(VarInt::from(22)),
-            Self::Objective => buf.encode_write(VarInt::from(23)),
-            Self::ObjectiveCriteria => buf.encode_write(VarInt::from(24)),
-            Self::Operation => buf.encode_write(VarInt::from(25)),
-            Self::Particle => buf.encode_write(VarInt::from(26)),
-            Self::Angle => buf.encode_write(VarInt::from(27)),
-            Self::Rotation => buf.encode_write(VarInt::from(28)),
-            Self::ScoreboardSlot => buf.encode_write(VarInt::from(29)),
+            Self::GameProfile => buf.encode_write(Var32::from(7)),
+            Self::BlockPos => buf.encode_write(Var32::from(8)),
+            Self::ColumnPos => buf.encode_write(Var32::from(9)),
+            Self::Vec3 => buf.encode_write(Var32::from(10)),
+            Self::Vec2 => buf.encode_write(Var32::from(11)),
+            Self::BlockState => buf.encode_write(Var32::from(12)),
+            Self::BlockPredicate => buf.encode_write(Var32::from(13)),
+            Self::ItemStack => buf.encode_write(Var32::from(14)),
+            Self::ItemPredicate => buf.encode_write(Var32::from(15)),
+            Self::Colour => buf.encode_write(Var32::from(16)),
+            Self::Component => buf.encode_write(Var32::from(17)),
+            Self::Style => buf.encode_write(Var32::from(18)),
+            Self::Message => buf.encode_write(Var32::from(19)),
+            Self::Nbt => buf.encode_write(Var32::from(20)),
+            Self::NbtTag => buf.encode_write(Var32::from(21)),
+            Self::NbtPath => buf.encode_write(Var32::from(22)),
+            Self::Objective => buf.encode_write(Var32::from(23)),
+            Self::ObjectiveCriteria => buf.encode_write(Var32::from(24)),
+            Self::Operation => buf.encode_write(Var32::from(25)),
+            Self::Particle => buf.encode_write(Var32::from(26)),
+            Self::Angle => buf.encode_write(Var32::from(27)),
+            Self::Rotation => buf.encode_write(Var32::from(28)),
+            Self::ScoreboardSlot => buf.encode_write(Var32::from(29)),
             Self::ScoreHolder { allow_multiple } => {
-                buf.encode_write(VarInt::from(30))?;
+                buf.encode_write(Var32::from(30))?;
                 let mut flags = 0b00000000;
                 if (*allow_multiple) { flags |= 0b00000001; }
                 buf.write_u8(flags);
                 Ok(())
             },
-            Self::Swizzle => buf.encode_write(VarInt::from(31)),
-            Self::Team => buf.encode_write(VarInt::from(32)),
-            Self::ItemSlot => buf.encode_write(VarInt::from(33)),
-            Self::Identifier => buf.encode_write(VarInt::from(34)),
-            Self::Function => buf.encode_write(VarInt::from(35)),
-            Self::EntityAnchor => buf.encode_write(VarInt::from(36)),
-            Self::IntRange => buf.encode_write(VarInt::from(37)),
-            Self::FloatRange => buf.encode_write(VarInt::from(38)),
-            Self::Dimension => buf.encode_write(VarInt::from(39)),
-            Self::Gamemode => buf.encode_write(VarInt::from(40)),
+            Self::Swizzle => buf.encode_write(Var32::from(31)),
+            Self::Team => buf.encode_write(Var32::from(32)),
+            Self::ItemSlot => buf.encode_write(Var32::from(33)),
+            Self::Identifier => buf.encode_write(Var32::from(34)),
+            Self::Function => buf.encode_write(Var32::from(35)),
+            Self::EntityAnchor => buf.encode_write(Var32::from(36)),
+            Self::IntRange => buf.encode_write(Var32::from(37)),
+            Self::FloatRange => buf.encode_write(Var32::from(38)),
+            Self::Dimension => buf.encode_write(Var32::from(39)),
+            Self::Gamemode => buf.encode_write(Var32::from(40)),
             Self::Time { min_ticks } => {
-                buf.encode_write(VarInt::from(41))?;
+                buf.encode_write(Var32::from(41))?;
                 buf.encode_write(min_ticks)?;
                 Ok(())
             },
             Self::ResourceOrTag { registry } => {
-                buf.encode_write(VarInt::from(42))?;
+                buf.encode_write(Var32::from(42))?;
                 buf.encode_write(registry)?;
                 Ok(())
             },
             Self::ResourceOrTagKey { registry } => {
-                buf.encode_write(VarInt::from(43))?;
+                buf.encode_write(Var32::from(43))?;
                 buf.encode_write(registry)?;
                 Ok(())
             },
             Self::Resource { registry } => {
-                buf.encode_write(VarInt::from(44))?;
+                buf.encode_write(Var32::from(44))?;
                 buf.encode_write(registry)?;
                 Ok(())
             },
             Self::ResourceKey { registry } => {
-                buf.encode_write(VarInt::from(45))?;
+                buf.encode_write(Var32::from(45))?;
                 buf.encode_write(registry)?;
                 Ok(())
             },
-            Self::TemplateMirror => buf.encode_write(VarInt::from(46)),
-            Self::TemplateRotation => buf.encode_write(VarInt::from(47)),
-            Self::Heightmap => buf.encode_write(VarInt::from(48)),
-            Self::Uuid => buf.encode_write(VarInt::from(49)),
+            Self::TemplateMirror => buf.encode_write(Var32::from(46)),
+            Self::TemplateRotation => buf.encode_write(Var32::from(47)),
+            Self::Heightmap => buf.encode_write(Var32::from(48)),
+            Self::Uuid => buf.encode_write(Var32::from(49)),
         }
     }
 }
 impl PacketDecode for CommandNodeParser {
     fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
-        match (buf.read_decode::<VarInt>()?.as_i32()) {
+        match (buf.read_decode::<Var32>()?.as_i32()) {
             0 => Ok(Self::Bool),
             1 => {
                 let flags = buf.read_u8()?;
@@ -403,7 +403,7 @@ impl PacketDecode for CommandNodeParser {
 }
 
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum StringCommandNode {
     SingleWord     = 0,
     QuotablePhrase = 1,

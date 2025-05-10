@@ -59,7 +59,7 @@ impl PacketDecode for Uuid { fn decode<'l>(buf : &mut PacketReader<'l>) -> Resul
 } }
 
 impl PacketDecode for String { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
-    let len = buf.read_decode::<VarInt>()?.as_i32() as usize;
+    let len = buf.read_decode::<Var32>()?.as_i32() as usize;
     String::from_utf8(buf.read_u8s(len)?).map_err(|_| DecodeError::InvalidData(Cow::Borrowed("String data is not valid UTF8")))
 } }
 
@@ -105,7 +105,7 @@ pub trait PrefixedPacketDecode : Sized {
 
 impl<T : PacketDecode + PacketMeta> PrefixedPacketDecode for T {
     fn decode_prefixed<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
-        let packet_id = buf.read_decode::<VarInt>()?.as_i32() as u8;
+        let packet_id = buf.read_decode::<Var32>()?.as_i32() as u8;
         if (packet_id != Self::PREFIX) {
             return Err(DecodeError::UnknownPacketPrefix(packet_id));
         }
@@ -137,7 +137,7 @@ mod tests {
         assert_eq!(packetbuf.as_slice(), [0, 129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1]);
         assert_eq!(consumed, 17);
 
-        let Ok((packet_id, consumed)) = VarInt::decode_iter(&mut packetbuf.iter()) else { panic!("decode_iter was not a success") };
+        let Ok((packet_id, consumed)) = Var32::decode_iter(&mut packetbuf.iter()) else { panic!("decode_iter was not a success") };
         assert_eq!(packet_id.as_i32(), 0);
         packetbuf.skip(consumed);
 

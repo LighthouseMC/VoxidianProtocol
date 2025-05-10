@@ -50,7 +50,7 @@ impl PacketEncode for Uuid {
 
 impl PacketEncode for &str {
     fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
-        buf.encode_write(VarInt::from(self.len() as i32))?;
+        buf.encode_write(Var32::from(self.len() as i32))?;
         buf.write_u8s(self.as_bytes());
         Ok(())
     }
@@ -97,7 +97,7 @@ pub trait PrefixedPacketEncode {
 
 impl<T: PacketEncode + PacketMeta> PrefixedPacketEncode for T {
     fn encode_prefixed(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
-        buf.encode_write(VarInt::from(Self::PREFIX as i32))?;
+        buf.encode_write(Var32::from(Self::PREFIX as i32))?;
         self.encode(buf)?;
         Ok(())
     }
@@ -137,7 +137,7 @@ mod tests {
     #[test]
     fn basic_encoding() {
         let packet = IntentionC2SHandshakePacket {
-            protocol_version: VarInt::from(823),
+            protocol_version: Var32::from(823),
             address: "127.0.0.1".to_string(),
             port: 25565,
             intended_stage: IntendedStage::Status,

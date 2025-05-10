@@ -43,10 +43,10 @@ pub enum ParticleData {
     },
     Vibration {
         position_source_type: VibrationPositionSource,
-        ticks: VarInt,
+        ticks: Var32,
     },
     Shriek {
-        delay: VarInt,
+        delay: Var32,
     },
 }
 
@@ -97,7 +97,7 @@ impl PacketEncode for ParticleData {
 #[derive(Debug, Clone)]
 pub enum VibrationPositionSource {
     BlockPosition(BlockPos),
-    Entity { id: VarInt, eye_height: f32 },
+    Entity { id: Var32, eye_height: f32 },
 }
 
 impl PacketEncode for VibrationPositionSource {

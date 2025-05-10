@@ -1,7 +1,7 @@
-mod varint;
-pub use varint::*;
-mod varlong;
-pub use varlong::*;
+mod var32;
+pub use var32::*;
+mod var64;
+pub use var64::*;
 mod text;
 pub use text::*;
 mod ident;

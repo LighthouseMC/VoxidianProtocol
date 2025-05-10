@@ -2,8 +2,8 @@ use super::*;
 use std::collections::HashMap;
 
 use super::{
-    BlockState, Identifier, Nbt, OptionVarInt, PaintingVariant, SlotData, TextComponent, VarInt,
-    VarLong, WolfVariant,
+    BlockState, Identifier, Nbt, OptionVarInt, PaintingVariant, SlotData, TextComponent, Var32,
+    Var64, WolfVariant,
 };
 
 #[derive(Debug, Clone)]
@@ -80,8 +80,8 @@ impl PacketDecode for EntityMetadata {
 
 create_metadata_entries! {
     0x00 => Byte(u8),
-    0x01 => VarInt(VarInt),
-    0x02 => VarLong(VarLong),
+    0x01 => VarInt(Var32),
+    0x02 => VarLong(Var64),
     0x03 => Float(f32),
     0x04 => String(String),
     0x05 => TextComponent(TextComponent),
@@ -90,21 +90,21 @@ create_metadata_entries! {
     0x08 => Rotations((f32, f32, f32)),
     0x09 => Position(TODO),
     0x0A => OptionalPosition(Option<TODO>),
-    0x0B => Direction(VarInt),
+    0x0B => Direction(Var32),
     0x0C => BlockState(RegEntry<BlockState>),
     0x0D => OptionalBlockState(OptionVarInt),
     0x0E => Nbt(Nbt),
-    0x0F => Particle((VarInt, TODO)),
+    0x0F => Particle((Var32, TODO)),
     0x10 => Particles(TODO),
     0x11 => OptionalVarInt(OptionVarInt),
-    0x12 => Pose(VarInt),
+    0x12 => Pose(Var32),
     0x13 => CatVariant(RegEntry<TODO>),
     0x14 => WolfVariant(RegEntry<WolfVariant>),
     0x15 => FrogVariant(RegEntry<TODO>),
     0x16 => OptionalGlobalPosition(Option<(Identifier, TODO)>),
     0x17 => PaintingVariant(RegEntry<PaintingVariant>),
-    0x18 => SnifferState(VarInt),
-    0x19 => ArmadilloState(VarInt),
+    0x18 => SnifferState(Var32),
+    0x19 => ArmadilloState(Var32),
     0x1A => Vector3((f32, f32, f32)),
     0x1B => Quaternion((f32, f32, f32, f32)),
 }

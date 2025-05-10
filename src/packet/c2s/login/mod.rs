@@ -19,16 +19,16 @@ pub struct HelloC2SLoginPacket {
 pub struct KeyC2SLoginPacket {
     /// Encrypted using the server's public key.
     #[redacted]
-    pub secret_key : LengthPrefixVec<VarInt, u8>,
+    pub secret_key : LengthPrefixVec<Var32, u8>,
     /// Encrypted using the server's public key.
     #[redacted]
-    pub verify_token : LengthPrefixVec<VarInt, u8>
+    pub verify_token : LengthPrefixVec<Var32, u8>
 }
 
 
 #[packet( "minecraft:c2s/login/custom_query_answer" )]
 pub struct CustomQueryAnswerC2SLoginPacket {
-    pub msg_id : VarInt,
+    pub msg_id : Var32,
     pub data   : Option<ConsumeAllVec<u8>>
 }
 
@@ -40,7 +40,7 @@ pub struct LoginAcknowledgedC2SLoginPacket;
 #[packet( "minecraft:c2s/login/cookie_response" )]
 pub struct CookieResponseC2SLoginPacket {
     pub key     : Identifier,
-    pub payload : Option<LengthPrefixVec<VarInt, u8>>
+    pub payload : Option<LengthPrefixVec<Var32, u8>>
 }
 
 

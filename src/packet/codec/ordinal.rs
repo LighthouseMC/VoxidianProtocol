@@ -6,7 +6,7 @@ pub trait PacketEnumOrdinal : Copy {
     fn from_usize(from : usize) -> Self;
 }
 
-impl PacketEnumOrdinal for VarInt {
+impl PacketEnumOrdinal for Var32 {
     fn into_usize(self) -> usize { self.as_i32() as usize }
     fn from_usize(from : usize) -> Self { Self::from(from as i32) }
 }

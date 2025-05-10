@@ -10,11 +10,11 @@ impl<T: RegValue + PacketEncode + PacketDecode> PacketEncode for IdSet<T> {
     fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
         match self {
             IdSet::Tag(tag) => {
-                buf.encode_write::<VarInt>(VarInt::from(0))?;
+                buf.encode_write::<Var32>(Var32::from(0))?;
                 tag.encode(buf)?;
             },
             IdSet::Ids(ids) => {
-                buf.encode_write::<VarInt>(VarInt::from(ids.len()))?;
+                buf.encode_write::<Var32>(Var32::from(ids.len()))?;
                 for id in ids {
                     id.encode(buf)?;
                 }
@@ -26,7 +26,7 @@ impl<T: RegValue + PacketEncode + PacketDecode> PacketEncode for IdSet<T> {
 
 impl<T: RegValue + PacketEncode + PacketDecode> PacketDecode for IdSet<T> {
     fn decode<'l>(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
-        let amount = buf.read_decode::<VarInt>()?;
+        let amount = buf.read_decode::<Var32>()?;
         if amount.as_i32() == 0 {
             let tag = Identifier::decode(buf)?;
             Ok(IdSet::Tag(tag))

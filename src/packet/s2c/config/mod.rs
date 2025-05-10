@@ -44,7 +44,7 @@ pub struct ResetChatS2CConfigPacket;
 #[packet( "minecraft:s2c/config/registry_data" )]
 pub struct RegistryDataS2CConfigPacket {
     pub registry : Identifier,
-    pub entries  : LengthPrefixVec<VarInt, (Identifier, Option<Nbt>)>
+    pub entries  : LengthPrefixVec<Var32, (Identifier, Option<Nbt>)>
 }
 
 
@@ -67,20 +67,20 @@ pub struct ResourcePackPushS2CConfigPacket {
 #[packet( "minecraft:s2c/config/store_cookie" )]
 pub struct StoreCookieS2CConfigPacket {
     pub key     : Identifier,
-    pub payload : LengthPrefixVec<VarInt, u8>
+    pub payload : LengthPrefixVec<Var32, u8>
 }
 
 
 #[packet( "minecraft:s2c/config/transfer" )]
 pub struct TransferS2CConfigPacket {
     pub host : String,
-    pub port : VarInt
+    pub port : Var32
 }
 
 
 #[packet( "minecraft:s2c/config/update_enabled_features" )]
 pub struct UpdateEnabledFeaturesS2CConfigPacket {
-    pub features : LengthPrefixVec<VarInt, Identifier>
+    pub features : LengthPrefixVec<Var32, Identifier>
 }
 
 
@@ -93,7 +93,7 @@ pub struct UpdateTagsS2CConfigPacket {
 
 #[packet( "minecraft:s2c/config/select_known_packs" )]
 pub struct SelectKnownPacksS2CConfigPacket {
-    pub known_packs : LengthPrefixVec<VarInt, KnownPack>
+    pub known_packs : LengthPrefixVec<Var32, KnownPack>
 }
 impl Default for SelectKnownPacksS2CConfigPacket { fn default() -> Self { Self {
     known_packs : vec![
@@ -120,7 +120,7 @@ pub struct KnownPack {
 
 #[packet( "minecraft:s2c/config/custom_report_details" )]
 pub struct CustomReportDetailsS2CConfigPacket {
-    pub details : LengthPrefixVec<VarInt, ReportDetail>
+    pub details : LengthPrefixVec<Var32, ReportDetail>
 }
 #[packet_part]
 pub struct ReportDetail {
@@ -131,13 +131,13 @@ pub struct ReportDetail {
 
 #[packet( "minecraft:s2c/config/server_links" )]
 pub struct ServerLinksS2CConfigPacket {
-    pub links : LengthPrefixVec<VarInt, ServerLink>
+    pub links : LengthPrefixVec<Var32, ServerLink>
 }
 #[packet_part]
 pub struct ServerLink {
     pub kind : Either<BuiltInServerLink, JsonText>
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum BuiltInServerLink {
     BugReport           = 0,
     CommunityGuidelines = 1,

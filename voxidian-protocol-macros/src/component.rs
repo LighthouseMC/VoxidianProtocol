@@ -91,7 +91,7 @@ pub(crate) fn component_enum_impl() -> TokenStream {
             fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
                 match self {
                     #( DataComponents::#formatted_names(component) => {
-                        buf.encode_write(VarInt::from(DataComponentTypes::#formatted_names.protocol_id() as i32))?;
+                        buf.encode_write(Var32::from(DataComponentTypes::#formatted_names.protocol_id() as i32))?;
                         buf.encode_write(component)
                     } ),*
                 }
@@ -100,7 +100,7 @@ pub(crate) fn component_enum_impl() -> TokenStream {
 
         impl PacketDecode for DataComponents {
             fn decode<'l>(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
-                let id = buf.read_decode::<VarInt>()?;
+                let id = buf.read_decode::<Var32>()?;
                 match id.as_i32() {
                     #( #formatted_values => {
                         let component = buf.read_decode::<#formatted_names>()?;
@@ -129,7 +129,7 @@ pub(crate) fn component_enum_impl() -> TokenStream {
             fn encode(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
                 match self {
                     #( DataComponentTypes::#formatted_names => {
-                        buf.encode_write(VarInt::from(#formatted_values))?;
+                        buf.encode_write(Var32::from(#formatted_values))?;
                         Ok(())
                     } ),*
                 }
@@ -138,7 +138,7 @@ pub(crate) fn component_enum_impl() -> TokenStream {
 
         impl PacketDecode for DataComponentTypes {
             fn decode<'l>(buf: &mut PacketReader<'l>) -> Result<Self, DecodeError> {
-                let id = buf.read_decode::<VarInt>()?;
+                let id = buf.read_decode::<Var32>()?;
                 match id.as_i32() {
                     #( #formatted_values => Ok(DataComponentTypes::#formatted_names), )*
                     _ => Err(DecodeError::InvalidData(Cow::Borrowed("Invalid component type")))

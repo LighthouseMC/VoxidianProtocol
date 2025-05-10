@@ -8,13 +8,13 @@ pub trait TryIntoC2SHandshakePackets {
 
 #[packet( "minecraft:c2s/handshake/intention" )]
 pub struct IntentionC2SHandshakePacket {
-    pub protocol_version : VarInt,
+    pub protocol_version : Var32,
     pub address          : String,
     pub port             : u16,
     pub intended_stage   : IntendedStage
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum IntendedStage {
     Status   = 1,
     Login    = 2,

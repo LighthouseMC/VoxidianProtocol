@@ -12,12 +12,12 @@ pub struct CustomData {
 
 #[component("minecraft:max_stack_size")]
 pub struct MaxStackSize {
-    pub amount : VarInt
+    pub amount : Var32
 }
 
 #[component("minecraft:max_damage")]
 pub struct MaxDamage {
-    pub amount : VarInt
+    pub amount : Var32
 }
 
 #[component("minecraft:unbreakable")]
@@ -42,14 +42,14 @@ pub struct ItemModel {
 
 #[component("minecraft:lore")]
 pub struct Lore {
-    pub lines : LengthPrefixVec<VarInt, NbtText>
+    pub lines : LengthPrefixVec<Var32, NbtText>
 }
 
 #[component("minecraft:rarity")]
 pub struct Rarity {
     pub rarity : RarityLevel
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum RarityLevel {
     Common   = 0,
     Uncommon = 1,
@@ -65,12 +65,12 @@ pub struct Enchantments {
 
 #[component("minecraft:can_place_on")]
 pub struct CanPlaceOn {
-    pub predicates: LengthPrefixVec<VarInt, BlockPredicate>,
+    pub predicates: LengthPrefixVec<Var32, BlockPredicate>,
     pub show_in_tooltip: bool
 }
 #[component("minecraft:can_break")]
 pub struct CanBreak {
-    pub predicates: LengthPrefixVec<VarInt, BlockPredicate>,
+    pub predicates: LengthPrefixVec<Var32, BlockPredicate>,
     pub show_in_tooltip: bool
 }
 
@@ -78,7 +78,7 @@ pub struct CanBreak {
 #[derive(PartialEq)]
 pub struct BlockPredicate {
     pub blocks: Option<IdSet<Block>>,
-    pub properties: Option<LengthPrefixVec<VarInt, BlockPredicateProperty>>,
+    pub properties: Option<LengthPrefixVec<Var32, BlockPredicateProperty>>,
     pub nbt: Option<Nbt>
 }
 
@@ -91,7 +91,7 @@ pub struct BlockPredicateProperty {
 
 #[component("minecraft:attribute_modifiers")]
 pub struct AttributeModifiers {
-    pub modifiers: LengthPrefixVec<VarInt, AttributeModifier>,
+    pub modifiers: LengthPrefixVec<Var32, AttributeModifier>,
     pub show_in_tooltip: bool
 }
 
@@ -104,14 +104,14 @@ pub struct AttributeModifier {
     pub operation: AttributeOperation,
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum AttributeOperation {
     Add = 0,
     MultiplyBase,
     MultiplyTotal
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum AttributeSlot {
     Any = 0,
     MainHand,
@@ -128,7 +128,7 @@ pub enum AttributeSlot {
 #[component("minecraft:custom_model_data")]
 pub struct CustomModelData {
     // TODO: probably outdated
-    pub data: VarInt
+    pub data: Var32
 }
 
 #[component("minecraft:hide_additional_tooltip")]
@@ -139,7 +139,7 @@ pub struct HideTooltip {}
 
 #[component("minecraft:repair_cost")]
 pub struct RepairCost {
-    pub cost: VarInt
+    pub cost: Var32
 }
 
 #[component("minecraft:creative_slot_lock")]
@@ -155,7 +155,7 @@ pub struct IntangibleProjectile {}
 
 #[component("minecraft:food")]
 pub struct Food {
-    pub food: VarInt,
+    pub food: Var32,
     pub saturation: f32,
     pub can_always_eat: bool,
 }
@@ -168,7 +168,7 @@ pub struct Consumable {
     pub consume_effects: TODO
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum EatingAnimation {
     None = 0,
     Eat = 1,
@@ -202,7 +202,7 @@ pub struct DamageResistant {
 
 #[component("minecraft:tool")]
 pub struct Tool {
-    pub rules: LengthPrefixVec<VarInt, ToolRule>,
+    pub rules: LengthPrefixVec<Var32, ToolRule>,
     pub default_mining_speed: f32,
     pub damage_per_block: i32
 }
@@ -217,7 +217,7 @@ pub struct ToolRule {
 
 #[component("minecraft:enchantable")]
 pub struct Enchantable {
-    pub how_expensive: VarInt
+    pub how_expensive: Var32
 }
 
 #[component("minecraft:equippable")]
@@ -232,7 +232,7 @@ pub struct Equippable {
     pub damage_on_hurt: bool,
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum EquippableSlot {
     MainHand = 0,
     Feet = 1,
@@ -268,7 +268,7 @@ pub struct DyedColor {
 
 #[component("minecraft:map_id")]
 pub struct MapId {
-    pub id: VarInt
+    pub id: Var32
 }
 
 #[component("minecraft:map_decorations")]
@@ -299,8 +299,8 @@ pub struct WrittenBookContent {
     pub title          : String,
     pub filtered_title : Option<String>,
     pub author         : String,
-    pub generation     : VarInt,
-    pub pages          : LengthPrefixVec<VarInt, BookPage>,
+    pub generation     : Var32,
+    pub pages          : LengthPrefixVec<Var32, BookPage>,
     pub resolved       : bool
 }
 #[packet_part]
@@ -350,7 +350,7 @@ pub struct Fireworks(TODO);
 pub struct Profile {
     pub name       : Option<String>,
     pub uuid       : Option<Uuid>,
-    pub properties : LengthPrefixVec<VarInt, ProfileProperty>
+    pub properties : LengthPrefixVec<Var32, ProfileProperty>
 }
 #[packet_part]
 #[derive(PartialEq)]
@@ -383,12 +383,12 @@ pub struct PotDecorations(TODO);
 
 #[component("minecraft:container")]
 pub struct Container {
-    pub contents: LengthPrefixVec<VarInt, SlotData>
+    pub contents: LengthPrefixVec<Var32, SlotData>
 }
 
 #[component("minecraft:block_state")]
 pub struct BlockState {
-    pub state: LengthPrefixVec<VarInt, (String, String)>
+    pub state: LengthPrefixVec<Var32, (String, String)>
 }
 
 #[component("minecraft:lock")]
@@ -405,7 +405,7 @@ pub struct MapColor(TODO);
 
 #[component("minecraft:damage")]
 pub struct Damage {
-    pub damage: VarInt
+    pub damage: Var32
 }
 
 

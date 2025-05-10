@@ -59,8 +59,8 @@ impl<T> fmt::Debug for RegEntry<T> {
 
 
 impl<T> PacketEncode for RegEntry<T> { fn encode(&self, buf : &mut PacketWriter) -> Result<(), crate::packet::EncodeError> {
-    buf.encode_write(VarInt::from(self.id as i32))
+    buf.encode_write(Var32::from(self.id as i32))
 } }
 impl<T> PacketDecode for RegEntry<T> { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
-    Ok(unsafe{ Self::new_unchecked(buf.read_decode::<VarInt>()?.as_i32() as u32) })
+    Ok(unsafe{ Self::new_unchecked(buf.read_decode::<Var32>()?.as_i32() as u32) })
 } }

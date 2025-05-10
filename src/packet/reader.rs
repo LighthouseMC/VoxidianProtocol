@@ -19,7 +19,7 @@ impl PacketReader<'static> {
     pub fn from_raw_queue(
         mut queue: impl Iterator<Item = u8>,
     ) -> Result<(Self, usize), DecodeError> {
-        let (size, consumed) = VarInt::decode_iter(&mut queue)?;
+        let (size, consumed) = Var32::decode_iter(&mut queue)?;
         let size = size.as_i32() as usize;
         let mut bytes = Vec::with_capacity(size);
         for _ in 0..size {
@@ -211,7 +211,7 @@ mod tests {
             16, 0, 129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1, 1, 0,
         ];
         //          ^Packet length
-        let Ok((len, consumed)) = VarInt::decode_iter(&mut data.into_iter()) else {
+        let Ok((len, consumed)) = Var32::decode_iter(&mut data.into_iter()) else {
             panic!("decode_iter was not a success");
         };
         assert_eq!(len.as_i32(), 16);

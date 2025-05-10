@@ -13,7 +13,7 @@ pub struct BundleDelimiterS2CPlayPacket;
 
 #[packet("minecraft:s2c/play/add_entity")]
 pub struct AddEntityS2CPlayPacket {
-    pub id: VarInt,
+    pub id: Var32,
     pub uuid: Uuid,
     pub kind: RegEntry<EntityType>,
     pub x: f64,
@@ -22,7 +22,7 @@ pub struct AddEntityS2CPlayPacket {
     pub pitch: Angle,
     pub yaw: Angle,
     pub head_yaw: Angle,
-    pub data: VarInt,
+    pub data: Var32,
     pub vel_x: i16,
     pub vel_y: i16,
     pub vel_z: i16,
@@ -30,7 +30,7 @@ pub struct AddEntityS2CPlayPacket {
 
 #[packet("minecraft:s2c/play/add_experience_orb")]
 pub struct AddExperienceOrbS2CPlayPacket {
-    pub id: VarInt,
+    pub id: Var32,
     pub x: f64,
     pub y: f64,
     pub z: f64,
@@ -39,7 +39,7 @@ pub struct AddExperienceOrbS2CPlayPacket {
 
 #[packet("minecraft:s2c/play/animate")]
 pub struct AnimateS2CPlayPacket {
-    pub id: VarInt,
+    pub id: Var32,
     pub anim: EntityAnimation,
 }
 
@@ -54,17 +54,17 @@ pub enum EntityAnimation {
 
 #[packet("minecraft:s2c/play/award_stats")]
 pub struct AwardStatsS2CPlayPacket {
-    pub stats: LengthPrefixVec<VarInt, Stat>,
+    pub stats: LengthPrefixVec<Var32, Stat>,
 }
 
 #[packet_part]
 pub struct Stat {
     pub category: StatCategory,
-    pub kind: VarInt,
-    pub value: VarInt,
+    pub kind: Var32,
+    pub value: Var32,
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum StatCategory {
     Mined = 0,
     Crafted = 1,
@@ -78,11 +78,11 @@ pub enum StatCategory {
 }
 
 #[packet("minecraft:s2c/play/block_changed_ack")]
-pub struct BlockChangedAckS2CPlayPacket(pub VarInt);
+pub struct BlockChangedAckS2CPlayPacket(pub Var32);
 
 #[packet("minecraft:s2c/play/block_destruction")]
 pub struct BlockDestructionS2CPlayPacket {
-    pub entity_id: VarInt,
+    pub entity_id: Var32,
     pub pos: BlockPos,
     pub stage: u8,
 }
@@ -90,7 +90,7 @@ pub struct BlockDestructionS2CPlayPacket {
 #[packet("minecraft:s2c/play/block_entity_data")]
 pub struct BlockEntityDataS2CPlayPacket {
     pub pos: BlockPos,
-    pub kind: VarInt,
+    pub kind: Var32,
     pub data: Nbt,
 }
 
@@ -114,7 +114,7 @@ pub struct BossEventS2CPlayPacket {
     pub action: BossBarAction,
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum BossBarAction {
     Add {
         title    : NbtText,
@@ -138,7 +138,7 @@ pub enum BossBarAction {
         flags: BossBarFlags,
     },
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum BossBarColour {
     Pink = 0,
     Blue = 1,
@@ -148,7 +148,7 @@ pub enum BossBarColour {
     Purple = 5,
     White = 6,
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum BossBarDivision {
     None = 0,
     Notch6 = 1,
@@ -177,7 +177,7 @@ pub enum Difficulty {
 
 #[packet("minecraft:s2c/play/chunk_batch_finished")]
 pub struct ChunkBatchFinishedS2CPlayPacket {
-    pub size: VarInt,
+    pub size: Var32,
 }
 
 #[packet("minecraft:s2c/play/chunk_batch_start")]
@@ -185,13 +185,13 @@ pub struct ChunkBatchStartS2CPlayPacket;
 
 #[packet("minecraft:s2c/play/chunks_biomes")]
 pub struct ChunksBiomesS2CPlayPacket {
-    pub chunks: LengthPrefixVec<VarInt, ChunkBiomeData>,
+    pub chunks: LengthPrefixVec<Var32, ChunkBiomeData>,
 }
 #[packet_part]
 pub struct ChunkBiomeData {
     pub chunk_x: i32,
     pub chunk_z: i32,
-    pub data: LengthPrefixVec<VarInt, u8>,
+    pub data: LengthPrefixVec<Var32, u8>,
 }
 
 #[packet("minecraft:s2c/play/clear_titles")]
@@ -201,10 +201,10 @@ pub struct ClearTitlesS2CPlayPacket {
 
 #[packet("minecraft:s2c/play/command_suggestions")]
 pub struct CommandSuggestionsS2CPlayPacket {
-    pub id: VarInt,
-    pub start: VarInt,
-    pub len: VarInt,
-    pub suggestions: LengthPrefixVec<VarInt, CommandSuggestion>,
+    pub id: Var32,
+    pub start: Var32,
+    pub len: Var32,
+    pub suggestions: LengthPrefixVec<Var32, CommandSuggestion>,
 }
 #[packet_part]
 pub struct CommandSuggestion {
@@ -217,28 +217,28 @@ pub use commands::*;
 
 #[packet("minecraft:s2c/play/container_close")]
 pub struct ContainerCloseS2CPlayPacket {
-    pub window: VarInt,
+    pub window: Var32,
 }
 
 #[packet("minecraft:s2c/play/container_set_content")]
 pub struct ContainerSetContentS2CPlayPacket {
-    pub window_id: VarInt,
-    pub sequence: VarInt,
-    pub slots: LengthPrefixVec<VarInt, SlotData>,
+    pub window_id: Var32,
+    pub sequence: Var32,
+    pub slots: LengthPrefixVec<Var32, SlotData>,
     pub cursor_item: SlotData,
 }
 
 #[packet("minecraft:s2c/play/container_set_data")]
 pub struct ContainerSetDataS2CPlayPacket {
-    pub window: VarInt,
+    pub window: Var32,
     pub prop: u16,
     pub value: u16,
 }
 
 #[packet("minecraft:s2c/play/container_set_slot")]
 pub struct ContainerSetSlotS2CPlayPacket {
-    pub window_id: VarInt,
-    pub state_id: VarInt,
+    pub window_id: Var32,
+    pub state_id: Var32,
     pub slot: i16,
     pub slot_data: SlotData,
 }
@@ -251,14 +251,14 @@ pub struct CookieRequestS2CPlayPacket {
 #[packet("minecraft:s2c/play/cooldown")]
 pub struct CooldownS2CPlayPacket {
     pub item: Identifier,
-    pub ticks: VarInt,
+    pub ticks: Var32,
 }
 
 #[packet("minecraft:s2c/play/custom_chat_completions")]
 pub struct CustomChatCompletionsS2CPlayPacket {
     pub action: ChatSuggestionAction,
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum ChatSuggestionAction {
     Add = 0,
     Remove = 1,
@@ -273,7 +273,7 @@ pub struct CustomPayloadS2CPlayPacket {
 
 #[packet("minecraft:s2c/play/damage_event")]
 pub struct DamageEventS2CPlayPacket {
-    pub entity: VarInt,
+    pub entity: Var32,
     pub source_type: RegEntry<DamageType>,
     pub source_cause_entity: OptionVarInt,
     pub source_direct_entity: OptionVarInt,
@@ -282,17 +282,17 @@ pub struct DamageEventS2CPlayPacket {
 
 #[packet("minecraft:s2c/play/debug_sample")]
 pub struct DebugSampleS2CPlayPacket {
-    pub sample: LengthPrefixVec<VarInt, u64>,
+    pub sample: LengthPrefixVec<Var32, u64>,
     pub kind: DebugSampleKind,
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum DebugSampleKind {
     TickTime = 0,
 }
 
 #[packet("minecraft:s2c/play/delete_chat")]
 pub struct DeleteChatS2CPlayPacket {
-    pub msg: VarInt,
+    pub msg: Var32,
     pub signature: Option<[u8; 256]>,
 }
 
@@ -315,7 +315,7 @@ pub struct EntityEventS2CPlayPacket {
 
 #[packet("minecraft:s2c/play/entity_position_sync")]
 pub struct EntityPositionSyncS2CPlayPacket {
-    pub entity_id: VarInt,
+    pub entity_id: Var32,
     pub x: f64,
     pub y: f64,
     pub z: f64,
@@ -330,7 +330,7 @@ pub struct EntityPositionSyncS2CPlayPacket {
 #[packet("minecraft:s2c/play/explode")]
 pub struct ExplodeS2CPlayPacket(TODO);
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum ExplosionBlockInteraction {
     Keep = 0,
     Destroy = 1,
@@ -369,14 +369,14 @@ pub enum GameEvent {
 
 #[packet("minecraft:s2c/play/horse_screen_open")]
 pub struct HorseScreenOpenS2CPlayPacket {
-    pub window: VarInt,
-    pub slots: VarInt,
+    pub window: Var32,
+    pub slots: Var32,
     pub entity: i32,
 }
 
 #[packet("minecraft:s2c/play/hurt_animation")]
 pub struct HurtAnimationS2CPlayPacket {
-    pub entity: VarInt,
+    pub entity: Var32,
     pub dyaw: f32,
 }
 
@@ -387,12 +387,12 @@ pub struct InitializeBorderS2CPlayPacket {
     pub old_diameter: f64,
     pub new_diameter: f64,
     /// In milliseconds
-    pub transition: VarLong,
-    pub portal_boundary: VarInt,
+    pub transition: Var64,
+    pub portal_boundary: Var32,
     /// In blocks
-    pub warning_dist: VarInt,
+    pub warning_dist: Var32,
     /// In seconds
-    pub warning_time: VarInt,
+    pub warning_time: Var32,
 }
 
 #[packet("minecraft:s2c/play/keep_alive")]
@@ -406,30 +406,30 @@ pub struct LevelChunkWithLightS2CPlayPacket {
     pub heightmaps: Nbt,
     pub data: ChunkSectionData,
 
-    pub block_entities: LengthPrefixVec<VarInt, ChunkBlockEntity>,
+    pub block_entities: LengthPrefixVec<Var32, ChunkBlockEntity>,
 
-    pub sky_light_mask: LengthPrefixVec<VarInt, u64>, // TODO: BitSet type
-    pub block_light_mask: LengthPrefixVec<VarInt, u64>, // TODO: BitSet type
-    pub empty_sky_light_mask: LengthPrefixVec<VarInt, u64>, // TODO: BitSet type
-    pub empty_block_light_mask: LengthPrefixVec<VarInt, u64>, // TODO: BitSet type
+    pub sky_light_mask: LengthPrefixVec<Var32, u64>, // TODO: BitSet type
+    pub block_light_mask: LengthPrefixVec<Var32, u64>, // TODO: BitSet type
+    pub empty_sky_light_mask: LengthPrefixVec<Var32, u64>, // TODO: BitSet type
+    pub empty_block_light_mask: LengthPrefixVec<Var32, u64>, // TODO: BitSet type
 
     // Each of these arrays should have 1 element for every 1 in their corresponding mask.
-    pub sky_light_array: LengthPrefixVec<VarInt, LightMask>,
-    pub block_light_array: LengthPrefixVec<VarInt, LightMask>,
+    pub sky_light_array: LengthPrefixVec<Var32, LightMask>,
+    pub block_light_array: LengthPrefixVec<Var32, LightMask>,
 }
 
 #[packet_part]
 pub struct ChunkBlockEntity {
     pub packed_xz: u8,
     pub y: i16,
-    pub entity_type: VarInt,
+    pub entity_type: Var32,
     pub data: Nbt,
 }
 
 #[packet_part]
 pub struct LightMask {
     /// The length of this array should always be 2048.
-    pub light_array: LengthPrefixVec<VarInt, u8>,
+    pub light_array: LengthPrefixVec<Var32, u8>,
 }
 
 #[packet("minecraft:s2c/play/level_event")]
@@ -460,10 +460,10 @@ pub struct LightUpdateS2CPlayPacket(TODO);
 pub struct LoginS2CPlayPacket {
     pub entity: i32,
     pub hardcore: bool,
-    pub dims: LengthPrefixVec<VarInt, Identifier>,
-    pub max_players: VarInt,
-    pub view_dist: VarInt,
-    pub sim_dist: VarInt,
+    pub dims: LengthPrefixVec<Var32, Identifier>,
+    pub max_players: Var32,
+    pub view_dist: Var32,
+    pub sim_dist: Var32,
     pub reduced_debug: bool,
     /// Inverse of doImmediateRespawn
     pub respawn_screen: bool,
@@ -477,8 +477,8 @@ pub struct LoginS2CPlayPacket {
     pub is_debug: bool,
     pub is_flat: bool,
     pub death_loc: Option<DeathLocation>,
-    pub portal_cooldown: VarInt,
-    pub sea_level: VarInt,
+    pub portal_cooldown: Var32,
+    pub sea_level: Var32,
     pub enforce_chat_reports: bool,
 }
 #[packet_part(u8)]
@@ -504,7 +504,7 @@ pub struct MerchantOffersS2CPlayPacket(TODO);
 
 #[packet("minecraft:s2c/play/move_entity_pos")]
 pub struct MoveEntityPosS2CPlayPacket {
-    pub entity: VarInt,
+    pub entity: Var32,
     pub dx: i16,
     pub dy: i16,
     pub dz: i16,
@@ -513,7 +513,7 @@ pub struct MoveEntityPosS2CPlayPacket {
 
 #[packet("minecraft:s2c/play/move_entity_pos_rot")]
 pub struct MoveEntityPosRotS2CPlayPacket {
-    pub entity: VarInt,
+    pub entity: Var32,
     pub yaw: Angle,
     pub pitch: Angle,
     pub ground: bool,
@@ -521,8 +521,8 @@ pub struct MoveEntityPosRotS2CPlayPacket {
 
 #[packet("minecraft:s2c/play/move_minecart_along_track")]
 pub struct MoveMinecartAlongTrackS2CPlayPacket {
-    pub entity_id: VarInt,
-    pub steps: LengthPrefixVec<VarInt, MinecartStep>,
+    pub entity_id: Var32,
+    pub steps: LengthPrefixVec<Var32, MinecartStep>,
 }
 
 #[packet_part]
@@ -548,7 +548,7 @@ pub struct MoveVehicleS2CPlayPacket(TODO);
 pub struct OpenBookS2CPlayPacket {
     pub hand: Hand,
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum Hand {
     Mainhand = 0,
     Offhand = 1,
@@ -595,7 +595,7 @@ pub struct PlayerChatS2CPlayPacket(TODO);
 
 #[packet("minecraft:s2c/play/player_combat_end")]
 pub struct PlayerCombatEndS2CPlayPacket {
-    pub duration: VarInt,
+    pub duration: Var32,
 }
 
 #[packet("minecraft:s2c/play/player_combat_enter")]
@@ -604,13 +604,13 @@ pub struct PlayerCombatEnterS2CPlayPacket;
 #[packet("minecraft:s2c/play/player_combat_kill")]
 pub struct PlayerCombatKillS2CPlayPacket {
     /// Should match the client's entity id.
-    pub entity  : VarInt,
+    pub entity  : Var32,
     pub message : NbtText
 }
 
 #[packet("minecraft:s2c/play/player_info_remove")]
 pub struct PlayerInfoRemoveS2CPlayPacket {
-    pub uuids: LengthPrefixVec<VarInt, Uuid>,
+    pub uuids: LengthPrefixVec<Var32, Uuid>,
 }
 #[derive(Debug, Clone)]
 pub struct PlayerInfoUpdateS2CPlayPacket {
@@ -634,7 +634,7 @@ impl PacketEncode for PlayerInfoUpdateS2CPlayPacket {
         }
 
         buf.write_u8(value);
-        buf.encode_write(VarInt::new(self.actions.len() as i32))?;
+        buf.encode_write(Var32::new(self.actions.len() as i32))?;
         for entry in self.actions.iter() {
             buf.encode_write(entry.0)?;
             for action in &entry.1 {
@@ -656,13 +656,13 @@ impl PacketDecode for PlayerInfoUpdateS2CPlayPacket {
 pub enum PlayerActionEntry {
     AddPlayer {
         name  : String,
-        props : LengthPrefixVec<VarInt, ProfileProperty>,
+        props : LengthPrefixVec<Var32, ProfileProperty>,
     },
     UpdateGameMode(Gamemode),
     Listed(bool),
-    Latency(VarInt),
+    Latency(Var32),
     DisplayName(NbtText),
-    ListPriority(VarInt),
+    ListPriority(Var32),
     UpdateHat(bool),
 }
 
@@ -718,20 +718,20 @@ pub struct PlayerLookAtS2CPlayPacket {
     pub z: f64,
     pub entity: Option<LookAtEntity>,
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum LookAtPart {
     Feet = 0,
     Eyes = 1,
 }
 #[packet_part]
 pub struct LookAtEntity {
-    pub entity: VarInt,
+    pub entity: Var32,
     pub at: LookAtPart,
 }
 
 #[packet("minecraft:s2c/play/player_position")]
 pub struct PlayerPositionS2CPlayPacket {
-    pub teleport_id: VarInt,
+    pub teleport_id: Var32,
     pub x: f64,
     pub y: f64,
     pub z: f64,
@@ -774,12 +774,12 @@ pub struct RecipeBookSettingsS2CPlayPacket(TODO);
 
 #[packet("minecraft:s2c/play/remove_entities")]
 pub struct RemoveEntitiesS2CPlayPacket {
-    pub entities: LengthPrefixVec<VarInt, VarInt>,
+    pub entities: LengthPrefixVec<Var32, Var32>,
 }
 
 #[packet("minecraft:s2c/play/remove_mob_effect")]
 pub struct RemoveMobEffectS2CPlayPacket {
-    pub entity: VarInt,
+    pub entity: Var32,
     pub effect: RegEntry<StatusEffect>,
 }
 
@@ -815,8 +815,8 @@ pub struct RespawnS2CPlayPacket {
     pub is_debug: bool,
     pub is_flat: bool,
     pub death_loc: Option<DeathLocation>,
-    pub portal_cooldown: VarInt,
-    pub sea_level: VarInt,
+    pub portal_cooldown: Var32,
+    pub sea_level: Var32,
     pub data_kept: RespawnDataKept
 }
 packet_flags! { pub struct RespawnDataKept<u8> {
@@ -826,14 +826,14 @@ packet_flags! { pub struct RespawnDataKept<u8> {
 
 #[packet("minecraft:s2c/play/rotate_head")]
 pub struct RotateHeadS2CPlayPacket {
-    pub entity: VarInt,
+    pub entity: Var32,
     pub yaw: Angle,
 }
 
 #[packet("minecraft:s2c/play/section_blocks_update")]
 pub struct SectionBlocksUpdateS2CPlayPacket {
     pub chunk_section: ChunkSectionPosition,
-    pub blocks: LengthPrefixVec<VarInt, VarLong>,
+    pub blocks: LengthPrefixVec<Var32, Var64>,
 }
 
 #[packet("minecraft:s2c/play/select_advancements_tab")]
@@ -844,7 +844,7 @@ pub struct SelectAdvancementsTabS2CPlayPacket {
 #[packet("minecraft:s2c/play/server_data")]
 pub struct ServerDataS2CPlayPacket {
     pub motd : NbtText,
-    pub icon : Option<LengthPrefixVec<VarInt, u8>>
+    pub icon : Option<LengthPrefixVec<Var32, u8>>
 }
 
 #[packet("minecraft:s2c/play/set_action_bar_text")]
@@ -863,7 +863,7 @@ pub struct SetBorderLerpSizeS2CPlayPacket {
     pub old_diameter: f64,
     pub new_diameter: f64,
     /// In milliseconds
-    pub transition: VarLong,
+    pub transition: Var64,
 }
 
 #[packet("minecraft:s2c/play/set_border_size")]
@@ -873,31 +873,31 @@ pub struct SetBorderSizeS2CPlayPacket {
 
 #[packet("minecraft:s2c/play/set_border_warning_delay")]
 pub struct SetBorderWarningDelayS2CPlayPacket {
-    pub warning_time: VarInt,
+    pub warning_time: Var32,
 }
 
 #[packet("minecraft:s2c/play/set_border_warning_distance")]
 pub struct SetBorderWarningDistanceS2CPlayPacket {
     /// In blocks
-    pub warning_dist: VarInt,
+    pub warning_dist: Var32,
 }
 
 #[packet("minecraft:s2c/play/set_camera")]
 pub struct SetCameraS2CPlayPacket {
     /// Use the entity of the client to return control.
-    pub entity: VarInt,
+    pub entity: Var32,
 }
 
 #[packet("minecraft:s2c/play/set_chunk_cache_center")]
 pub struct SetChunkCacheCenterS2CPlayPacket {
-    pub chunk_x: VarInt,
-    pub chunk_z: VarInt,
+    pub chunk_x: Var32,
+    pub chunk_z: Var32,
 }
 
 #[packet("minecraft:s2c/play/set_chunk_cache_radius")]
 pub struct SetChunkCacheRadiusS2CPlayPacket {
     /// 2~32
-    pub view_dist: VarInt,
+    pub view_dist: Var32,
 }
 
 #[packet("minecraft:s2c/play/set_cursor_item")]
@@ -917,7 +917,7 @@ pub struct SetDisplayObjectiveS2CPlayPacket {
     pub name: String,
 }
 
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum ObjectiveLocation {
     List = 0,
     Sidebar = 1,
@@ -927,7 +927,7 @@ pub enum ObjectiveLocation {
 
 #[packet("minecraft:s2c/play/set_entity_data")]
 pub struct SetEntityDataS2CPlayPacket {
-    pub entity: VarInt,
+    pub entity: Var32,
     pub data: EntityMetadata,
 }
 
@@ -940,7 +940,7 @@ pub struct SetEntityLinkS2CPlayPacket {
 
 #[packet("minecraft:s2c/play/set_entity_motion")]
 pub struct SetEntityMotionS2CPlayPacket {
-    pub entity: VarInt,
+    pub entity: Var32,
     pub vel_x: u16,
     pub vel_y: u16,
     pub vel_z: u16,
@@ -948,7 +948,7 @@ pub struct SetEntityMotionS2CPlayPacket {
 
 #[derive(Debug, Clone)]
 pub struct SetEquipmentS2CPlayPacket {
-    pub entity_id: VarInt,
+    pub entity_id: Var32,
     pub parts: Vec<EntityEquipmentPart>
 }
 
@@ -1002,22 +1002,22 @@ impl PacketDecode for SetEquipmentS2CPlayPacket {
 pub struct SetExperienceS2CPlayPacket {
     /// 0~1
     pub frac: f32,
-    pub level: VarInt,
-    pub total: VarInt,
+    pub level: Var32,
+    pub total: Var32,
 }
 
 #[packet("minecraft:s2c/play/set_health")]
 pub struct SetHealthS2CPlayPacket {
     pub hp: f32,
     /// 0~20
-    pub food: VarInt,
+    pub food: Var32,
     /// 0~5
     pub sat: f32,
 }
 
 #[packet("minecraft:s2c/play/set_held_slot")]
 pub struct SetHeldSlotS2CPlayPacket {
-    pub slot: VarInt,
+    pub slot: Var32,
 }
 
 #[packet("minecraft:s2c/play/set_objective")]
@@ -1039,12 +1039,12 @@ pub enum UpdateObjectiveAction {
         format : Option<NumberFormat>
     } = 2
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum ObjectiveKind {
     Integer = 0,
     Hearts = 1,
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum NumberFormat {
     Blank  = 0,
     Styled {
@@ -1057,13 +1057,13 @@ pub enum NumberFormat {
 
 #[packet("minecraft:s2c/play/set_passengers")]
 pub struct SetPassengersS2CPlayPacket {
-    pub entity: VarInt,
-    pub passengers: LengthPrefixVec<VarInt, VarInt>,
+    pub entity: Var32,
+    pub passengers: LengthPrefixVec<Var32, Var32>,
 }
 
 #[packet("minecraft:s2c/play/set_player_inventory")]
 pub struct SetPlayerInventoryS2CPlayPacket {
-    pub slot: VarInt,
+    pub slot: Var32,
     pub data: SlotData,
 }
 
@@ -1084,7 +1084,7 @@ pub enum UpdateTeamAction {
         colour         : VanillaFormatting,
         prefix         : NbtText,
         suffix         : NbtText,
-        entities       : LengthPrefixVec<VarInt, String>
+        entities       : LengthPrefixVec<Var32, String>
     } = 0,
     Remove = 1,
     Update {
@@ -1099,13 +1099,13 @@ pub enum UpdateTeamAction {
         suffix         : NbtText
     } = 2,
     AddEntities {
-        entities: LengthPrefixVec<VarInt, String>,
+        entities: LengthPrefixVec<Var32, String>,
     } = 3,
     RemoveEntities {
-        entities: LengthPrefixVec<VarInt, String>,
+        entities: LengthPrefixVec<Var32, String>,
     } = 4,
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum VanillaFormatting {
     Black = 0,
     DarkBlue = 1,
@@ -1139,14 +1139,14 @@ packet_flags! { pub struct TeamFriendlyFlags<u8> {
 pub struct SetScoreS2CPlayPacket {
     pub entity_name    : String,
     pub objective_name : String,
-    pub value          : VarInt,
+    pub value          : Var32,
     pub display_name   : Option<NbtText>,
     pub number_format  : Option<NumberFormat>
 }
 
 #[packet("minecraft:s2c/play/set_simulation_distance")]
 pub struct SetSimulationDistanceS2CPlayPacket {
-    pub sim_dist: VarInt,
+    pub sim_dist: Var32,
 }
 
 #[packet("minecraft:s2c/play/set_subtitle_text")]
@@ -1177,12 +1177,12 @@ pub struct SetTitlesAnimationS2CPlayPacket {
 pub struct SoundEntityS2CPlayPacket {
     pub sound: Sound,
     pub category: SoundCategory,
-    pub entity: VarInt,
+    pub entity: Var32,
     pub volume: f32,
     pub pitch: f32,
     pub seed: u64,
 }
-#[packet_part(VarInt)]
+#[packet_part(Var32)]
 pub enum SoundCategory {
     Master = 0,
     Music = 1,
@@ -1215,7 +1215,7 @@ impl SoundCategory {
 pub struct SoundS2CPlayPacket {
     pub sound: Sound,
     pub category: SoundCategory,
-    pub entity: VarInt,
+    pub entity: Var32,
     pub volume: f32,
     pub pitch: f32,
     pub seed: u64,
@@ -1230,7 +1230,7 @@ pub struct StopSoundS2CPlayPacket(TODO);
 #[packet("minecraft:s2c/play/store_cookie")]
 pub struct StoreCookieS2CPlayPacket {
     pub key: Identifier,
-    pub payload: LengthPrefixVec<VarInt, u8>,
+    pub payload: LengthPrefixVec<Var32, u8>,
 }
 
 #[packet("minecraft:s2c/play/system_chat")]
@@ -1247,20 +1247,20 @@ pub struct TabListS2CPlayPacket {
 
 #[packet("minecraft:s2c/play/tag_query")]
 pub struct TagQueryS2CPlayPacket {
-    pub transaction: VarInt,
+    pub transaction: Var32,
     pub nbt: Nbt,
 }
 
 #[packet("minecraft:s2c/play/take_item_entity")]
 pub struct TakeItemEntityS2CPlayPacket {
-    pub collected_entity: VarInt,
-    pub collector_entity: VarInt,
-    pub item_count: VarInt,
+    pub collected_entity: Var32,
+    pub collector_entity: Var32,
+    pub item_count: Var32,
 }
 
 #[packet("minecraft:s2c/play/teleport_entity")]
 pub struct TeleportEntityS2CPlayPacket {
-    pub entity: VarInt,
+    pub entity: Var32,
     pub x: f64,
     pub y: f64,
     pub z: f64,
@@ -1281,13 +1281,13 @@ pub struct TickingStateS2CPlayPacket {
 
 #[packet("minecraft:s2c/play/ticking_step")]
 pub struct TickingStepS2CPlayPacket {
-    pub steps: VarInt,
+    pub steps: Var32,
 }
 
 #[packet("minecraft:s2c/play/transfer")]
 pub struct TransferS2CPlayPacket {
     pub host: String,
-    pub port: VarInt,
+    pub port: Var32,
 }
 
 #[packet("minecraft:s2c/play/update_advancements")]
@@ -1295,14 +1295,14 @@ pub struct UpdateAdvancementsS2CPlayPacket(TODO);
 
 #[packet("minecraft:s2c/play/update_attributes")]
 pub struct UpdateAttributesS2CPlayPacket {
-    pub entity: VarInt,
-    pub properties: LengthPrefixVec<VarInt, Attribute>,
+    pub entity: Var32,
+    pub properties: LengthPrefixVec<Var32, Attribute>,
 }
 #[packet_part]
 pub struct Attribute {
     pub id: RegEntry<AttributeType>,
     pub value: f64,
-    pub mods: LengthPrefixVec<VarInt, AttrModifier>,
+    pub mods: LengthPrefixVec<Var32, AttrModifier>,
 }
 #[packet_part]
 pub struct AttrModifier {
@@ -1319,11 +1319,11 @@ pub enum AttrModOp {
 
 #[packet("minecraft:s2c/play/update_mob_effect")]
 pub struct UpdateMobEffectS2CPlayPacket {
-    pub entity: VarInt,
+    pub entity: Var32,
     pub effect: RegEntry<StatusEffect>,
-    pub amp: VarInt,
+    pub amp: Var32,
     /// -1 for infinite
-    pub dur: VarInt,
+    pub dur: Var32,
     pub flags: EffectFlags,
 }
 packet_flags! { pub struct EffectFlags<u8> {
@@ -1344,18 +1344,18 @@ pub struct UpdateTagsS2CPlayPacket {
 
 #[packet("minecraft:s2c/play/projectile_power")]
 pub struct ProjectilePowerS2CPlayPacket {
-    pub entity: VarInt,
+    pub entity: Var32,
     pub power: f64,
 }
 
 #[packet("minecraft:s2c/play/custom_report_details")]
 pub struct CustomReportDetailsS2CPlayPacket {
-    pub details: LengthPrefixVec<VarInt, ReportDetail>,
+    pub details: LengthPrefixVec<Var32, ReportDetail>,
 }
 
 #[packet("minecraft:s2c/play/server_links")]
 pub struct ServerLinksS2CPlayPacket {
-    pub links: LengthPrefixVec<VarInt, ServerLink>,
+    pub links: LengthPrefixVec<Var32, ServerLink>,
 }
 
 packet_full_decode! { S2C Play }

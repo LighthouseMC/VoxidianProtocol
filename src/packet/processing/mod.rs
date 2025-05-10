@@ -4,7 +4,7 @@ mod compress;
 pub use compress::*;
 
 use crate::packet::*;
-use crate::value::VarInt;
+use crate::value::Var32;
 
 
 pub struct PacketProcessing {
@@ -22,7 +22,7 @@ impl PacketProcessing {
     pub fn encode_encrypt(&mut self, plaintext : PacketWriter) -> Result<PacketWriter, EncodeError> {
         let mut smalltext  = self.compression.compress(plaintext)?;
         #[allow(deprecated)]
-        smalltext.insert(0, &VarInt::from(smalltext.len()).as_bytes());
+        smalltext.insert(0, &Var32::from(smalltext.len()).as_bytes());
         let ciphertext = self.secret_cipher.encrypt(smalltext);
         Ok(ciphertext)
     }

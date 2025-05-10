@@ -48,7 +48,7 @@ mod test {
 impl PacketEncode for DataArray {
     fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         let compressed = self.to_bit_stream();
-        VarInt::from(compressed.len()).encode(buf)?;
+        Var32::from(compressed.len()).encode(buf)?;
         for long in &compressed {
             buf.encode_write(*long)?;
         }
@@ -67,7 +67,7 @@ impl PacketEncode for ChunkSectionData {
         for element in &self.sections {
             element.encode(&mut subbuf)?;
         }
-        LengthPrefixVec::<VarInt, _>::from(subbuf.into_inner()).encode(buf)?;
+        LengthPrefixVec::<Var32, _>::from(subbuf.into_inner()).encode(buf)?;
         Ok(())
     }
 }
@@ -148,12 +148,12 @@ impl<T, const E: usize> PacketEncode for PaletteFormat<T, E> {
     fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> {
         match self {
             PaletteFormat::SingleValued { entry } => {
-                VarInt::from(entry.id() as i32).encode(buf)?;
+                Var32::from(entry.id() as i32).encode(buf)?;
             },
             PaletteFormat::Indirect { mappings, data : _ } => {
-                VarInt::from(mappings.len()).encode(buf)?;
+                Var32::from(mappings.len()).encode(buf)?;
                 for entry in mappings {
-                    VarInt::from(entry.id() as i32).encode(buf)?;
+                    Var32::from(entry.id() as i32).encode(buf)?;
                 }
             },
             PaletteFormat::Direct { data : _ } => { },
