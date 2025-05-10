@@ -74,6 +74,12 @@ impl Var32 {
             data = ((data as u32) >> 7) as i32;
         }
     }
+
+    pub fn extend_bytes(&self, vec : &mut Vec<u8>) {
+        let mut buf = [0; 5];
+        let     n   = self.bytes_buf(&mut buf);
+        vec.extend_from_slice(&buf[0..n]);
+    }
 }
 
 #[cfg(test)]

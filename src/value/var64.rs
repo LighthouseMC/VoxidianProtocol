@@ -70,4 +70,10 @@ impl Var64 {
             data = ((data as u64) >> 7) as i64;
         }
     }
+
+    pub fn extend_bytes(&self, vec : &mut Vec<u8>) {
+        let mut buf = [0; 10];
+        let     n   = self.bytes_buf(&mut buf);
+        vec.extend_from_slice(&buf[0..n]);
+    }
 }
