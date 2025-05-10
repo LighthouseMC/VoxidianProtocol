@@ -20,9 +20,11 @@ impl PacketProcessing {
 
     /// Includes full packet length.
     pub fn encode_encrypt(&mut self, plaintext : PacketWriter) -> Result<PacketWriter, EncodeError> {
-        let mut smalltext  = self.compression.compress(plaintext)?;
+        let mut smalltext = self.compression.compress(plaintext)?;
+        let mut buf = [0; 5];
+        let     n   = Var32::from(smalltext.len()).bytes_buf(&mut buf);
         #[allow(deprecated)]
-        smalltext.insert(0, &Var32::from(smalltext.len()).as_bytes());
+        smalltext.insert(0, &buf[0..n]);
         let ciphertext = self.secret_cipher.encrypt(smalltext);
         Ok(ciphertext)
     }
