@@ -105,6 +105,6 @@ mod tests {
         assert_eq!(Var32::decode_iter(&mut [0xff, 0xff, 0xff, 0xff, 0x0f].into_iter()).unwrap().0.as_i32(), -1);
         let mut buf = [0; 5];
         let     n   = Var32::from(-1).bytes_buf(&mut buf);
-        assert_eq!(Var32::decode_iter(&mut buf[0..n].iter().map(|b| *b)).unwrap().0.as_i32(), -1);
+        assert_eq!(Var32::decode_iter(&mut buf[0..n].iter().cloned()).unwrap().0.as_i32(), -1);
     }
 }

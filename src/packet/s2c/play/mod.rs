@@ -617,10 +617,14 @@ pub struct PlayerInfoUpdateS2CPlayPacket {
     pub actions: Vec<(Uuid, Vec<PlayerActionEntry>)>,
 }
 
-impl PacketMeta for PlayerInfoUpdateS2CPlayPacket {
+impl PacketPrefix for PlayerInfoUpdateS2CPlayPacket {
     const PREFIX: u8 = 0x40;
+}
+impl PacketMeta for PlayerInfoUpdateS2CPlayPacket {
     const BOUND: Bound = Bound::S2C;
+    type BoundT = BoundS2C;
     const STAGE: Stage = Stage::Play;
+    type StageT = StagePlay;
 }
 
 impl PacketEncode for PlayerInfoUpdateS2CPlayPacket {
@@ -969,10 +973,14 @@ pub enum EquipmentSlot {
     Body = 6
 }
 
-impl PacketMeta for SetEquipmentS2CPlayPacket {
+impl PacketPrefix for SetEquipmentS2CPlayPacket {
     const PREFIX : u8 = 0x60;
-    const BOUND  : Bound = Bound::S2C;
-    const STAGE  : Stage = Stage::Play;
+}
+impl PacketMeta for SetEquipmentS2CPlayPacket {
+    const BOUND: Bound = Bound::S2C;
+    type BoundT = BoundS2C;
+    const STAGE: Stage = Stage::Play;
+    type StageT = StagePlay;
 }
 
 impl PacketEncode for SetEquipmentS2CPlayPacket {

@@ -61,6 +61,10 @@ pub(crate) fn packet_full_decode_impl(input : TokenStream) -> TokenStream {
         });
     }
 
+    let bound_ident  = parse_str::<Ident>(&format!("{}", bound_str)).unwrap();
+    let boundt_ident = parse_str::<Ident>(&format!("Bound{}", bound_str)).unwrap();
+    let stage_ident  = parse_str::<Ident>(&format!("{}", stage_str)).unwrap();
+    let staget_ident = parse_str::<Ident>(&format!("Stage{}", stage_str)).unwrap();
     (quote!{
         #[derive(Debug, Clone)]
         pub enum #packets_ident { #( #fields )* }
@@ -72,6 +76,12 @@ pub(crate) fn packet_full_decode_impl(input : TokenStream) -> TokenStream {
                 packetid => Err(DecodeError::UnknownPacketPrefix(packetid))
             }
         } }
+        impl PacketMeta for #packets_ident {
+            const BOUND  : Bound = Bound::#bound_ident;
+            type  BoundT         = #boundt_ident;
+            const STAGE  : Stage = Stage::#stage_ident;
+            type  StageT         = #staget_ident;
+        }
         #(#try_intos)*
     }).into()
 }

@@ -101,16 +101,22 @@ pub(crate) fn packet_impl(attr : TokenStream, item : TokenStream) -> TokenStream
                 ),
 
             };
-            let bound_ident = parse_str::<Ident>(&format!("{:?}", bound)).unwrap();
-            let stage_ident = parse_str::<Ident>(&format!("{:?}", stage)).unwrap();
+            let bound_ident  = parse_str::<Ident>(&format!("{:?}", bound)).unwrap();
+            let boundt_ident = parse_str::<Ident>(&format!("Bound{:?}", bound)).unwrap();
+            let stage_ident  = parse_str::<Ident>(&format!("{:?}", stage)).unwrap();
+            let staget_ident = parse_str::<Ident>(&format!("Stage{:?}", stage)).unwrap();
             (quote!{
                 #[derive(Clone)]
                 #(#attrs)* #vis #struct_token #ident #generics #new_fields #semi_token
                 impl fmt::Debug for #ident { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result { #debug } }
+                impl PacketPrefix for #ident {
+                    const PREFIX : u8 = #prefix;
+                }
                 impl PacketMeta for #ident {
-                    const PREFIX : u8    = #prefix;
                     const BOUND  : Bound = Bound::#bound_ident;
+                    type  BoundT         = #boundt_ident;
                     const STAGE  : Stage = Stage::#stage_ident;
+                    type  StageT         = #staget_ident;
                 }
                 impl PacketEncode for #ident { fn encode(&self, buf : &mut PacketWriter) -> Result<(), EncodeError> { #encode Ok(()) } }
                 impl PacketDecode for #ident { fn decode<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> { Ok(Self #decode) } }

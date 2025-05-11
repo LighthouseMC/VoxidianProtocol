@@ -103,7 +103,7 @@ pub trait PrefixedPacketDecode : Sized {
     fn decode_prefixed<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError>;
 }
 
-impl<T : PacketDecode + PacketMeta> PrefixedPacketDecode for T {
+impl<T : PacketDecode + PacketPrefix + PacketMeta> PrefixedPacketDecode for T {
     fn decode_prefixed<'l>(buf : &mut PacketReader<'l>) -> Result<Self, DecodeError> {
         let packet_id = buf.read_decode::<Var32>()?.as_i32() as u8;
         if (packet_id != Self::PREFIX) {

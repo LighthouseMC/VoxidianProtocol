@@ -6,6 +6,10 @@ pub trait PacketEncode {
 
 #[derive(Debug, Clone)]
 pub enum EncodeError {
+    /// Failed to encode the packet.
+    EncodeFailed,
+    /// Failed to compress the packet.
+    CompressFailed,
     /// Failed to send the packet to the client.
     SendFailed,
 }
@@ -13,7 +17,9 @@ pub enum EncodeError {
 impl fmt::Display for EncodeError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match (self) {
-            Self::SendFailed => write!(f, "failed to send")
+            Self::EncodeFailed   => write!(f, "failed to encode"),
+            Self::CompressFailed => write!(f, "failed to compress"),
+            Self::SendFailed     => write!(f, "failed to send")
         }
     }
 }
@@ -95,7 +101,7 @@ pub trait PrefixedPacketEncode {
     fn encode_prefixed(&self, buf: &mut PacketWriter) -> Result<(), EncodeError>;
 }
 
-impl<T: PacketEncode + PacketMeta> PrefixedPacketEncode for T {
+impl<T: PacketEncode + PacketPrefix + PacketMeta> PrefixedPacketEncode for T {
     fn encode_prefixed(&self, buf: &mut PacketWriter) -> Result<(), EncodeError> {
         buf.encode_write(Var32::from(Self::PREFIX as i32))?;
         self.encode(buf)?;

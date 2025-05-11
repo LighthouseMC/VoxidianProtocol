@@ -24,7 +24,7 @@ impl IntendedStage {
     pub fn into_stage(&self) -> Stage { match (self) {
         Self::Login    => Stage::Login,
         Self::Status   => Stage::Status,
-        Self::Transfer => Stage::Transfer
+        Self::Transfer => Stage::Login
     } }
 }
 
