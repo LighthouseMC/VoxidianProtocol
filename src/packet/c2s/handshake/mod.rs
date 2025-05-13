@@ -1,8 +1,8 @@
 use super::*;
 
 
-pub trait TryIntoC2SHandshakePackets {
-    fn try_into_c2s_handshake(self) -> Option<C2SHandshakePackets>;
+pub trait TryIntoC2SHandshakePackets : Sized {
+    fn try_into_c2s_handshake(self) -> Result<C2SHandshakePackets, Self>;
 }
 
 

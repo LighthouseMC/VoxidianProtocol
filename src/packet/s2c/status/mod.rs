@@ -1,8 +1,8 @@
 use super::*;
 
 
-pub trait TryIntoS2CStatusPackets {
-    fn try_into_s2c_status(self) -> Option<S2CStatusPackets>;
+pub trait TryIntoS2CStatusPackets : Sized {
+    fn try_into_s2c_status(self) -> Result<S2CStatusPackets, Self>;
 }
 
 

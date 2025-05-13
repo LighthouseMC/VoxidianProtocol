@@ -36,10 +36,10 @@ pub(crate) fn packet_full_decode_impl(input : TokenStream) -> TokenStream {
                 let try_into_ident = parse_str::<Ident>(&format!("TryInto{}{}Packets", bound_str, other_stage)).unwrap();
                 let try_into_fn_ident = parse_str::<Ident>(&format!("try_into_{}_{}", bound_str.to_lowercase(), other_stage.to_lowercase())).unwrap();
                 let try_into_ret_ident = parse_str::<Ident>(&format!("{}{}Packets", bound_str, other_stage)).unwrap();
-                let result = if (stage_str == other_stage) { quote!{ Some(#packets_ident::#packet_id_tc(self)) } } else { quote!{ None } };
+                let result = if (stage_str == other_stage) { quote!{ Ok(#packets_ident::#packet_id_tc(self)) } } else { quote!{ Err(self) } };
                 try_intos.push(quote!{
                     impl crate::packet::#bound_ident::#other_stage_ident::#try_into_ident for #ident {
-                        fn #try_into_fn_ident(self) -> Option<crate::packet::#bound_ident::#other_stage_ident::#try_into_ret_ident> { #result }
+                        fn #try_into_fn_ident(self) -> Result<crate::packet::#bound_ident::#other_stage_ident::#try_into_ret_ident, Self> { #result }
                     }
                 });
             }
@@ -53,10 +53,10 @@ pub(crate) fn packet_full_decode_impl(input : TokenStream) -> TokenStream {
         let try_into_ident = parse_str::<Ident>(&format!("TryInto{}{}Packets", bound_str, other_stage)).unwrap();
         let try_into_fn_ident = parse_str::<Ident>(&format!("try_into_{}_{}", bound_str.to_lowercase(), other_stage.to_lowercase())).unwrap();
         let try_into_ret_ident = parse_str::<Ident>(&format!("{}{}Packets", bound_str, other_stage)).unwrap();
-        let result = if (stage_str == other_stage) { quote!{ Some(self) } } else { quote!{ None } };
+        let result = if (stage_str == other_stage) { quote!{ Ok(self) } } else { quote!{ Err(self) } };
         try_intos.push(quote!{
             impl crate::packet::#bound_ident::#other_stage_ident::#try_into_ident for #packets_ident {
-                fn #try_into_fn_ident(self) -> Option<crate::packet::#bound_ident::#other_stage_ident::#try_into_ret_ident> { #result }
+                fn #try_into_fn_ident(self) -> Result<crate::packet::#bound_ident::#other_stage_ident::#try_into_ret_ident, Self> { #result }
             }
         });
     }

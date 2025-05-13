@@ -4,8 +4,8 @@ use s2c::play::{ Hand, PlayerAbilityFlags };
 use voxidian_protocol_macros::packet;
 
 
-pub trait TryIntoC2SPlayPackets {
-    fn try_into_c2s_play(self) -> Option<C2SPlayPackets>;
+pub trait TryIntoC2SPlayPackets : Sized {
+    fn try_into_c2s_play(self) -> Result<C2SPlayPackets, Self>;
 }
 
 

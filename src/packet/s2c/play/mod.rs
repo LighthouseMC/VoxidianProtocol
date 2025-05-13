@@ -3,8 +3,8 @@ use crate::packet::s2c::config::{ReportDetail, ServerLink};
 //use config::{ ReportDetail, ServerLink };
 
 
-pub trait TryIntoS2CPlayPackets {
-    fn try_into_s2c_play(self) -> Option<S2CPlayPackets>;
+pub trait TryIntoS2CPlayPackets : Sized {
+    fn try_into_s2c_play(self) -> Result<S2CPlayPackets, Self>;
 }
 
 

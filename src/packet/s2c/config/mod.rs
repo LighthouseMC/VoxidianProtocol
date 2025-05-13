@@ -1,8 +1,8 @@
 use super::*;
 
 
-pub trait TryIntoS2CConfigPackets {
-    fn try_into_s2c_config(self) -> Option<S2CConfigPackets>;
+pub trait TryIntoS2CConfigPackets : Sized {
+    fn try_into_s2c_config(self) -> Result<S2CConfigPackets, Self>;
 }
 
 

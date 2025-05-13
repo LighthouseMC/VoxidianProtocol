@@ -1,8 +1,8 @@
 use super::*;
 
 
-pub trait TryIntoS2CLoginPackets {
-    fn try_into_s2c_login(self) -> Option<S2CLoginPackets>;
+pub trait TryIntoS2CLoginPackets : Sized {
+    fn try_into_s2c_login(self) -> Result<S2CLoginPackets, Self>;
 }
 
 
