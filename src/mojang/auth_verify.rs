@@ -152,3 +152,13 @@ pub enum MojAuthError {
     Unverified
 
 }
+
+impl fmt::Display for MojAuthError {
+    fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", match (self) {
+            Self::AuthServerDown => "authentication servers unreachable",
+            Self::InvalidData    => "authentication servers responded with bad data",
+            Self::Unverified     => "authentication failed"
+        })
+    }
+}

@@ -25,7 +25,7 @@ use super::*;
 #[derive(Ser, Deser, Clone, PartialEq, Eq, Hash, Default)]
 pub struct Text(Vec<TextComponent>);
 impl Text {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self(Vec::new())
     }
     pub fn push(&mut self, component : TextComponent) {
@@ -33,6 +33,9 @@ impl Text {
     }
     pub fn into_components(self) -> Vec<TextComponent> {
         self.0
+    }
+    pub fn components(&self) -> &[TextComponent] {
+        &self.0
     }
 }
 impl From<Vec<TextComponent>> for Text { fn from(from : Vec<TextComponent>) -> Self {
