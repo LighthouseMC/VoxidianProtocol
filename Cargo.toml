@@ -16,7 +16,7 @@ build = "build.rs"
 # Parse of XML text representation into a Text. It is heavily inspired by Adventure MiniMessage.
 text_xml           = [ ]
 # Convert clap commands to CommandsS2CPlayPacket. Useful for building CLI-like in-game command parsers.
-commands_clap      = [ "clap" ]
+commands_clap      = [ "dep:clap" ]
 
 data_generator_api = ["dep:proc-macro2", "dep:quote"]
 

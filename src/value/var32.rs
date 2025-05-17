@@ -14,7 +14,7 @@ impl Var32 {
 
 }
 impl fmt::Debug for Var32 { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "VarInt({})", self.0)
+    write!(f, "Var32({})", self.0)
 } }
 
 impl From<i32> for Var32 { fn from(value : i32) -> Self { Self(value) } }
@@ -43,6 +43,7 @@ impl Var32 {
         let mut index = 0;
         loop {
             let byte = iter.next().ok_or(DecodeError::EndOfBuffer)?;
+            index += 1;
             value |= ((byte & 0x7F) as i32) << position;
 
             if (byte & 0x80) == 0 {
@@ -50,14 +51,13 @@ impl Var32 {
             }
 
             position += 7;
-            index += 1;
 
-            if position >= 32 {
+            if (position >= 32) {
                 return Err(DecodeError::InvalidData(Cow::Borrowed("VarInt is too long")));
             }
         }
 
-        Ok((Var32::from(value), index + 1))
+        Ok((Self(value), index))
     }
 
 
@@ -88,6 +88,7 @@ mod tests {
 
     #[test]
     fn varint_decode_iter() {
+
         let data = [
             16, 0, 129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1, 1, 0,
         ];
@@ -97,6 +98,7 @@ mod tests {
         };
         assert_eq!(len.as_i32(), 16);
         assert_eq!(consumed, 1);
+
     }
 
     #[test]

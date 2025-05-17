@@ -10,7 +10,7 @@ impl Var64 {
 
 }
 impl fmt::Debug for Var64 { fn fmt(&self, f : &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "VarLong({})", self.0)
+    write!(f, "Var64({})", self.0)
 } }
 
 impl From<i64> for Var64 { fn from(value : i64) -> Self { Self(value) } }
@@ -39,6 +39,7 @@ impl Var64 {
         let mut index = 0;
         loop {
             let byte = iter.next().ok_or(DecodeError::EndOfBuffer)?;
+            index += 1;
             value |= ((byte & 0x7F) as i64) << position;
 
             if (byte & 0x80) == 0 {
@@ -46,14 +47,13 @@ impl Var64 {
             }
 
             position += 7;
-            index += 1;
 
-            if position >= 64 {
+            if (position >= 64) {
                 return Err(DecodeError::InvalidData(Cow::Borrowed("VarLong is too long")));
             }
         }
 
-        Ok((Var64::from(value), index + 1))
+        Ok((Self(value), index))
     }
 
 

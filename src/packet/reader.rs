@@ -21,6 +21,7 @@ impl PacketReader<'static> {
     ) -> Result<(Self, usize), DecodeError> {
         let (size, consumed) = Var32::decode_iter(&mut queue)?;
         let size = size.as_i32() as usize;
+        // TODO: Max packet size.
         let mut bytes = Vec::with_capacity(size);
         for _ in 0..size {
             let Some(byte) = queue.next() else {

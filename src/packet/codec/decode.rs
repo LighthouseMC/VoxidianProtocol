@@ -134,12 +134,13 @@ mod tests {
         //          |   ^Handshake packet
         //          ^Packet length
         let Ok((mut packetbuf, consumed)) = PacketReader::from_raw_queue(data.into_iter()) else { panic!("from_raw_queue was not a success") };
-        assert_eq!(packetbuf.as_slice(), [0, 129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1]);
         assert_eq!(consumed, 17);
+        assert_eq!(packetbuf.as_slice(), [0, 129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1]);
 
         let Ok((packet_id, consumed)) = Var32::decode_iter(&mut packetbuf.iter()) else { panic!("decode_iter was not a success") };
         assert_eq!(packet_id.as_i32(), 0);
-        packetbuf.skip(consumed);
+        assert_eq!(consumed, 1);
+        assert_eq!(packetbuf.as_slice(), [129, 6, 9, 108, 111, 99, 97, 108, 104, 111, 115, 116, 99, 221, 1]);
 
         let packet = match (IntentionC2SHandshakePacket::decode(&mut packetbuf)) {
             Ok(packet) => packet,
