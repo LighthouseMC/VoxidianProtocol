@@ -1191,6 +1191,7 @@ pub struct SoundEntityS2CPlayPacket {
     pub seed: u64,
 }
 #[packet_part(Var32)]
+#[derive(Copy)]
 pub enum SoundCategory {
     Master = 0,
     Music = 1,
